@@ -1,0 +1,2 @@
+webapp.webcontext=/ui
+webapp.port=8080

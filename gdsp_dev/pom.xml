@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gdsp.dev</groupId>
+        <artifactId>dev-parent</artifactId>
+        <version>3.1-SNAPSHOT</version>
+        <relativePath>parent</relativePath>
+    </parent>
+    <artifactId>dev</artifactId>
+    <packaging>pom</packaging>
+    <name>dev</name>
+    <properties>
+    	<dev-version>3.1-SNAPSHOT</dev-version>
+    </properties>
+    <modules>
+    	<module>parent</module>
+        <module>core</module>
+        <module>persist</module>
+        <module>web</module>
+        <module>server</module>
+    </modules>
+    <dependencyManagement>
+		<dependencies>
+			<!-- dev各模块声明 -->
+			<dependency>
+				<groupId>com.gdsp.dev</groupId>
+				<artifactId>dev-core</artifactId>
+				<version>${dev-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gdsp.dev</groupId>
+				<artifactId>dev-persist</artifactId>
+				<version>${dev-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gdsp.dev</groupId>
+				<artifactId>dev-web</artifactId>
+				<version>${dev-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gdsp.dev</groupId>
+				<artifactId>dev-server</artifactId>
+				<version>${dev-version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

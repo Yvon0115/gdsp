@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.notice.dao.INoticeRangeDao">
+
+	 
+	 <resultMap type="NoticePowerVO" id="pageUserMap">
+		<id property="id" column="id" />
+		<result property="range_id" column="range_id" />
+		<association property="userVO" javaType="UserVO">
+			<id column="range_id" property="id"   />
+			<result column="account" property="account" jdbcType="VARCHAR" />
+			<result column="username" property="username"/>
+		    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		    <result column="email" property="email" jdbcType="VARCHAR" />
+		    <result column="memo" property="memo"  />
+		</association>	
+	</resultMap>
+	<!-- 根据条件查询页面用户列表 -->
+	<!--  权限拆分                                          2016.12.28   该sql没有被调用-->
+<!-- 	<select id="queryUsersByAddCond" resultMap="pageUserMap"> -->
+<!-- 		select n.id,n.range_id,u.username,u.account,u.mobile,u.email,u.memo from rms_notice_range n inner join rms_user u on u.id = n.range_id -->
+<!-- 		<trim prefix="where" prefixOverrides="and |or "> -->
+<!-- 			<if test="addCond != null and addCond!=''">(${addCond}) </if> -->
+<!-- 		</trim>	 -->
+		
+<!-- 	</select> -->
+	
+	<!-- lyf 2016.12.28修改 原因：权限拆分，rms_orgs表不能联表查询 -->
+	<!--<resultMap type="NoticePowerVO" id="pageOrgMap">-->
+		<!--<id property="id" column="id" />-->
+		<!--<result property="range_id" column="range_id" />-->
+		<!--<association property="orgVO" javaType="OrgVO">-->
+			<!--<id column="range_id" property="id"   />-->
+			<!--<result column="orgname" property="orgname"/>-->
+		  <!--<result column="orgcode" property="orgcode"/>-->
+		<!--</association>-->	
+	<!--</resultMap>-->
+	<!-- 根据条件查询页面用户列表 -->
+	<select id="queryNoticeRangeByCondition" resultType="NoticePowerVO">
+		select n.id,n.range_id from rms_notice_range n 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="addCond != null and addCond!=''">(${addCond}) </if>
+		</trim>	
+		
+	</select>
+	<!-- 此次修改结束 -->
+	
+	
+	
+		<resultMap type="NoticePowerVO" id="pageUserGroupMap">
+		<id property="id" column="id" />
+		<result property="range_id" column="range_id" />
+		<association property="userGroupVO" javaType="UserGroupVO">
+			<id column="range_id" property="id"   />
+			<result column="groupname" property="groupname"/>
+		  <result column="memo" property="memo"/>
+		</association>	
+	</resultMap>
+	<!-- 根据条件查询页面用户列表 -->
+	<select id="queryUserGroupByConditions" resultMap="pageUserGroupMap">
+		select n.id,n.range_id,g.groupname,g.memo from rms_notice_range n inner join rms_usergroup g on g.id = n.range_id
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="addCond != null and addCond!=''">(${addCond}) </if>
+		</trim>	
+		
+	</select>
+	
+	
+	
+</mapper>

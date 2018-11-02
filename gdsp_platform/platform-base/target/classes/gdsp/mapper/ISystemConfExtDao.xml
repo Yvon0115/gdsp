@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.config.customization.dao.ISystemConfExtDao">
+	<resultMap type="com.gdsp.platform.config.customization.model.SystemConfExtVO" id="systemConfExtMap">
+		<id property="id" column="id" />
+		<result property="confName" column="conf_name"/>
+		<result property="confCode" column="conf_code"/>
+		<result property="confValue" column="conf_value"/>
+		<result property="valueType" column="value_type"/>
+		<result property="categoryName" column="category_name"/>
+		<result property="categoryCode" column="category_code"/>
+		<result property="createBy" column="createby"/>
+		<result property="createTime" column="createtime"/>
+		<result property="lastModifyBy" column="lastmodifyby"/>
+		<result property="lastModifyTime" column="lastmodifytime"/>
+	</resultMap>
+	<sql id="sysConfExtColumns">
+    	id,conf_name,conf_code,conf_value,value_type,category_name,category_code,createby,createtime,lastmodifyby,lastmodifytime,version
+    </sql>
+	<update id="updateBatch" parameterType="list">
+		UPDATE cp_sys_conf_ext
+			set conf_value = case conf_code
+			<foreach collection='list' index='index' item='item'>
+				when #{item.confCode} then #{item.confValue} 
+			</foreach>
+			end
+			where conf_code in
+			<foreach collection='list' index='index' item='item' open="(" close=")" separator=",">
+				 #{item.confCode}
+			</foreach>
+	</update>
+	
+	<select id="querySystemConfExtVoListByCatgCode" resultMap="systemConfExtMap">
+    	select 
+			<include refid="sysConfExtColumns"/>
+		from 
+			cp_sys_conf_ext
+		where 
+			category_code = #{catgCode}
+    </select>
+</mapper>

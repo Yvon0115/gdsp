@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.IWidgetQueryDao">
+
+	<select id="queryOutResByCondition" resultType="PageVO">
+		select id,res_name as page_name,parent_id as dir_id ,res_type as page_type from ac_out_resoure
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+		<if test="sort!=null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="getColumnInfoByLayout" resultType="LayoutColumnVO">
+		select * from ac_layout_column where layout_id=#{layout_id} order by sortnum
+	</select>
+</mapper>

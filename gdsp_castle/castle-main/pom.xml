@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gdsp.castle</groupId>
+        <artifactId>castle</artifactId>
+        <version>3.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>castle-main</artifactId>
+    <name>castle-main</name>
+    <dependencies>
+        <!-- 模块依赖于castle-ui -->
+        <dependency>
+            <groupId>com.gdsp.castle</groupId>
+            <artifactId>castle-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.castle</groupId>
+            <artifactId>castle-ui</artifactId>
+            <type>war</type>
+        </dependency>
+        <!-- 模块依赖于castle-ui -->
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

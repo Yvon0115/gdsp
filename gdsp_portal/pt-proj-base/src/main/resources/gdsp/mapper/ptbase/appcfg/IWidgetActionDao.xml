@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.IWidgetActionDao">
+
+
+	<insert id="insert" parameterType="WidgetActionVO">
+		INSERT INTO ac_widget_action(id, name, code, template,memo, widgettype,widgetid,sortnum,createBy, createTime, lastModifyBy, lastModifyTime, version)
+		VALUES(#{id},#{name},#{code}, #{template},#{memo},#{widgettype},#{widgetid},#{sortnum},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},0)
+	</insert>
+
+	<update id="update" parameterType="WidgetActionVO">
+		UPDATE ac_widget_action
+		SET name=#{name}, code=#{code}, template=#{template},memo=#{memo},widgettype=#{widgettype},widgetid=#{widgetid},sortnum=#{sortnum},createBy=#{createBy},
+		createTime=#{createTime:BIGINT}, lastModifyBy=#{lastModifyBy}, lastModifyTime=#{lastModifyTime:BIGINT}, version=#{version}
+		WHERE  id = #{id}
+	</update>
+	<delete id="delete">
+		delete from ac_widget_action
+		where id in
+				<foreach collection="array" index="index" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+	</delete>
+	<select id="load" resultType="WidgetActionVO">
+		SELECT
+		action.*,
+		(
+			CASE
+			WHEN action.widgettype = 'cognos' THEN
+				(
+					SELECT
+						report_name
+					FROM
+						ac_cognos_node where id = action.widgetid
+				)
+			ELSE
+				(
+					SELECT
+						NAME
+					FROM
+						ac_widget_meta
+					WHERE
+						id = action.widgetid
+				)
+			END
+		) refshowvalue
+		FROM
+			ac_widget_action action
+		where id=#{id}
+	</select>
+
+	<select id="findActionsByWidget" resultType="WidgetActionVO">
+		
+		select * from ac_widget_action where 
+		  <if test="widgetId != null and widgetId!=''" >
+		  		widgetid=#{widgetId} or 
+		  </if>
+		   <if test="widgetId == null or widgetId == '' " >
+		   		(widgetid=null or widgetid='') or 
+		   </if>
+		   widgettype=#{widgetType} or widgettype=#{pubType} order by sortnum desc
+	</select>
+	<select id="findAllActions" resultType="WidgetActionVO" >
+		select * from ac_widget_action order by sortnum desc 
+	</select>
+	
+	<select id="queryWidgetActionVOByCondition" resultType="WidgetActionVO">
+		
+		select * from ac_widget_action
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		order by sortnum desc 
+	</select>
+	
+	
+	<select id="findWidgetActionVOByWidgetIDs" resultType="WidgetActionVO">
+	select * from ac_widget_action  where widgetid=#{widgetid}
+	</select>
+	
+</mapper>

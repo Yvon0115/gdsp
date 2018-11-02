@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions  xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="www.activiti.org">
+    <process  id="process1446431554366" name="process1446431554366">
+        <startEvent  id="start" name="Start" activiti:initiator="_wf_default_v_applicant">
+        </startEvent>
+        <endEvent  id="end" name="End">
+        </endEvent>
+        <userTask  id="startuser" name="&#x53D1;&#x8D77;&#x4EBA;" >
+        </userTask>
+        <sequenceFlow  id="flow1445332086618" name="flow1445332086618" sourceRef="start" targetRef="startuser">
+        </sequenceFlow>
+    </process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_process1446431554366">
+        <bpmndi:BPMNPlane bpmnElement="process1446431554366" id="BPMNPlane_process1446431554366">
+            <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+                <omgdc:Bounds height="30" width="30" x="114" y="241"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+                <omgdc:Bounds height="30" width="30" x="924" y="241"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="startuser" id="BPMNShape_startuser">
+                <omgdc:Bounds height="60" width="130" x="243" y="226"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="flow1445332086618" id="BPMNEdge_flow1445332086618">
+                <omgdi:waypoint x="144" y="256"/>
+                <omgdi:waypoint x="238" y="256"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>

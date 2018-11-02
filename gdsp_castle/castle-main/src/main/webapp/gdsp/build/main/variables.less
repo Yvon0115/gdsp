@@ -1,0 +1,109 @@
+//Castle Variables.less
+//=========================
+
+//PATHS
+//--------------------------------------------------------
+
+@boxed-layout-bg-image-path: "../images/boxed-bg.jpg";
+
+//COLORS
+//--------------------------------------------------------
+
+@light-blue: #25abf2;  //Primary
+@red:        #dd4b39;  //Danger
+@green:      #00a65a;  //Success
+@aqua:       #00c0ef;  //Info
+@yellow:     #f39c12;  //Warning
+@blue:       #0073b7;
+@navy:       #001F3F;
+@teal:       #39CCCC;
+@olive:      #3D9970;
+@lime:       #01FF70;
+@orange:     #FF851B;
+@fuchsia:    #F012BE;
+@purple:     #605ca8;
+@maroon:     #D81B60;
+@black:      #111;
+@gray:       #d2d6de;
+
+@light-blue-hover:#2096D5;
+//MAIN-TOP
+//----------------------------------------------
+@header-top-height: 28px;
+@header-top-item-padding:15px;
+@header-color:#fff;
+//LAYOUT
+//--------------------------------------------------------
+
+//Side bar and logo width
+@sidebar-width: 230px;
+@sidebar-margin: 6px;
+//Boxed layout maximum width
+@boxed-layout-max-width: 1024px;
+//When the logo should go to the top of the screen
+@screen-header-collapse: @screen-xs-max;
+
+//Link colors (Aka: <a> tags)
+@link-color:       @light-blue;
+@link-hover-color: @light-blue-hover;
+
+//Body background (Affects main content background only)
+@body-bg: #eee;
+
+//SIDEBAR SKINS
+//--------------------------------------------------------
+
+//Dark sidebar
+@sidebar-dark-bg:                  rgb(39, 48, 69);
+@sidebar-dark-hover-bg:            darken(@sidebar-dark-bg, 2%);
+@sidebar-dark-color:               lighten(@sidebar-dark-bg, 60%);
+@sidebar-dark-hover-color:         #fff;
+@sidebar-dark-submenu-bg:          lighten(@sidebar-dark-bg, 5%);
+@sidebar-dark-submenu-color:       lighten(@sidebar-dark-submenu-bg, 40%);
+@sidebar-dark-submenu-hover-color: #fff;
+
+//Light sidebar
+@sidebar-light-bg:                  #d9dadc;
+@sidebar-light-hover-bg:            #fff;
+@sidebar-light-color:               #888;
+@sidebar-light-hover-color:         #333;
+@sidebar-light-submenu-bg:          @sidebar-light-hover-bg;
+@sidebar-light-submenu-color:       #888;
+@sidebar-light-submenu-hover-color: #333;
+
+//CONTROL SIDEBAR
+//--------------------------------------------------------
+@control-sidebar-width: @sidebar-width;
+
+
+//BOXES
+//--------------------------------------------------------
+@box-border-color:  #ddd;
+@box-border-radius: 0px;
+@box-footer-bg:     #fff;
+@box-boxshadow:     0 1px 1px rgba(0, 0, 0, .1);
+@box-padding-vertical:       7px;
+@box-padding-horizontal:       10px;
+
+//Box variants
+@box-default-border-color: #ddd;
+
+
+
+//z-index
+//--------------------------------------------------------
+@zindex-header: 300;
+@zindex-content: 100;
+@zindex-sidebar: 200;
+@zindex-preloader: 10000;
+@zindex-box: 50;
+//CHAT WIDGET
+//--------------------------------------------------------
+@attachment-border-radius: 3px;
+
+//TRANSITIONS SETTINGS
+//--------------------------------------------------------
+
+//Transition global options
+@transition-speed: .3s;
+@transition-fn:    ease-in-out;//cubic-bezier(0.32,1.25,0.375,1.15);

@@ -1,0 +1,2 @@
+webapp.webcontext=/portal
+webapp.port=8080

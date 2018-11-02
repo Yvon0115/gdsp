@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.role.dao.IRoleDao">
+	<resultMap id="RoleResultMap" type="HashMap" >
+    	<id column="id" property="id" jdbcType="CHAR" />
+    	<result column="rolename" property="rolename" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="base_colunm_list">
+			r.id
+            ,r.rolename
+            ,r.pk_org
+            ,r.memo
+            ,r.agingLimit
+            ,r.createBy
+            ,r.createTime
+            ,r.lastModifyTime
+            ,r.lastModifyBy
+            ,r.version
+            ,r.permissionAging
+            ,r.agingUnit
+	</sql>
+	<!-- 查询 分页列表 -->
+	<select id="queryRoleByCondition" resultType="roleVO">
+		select
+		 <include refid="base_colunm_list"></include> 
+		from rms_role r
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+
+	<!-- 查询 列表 -->
+    <!-- lyf 2017.01.06修改 原因：角色时效相关，新增了权限时效时长(permissionAging)和时效单位(agingUnit)字段，所以修改了更新的sql -->
+	<select id="queryRoleListByCondition" resultType="roleVO">
+		select 
+            id,
+            rolename,
+            pk_org,
+            memo,
+            agingLimit,
+            createBy,
+            createTime,
+            lastModifyTime,
+            lastModifyBy,
+            version,
+            permissionAging,
+            agingUnit  
+        from rms_role 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	
+	<!-- 根据机构id集合查询角色列表  【查询更改  wqh 2016/12/27  原因：权限拆分】 -->
+	<select id="queryRoleListByOrgIds" parameterType="java.util.List" resultType="roleVO">
+		select 
+			r.id,
+			r.rolename,
+			r.pk_org ,
+			'Y' leaf ,
+			AGINGLIMIT,
+			PERMISSIONAGING,
+			AGINGUNIT 
+		from 
+		-- rms_power_org ro inner join rms_role r on ro.pk_role=r.id  and r.pk_org=ro.resource_id where ro.resource_id in
+			rms_role r
+		where r.PK_ORG in 
+	 	<foreach collection='list' index='index' item='item' open='(' separator=',' close=')'> #{item} </foreach>
+	</select>
+	
+	<!-- 查询单个机构下的角色 -->
+  	<select id="queryRoleList" resultMap="RoleResultMap">
+    	select 
+    		id,
+    		rolename 
+    	from  rms_role 
+    	where pk_org=#{pk_org}
+  	</select>
+  	<!-- 查询所有角色信息，单表查询 -->
+    <!-- lyf 2017.01.06修改 原因：角色时效相关，新增了权限时效时长和时效单位字段，所以修改了更新的sql -->
+  	<select id="findAllRoleList" parameterType="java.util.List" resultType="roleVO">
+		SELECT 
+			<include refid="base_colunm_list"></include>
+		FROM rms_role r
+	</select>
+
+	<!-- 更新角色时效标识 -->
+	<update id="updateRoleAgingStatus" >
+		UPDATE rms_role 
+		SET agingLimit = #{agingLimit}
+		WHERE ID = #{roleID}
+	</update>
+  
+</mapper>

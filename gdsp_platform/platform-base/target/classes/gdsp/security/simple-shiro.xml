@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<description>Shiro安全配置</description>
+
+    <!-- Realm实现 -->
+    <bean id="userRealm" class="com.gdsp.dev.web.security.shiro.UserRealm">
+        <constructor-arg ref="shiroCacheManager"/>
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+        <property name="cachingEnabled" value="false"/>
+        <property name="authenticationCachingEnabled" value="false"/>
+        <property name="authenticationCacheName" value="authenticationCache"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <property name="authorizationCacheName" value="authorizationCache"/>
+    </bean>
+    <!-- 隐式登录Realm实现 -->
+    <bean id="autoLoginRealm" class="com.gdsp.dev.web.security.shiro.AutoLoginRealm">
+        <constructor-arg ref="shiroCacheManager"/>
+        <property name="cachingEnabled" value="false"/>
+    </bean>
+    <!-- realm列表 -->
+    <util:list id="realmList">
+        <ref bean="userRealm"/>
+        <ref bean="autoLoginRealm"/>
+    </util:list>
+	<bean id="jCaptcha" class="com.gdsp.dev.web.security.jcaptcha.JCaptcha"/>
+    <bean id="jCaptchaValidateFilter" class="com.gdsp.dev.web.security.jcaptcha.JCaptchaValidateFilter">
+          <property name="jcaptchaEnabled" value="${login.jcaptcha.enabled:true}"/>
+          <property name="jcaptchaParam" value="${login.jcaptchaCode:jcaptchaCode}"/>
+          <property name="failureKeyAttribute" value="${login.failureKeyAttribute:shiroLoginFailure}"/>
+          <property name="jcaptcha" ref="jCaptcha"></property>
+    </bean>
+    <!-- Shiro的Web过滤器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login.d" /><!-- 登录页面地址 -->
+        <property name="successUrl" value="/navigation.d" /><!-- 登陆成功地址 -->
+        <property name="unauthorizedUrl" value="/unauthorized.d"/><!-- 认证未通过地址 -->
+        <property name="filters"><!-- 基于表单认证的过滤器 -->
+            <util:map>
+                <entry key="authc" value-ref="authcFilter"/>
+                <entry key="ssl" value-ref="sslFilter"/>
+                <entry key="url" value-ref="urlMatchingFilter"/>
+                <entry key="jCaptchaValidate" value-ref="jCaptchaValidateFilter"/>
+                <entry key="pwdSecurityPolicy" value-ref="pwdSecurityPolicyFilter"/>
+            </util:map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /= anon<!-- 匿名可访问 -->
+                /noauth/** =anon<!-- 匿名可访问 -->
+                /login.d = jCaptchaValidate,authc<!-- 需要通过身份认证-->
+                /logout.d = logout
+                /** = authc,url,pwdSecurityPolicy<!-- 需要通过身份认证、URL校验、密码时效校验-->
+            </value>
+        </property>
+    </bean>
+</beans>

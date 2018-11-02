@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.indexanddim.dao.IIndexManageDao">
+	<sql id="indexInfoColumns">
+		id,indexCode,indexName,indexCodeName,indexColumnName
+		,indexTableName,statfreq,datasource,comedepart,businessbore
+		,techbore,peicision,meterunit,onlyflexiablequery,remark,createby
+		,createtime,lastmodifyby,lastmodifytime,indexTableId
+	</sql>
+	<!-- 查询 分页列表 -->
+	<select id="queryIndexInfoByCondition" resultType="IndexInfoVO">
+		select * from bp_indexinfo
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}</foreach>
+		</if>
+	</select>
+	<!-- 查询指标表，部门表信息 -->
+	<select id="queryIdxDepartment" resultType="IndexInfoVO">
+		select * from bp_indexinfo
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}</foreach>
+		</if>
+	</select>
+
+	<select id="existSameIdxInfo" resultType="Integer">
+		select count(*) from bp_indexinfo where indexCode=#{indexCode}
+		<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+	</select>
+
+	<!-- 根据指标ID查询指标信息 -->
+	<select id="findIdxInfoById" resultType="IndexInfoVO">
+		select * from
+		bp_indexinfo where id=#{id}
+	</select>
+	<!-- 根据指标ID是否存在 -->
+	<select id="findExportIdxInfoById" resultType="Integer">
+		select count(*)
+		from bp_indexinfo where indexCode=#{id}
+	</select>
+
+    <!-- lyf 2016.12.28修改 原因：有关rms_orgs表的权限拆分 -->
+	<!-- 根据部门ID获取部门名称 -->
+	<!--<select id="queryOrgNameByID" resultType="OrgVO">-->
+		<!--select * from rms_orgs-->
+		<!--where id=#{comedepart}-->
+	<!--</select> -->
+    <!-- 此次修改结束 -->
+
+	<!-- 新增指标信息 -->
+	<insert id="insertIndexInfo" parameterType="IndexInfoVO">
+		INSERT INTO bp_indexinfo (
+		<include refid="indexInfoColumns" />
+		)
+		values
+		(#{id},#{indexCode},#{indexName},#{indexCodeName},#{indexColumnName}
+		,#{indexTableName},#{statfreq},#{datasource},#{comedepart},#{businessbore}
+		,#{techbore},#{peicision},#{meterunit},#{onlyflexiablequery},#{remark},#{createBy}
+		,#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{indexTableId})
+	</insert>
+	<!-- 修改指标信息 -->
+	<update id="updateIndexInfo">
+		update bp_indexinfo set
+		indexCode=#{indexCode},indexName=#{indexName},indexCodeName=#{indexCodeName}
+		,indexColumnName=#{indexColumnName},indexTableName=#{indexTableName}
+		,statfreq=#{statfreq},datasource=#{datasource},comedepart=#{comedepart}
+		,businessbore=#{businessbore},techbore=#{techbore},peicision=#{peicision}
+		,meterunit=#{meterunit},onlyflexiablequery=#{onlyflexiablequery},remark=#{remark}
+		,createby=#{createBy},lastmodifyby=#{lastModifyBy},indexTableId=#{indexTableId}
+		,lastmodifytime=#{lastModifyTime:BIGINT} where id=#{id}
+	</update>
+
+	<!-- 删除指标信息 -->
+	<delete id="deleteIdxInfo">
+		DELETE FROM bp_indexinfo
+		where id in
+		<foreach collection='array' index='index' item='item' open='('
+			separator=',' close=')'>
+			#{item}
+		</foreach>
+	</delete>
+	<!-- 通过指标编码、指标名称查询指标id -->
+	<select id="queryIdexId" resultType="String">
+		select id from bp_indexinfo where indexCode=#{indexCode} and
+		indexName=#{indexName}
+	</select>
+	<!-- 批量添加指标 -->
+	<!--<insert id="insertIndex" parameterType="java.util.List">
+		insert into bp_indexinfo(
+		<include refid="indexInfoColumns" />
+		)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.id},#{item.indexCode},#{item.indexName},#{item.indexCodeName}
+			,#{item.indexColumnName},#{item.indexTableName},#{item.statfreq},#{item.datasource}
+			,#{item.comedepart},#{item.businessbore},#{item.techbore},#{item.peicision}
+			,#{item.meterunit},#{item.onlyflexiablequery},#{item.remark},#{item.createBy},#{item.createTime:BIGINT}
+			,#{item.lastModifyBy},#{item.lastModifyTime:BIGINT},#{item.indexTableId})
+		</foreach>
+	</insert>-->
+    <select id="queryIndexByIds" resultType="IndexInfoVO">
+       select  a.indexName ,a.id,a.businessbore  from bp_indexinfo a
+        <where>
+            <if test="ids!=null">
+                and id in
+                <foreach collection="ids" open="(" close=")" separator=","
+                    item="id">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

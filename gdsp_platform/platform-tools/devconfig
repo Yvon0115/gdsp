@@ -1,0 +1,2 @@
+webapp.webcontext=/platform-tools
+webapp.port=8080

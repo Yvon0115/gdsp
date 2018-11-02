@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.indexanddim.dao.IIndexDimRelDao">
+
+<!-- 查询指标树信息 -->
+<select id="queryIdxList" resultType="IndexDimTreeVO">
+	select a.pk_fatherid,a.id,a.disname,a.leaf from (
+	select ig.pk_fatherid,ig.id,ig.groupName disname,ig.groupCode, 'N' leaf ,
+	null as indexCode from bp_indgroups ig 
+	union
+	select ir.pk_indexgroup pk_fatherid,ii.id,ii.indexname disname,ii.indexCode,case when
+	ig.groupCode is null then '999' else ig.groupCode end,'Y' leaf from bp_indexinfo ii
+	left join bp_indgroup_rlt ir on ii.id = ir.pk_index
+	left join bp_indgroups ig on ir.pk_indexgroup = ig.id
+	) a  order by groupCode,indexCode
+</select>
+
+<!-- 根据指标ID查询未关联维度 -->
+<select id="queryNoDimListByIdxId" resultType="DimVO">
+	select r.id,r.dimname,r.dimfieldname,r.dimmemo from bp_dim r 
+	<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+	</trim>	
+	order by r.dimname
+</select>
+
+<!-- 根据指标ID查询维度信息 -->
+<select id="queryDimListByIdxId" resultMap="idxDimMap">
+	select idx.id,idx.dimid,dim.dimname,dim.dimfieldname from bp_idxdimrel
+	idx inner join bp_dim dim on idx.dimid=dim.id
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	
+		order by dim.dimname
+</select>
+
+<resultMap type="IdxDimRelVO" id="idxDimMap">
+		<id property="id" column="id" />
+		<result property="indexid" column="indexid" />
+		<result property="dimid" column="dimid" />
+		<association property="dimVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimVO">
+			<id property="id" column="dimid"  />
+			<result property="dimname" column="dimname" />
+			<result property="dimfieldname" column="dimfieldname" />
+		</association>	
+	</resultMap>
+
+<!-- 保存维度 -->
+<insert id="saveDim">
+	insert into bp_idxdimrel (id,indexid,dimid,createby,createtime)
+	values
+	<foreach collection="list" item="item" index="index" separator=",">
+		(#{item.id},#{item.indexid},#{item.dimid},#{item.createBy},#{item.createTime:BIGINT})
+	</foreach>
+</insert>
+
+<!-- 删除维度 -->
+<delete id="deleteDim">
+	delete from bp_idxdimrel
+	where id in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>
+		#{item}
+	</foreach>
+</delete>
+<!-- 判断维度是否被引用 -->
+<select id="isDimCite" resultType="Integer">
+	select count(*) from bp_idxdimrel where dimid in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>
+		#{item}
+	</foreach>
+</select>
+<!-- 判断指标是否被引用 -->
+<select id="findIdxDimCount" resultType="Integer">
+	select count(*) from bp_idxdimrel where indexid in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>
+		#{item}
+	</foreach>
+</select>
+<!-- 通过指标ID查询公共的维度ID -->
+<select id="queryDimIdsByIndexIds" resultType="String">
+	select distinct dimid from bp_idxdimrel where indexid in
+	<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+	</foreach>
+</select>
+<!-- 通过维度ID查询公共的指标ID -->
+<select id="queryIndexIdsByDim" resultType="String">
+	select indexid from bp_idxdimrel where dimid in
+	<foreach collection='list' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+	</foreach>
+</select>
+<!-- 判断指标维度关系是否已存在 -->
+<select id="isExistRelation" resultType="Integer">
+	select count(*) from bp_idxdimrel where indexid=#{indexid} and dimid=#{dimid}
+</select>
+<!-- 添加指标维度关联关系 -->
+<insert id="insertIndDimId" parameterType="java.util.List">
+	insert into bp_idxdimrel (id,indexid,dimid,createby,createtime)
+	values
+	<foreach collection="list" item="item" index="index" separator=",">
+		(#{item.id},#{item.indexid},#{item.dimid},#{item.createBy},#{item.createTime:BIGINT})
+	</foreach>
+</insert>
+<!-- 指标维度关联关系导入sql  
+SELECT	B.columnid	AS	columnid		
+		,A.idx_cde	AS	idx_cde			
+		,A.idx_name	AS	idx_name		
+		,A.freq		AS	freq			
+		,B.tablename	AS	tablename		
+		,B.commentstring	AS	commentstring	
+		,B.columnname	AS	columnname		
+		,B.columntitle	AS	columntitle		
+	FROM (	SELECT	idx_cde					
+			,idx_name				
+			,substr(idx_table,11) AS idx_table	
+			,freq					
+		from	NSPUBVIEW.KPI_INFO ) A
+	LEFT JOIN (
+		SELECT	T1.columnid	AS	columnid
+			,T1.tablename	AS	tablename		
+			,T2.commentstring	AS	commentstring	
+			,T1.columnname	AS	columnname		
+			,T1.columntitle	AS	columntitle		
+		FROM	DBC.COLUMNS T1
+		LEFT JOIN DBC.TABLES T2
+		ON	T1.tablename = T2.tablename
+		AND	T2.databasename = 'NSPUBMART'
+		WHERE	T1.databasename = 'NSPUBMART'
+		  AND	T1.tablename  LIKE 'KPI_%'
+		  AND	T1.tablename <> 'KPI_INFO'
+		  AND	T1.tablename IN (SELECT SUBSTR(idx_table,11) FROM NSPUBVIEW.KPI_INFO)
+		  AND	T1.columntitle NOT IN ('统计日期','频度','指标编码','指标值')
+			) B
+	ON A.idx_table = B.tablename
+order by idx_cde
+
+ -->
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IEventDao">
+    <sql id="flow_eventColumns">
+    	id,eventcode,eventname,eventtype,formtypeid,implement,note,createby,createtime,lastmodifyby,lastmodifytime,version
+    </sql>
+
+	<!-- 查询 事件列表 -->
+	<select id="queryEventListByCondition" resultType="EventVO">
+		select 
+		<include refid="flow_eventColumns" />
+		from flow_event 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	
+	<select id="queryEventListByInput" resultType="EventVO">
+		select 
+		<include refid="flow_eventColumns" />
+		from flow_event 
+		where  eventname like #{event} or  implement like #{event}
+	</select>
+</mapper>

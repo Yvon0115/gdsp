@@ -1,0 +1,47 @@
+.datas {
+	color: #383737;
+	font-size: 14px;
+	width: auto;
+	height: 25px;
+	padding-left: 20px;
+	margin-top: 3px;
+	margin-left: 0px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: block;
+	text-decoration: none;
+}
+.datas:link{
+	color: #383737;
+}
+a:hover{
+	color: #383737;
+}
+
+#orgname {
+	margin-left:10px;
+	margin-top:7px;
+}
+#changeRoleList{
+	margin-top:-10px;
+}
+.list_A {
+	overflow:hidden;
+	vertical-align:bottom;
+	text-overflow:ellipsis;
+	cursor:pointer;
+	font-size:14px;
+	color:#383737;
+	font-weight:100;
+	line-height:25px;
+	font-family:'microsoft yaHei';
+	margin-top:5px;
+	background-color:#ffffff;
+	display:block;
+	width: 100%;
+	padding-left: 20px;
+}
+.list_A:hover{
+   color:#383737;
+}

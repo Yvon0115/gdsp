@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+	   default-lazy-init="true">
+
+	<context:annotation-config />
+	<!-- 使用annotation 自动注册bean,并检查@Required,@Autowired的属性已被注入 -->
+	<context:component-scan base-package="com.gdsp"/>
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<!-- 支持异步方法执行 -->
+	<task:annotation-driven />
+
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.gdsp.dev.base.exceptions.BusinessException">exception/business</prop>
+				<prop key="org.springframework.web.multipart.MaxUploadSizeExceededException">exception/fileupload</prop>
+				<prop key="java.lang.Throwable">exception/system_exception</prop>
+			</props>
+		</property>
+		<property name="statusCodes">
+			<props>
+				<prop key="exception/500">500</prop>
+				<prop key="exception/404">404</prop>
+			</props>
+		</property>
+		<!-- 设置日志输出级别，不定义则默认不输出警告等错误日志信息 -->
+		<property name="warnLogCategory" value="WARN"/>
+		<!-- 默认错误页面，当找不到上面mappings中指定的异常对应视图时，使用本默认配置 -->
+		<property name="defaultErrorView" value="errors/error"/>
+		<!-- 默认HTTP状态码 -->
+		<property name="defaultStatusCode" value="500"/>
+	</bean>
+	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" >
+		<property name="objectMapper" ref="json2ObjectMapper"/>
+		<property name="supportedMediaTypes">
+			<list>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg index="0" value="application" />
+					<constructor-arg index="1" value="x-www-form-urlencoded" />
+					<constructor-arg index="2" value="UTF-8" />
+				</bean>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg index="0" value="application" />
+					<constructor-arg index="1" value="json" />
+					<constructor-arg index="2" value="UTF-8" />
+				</bean>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg index="0" value="text" />
+					<constructor-arg index="1" value="*" />
+					<constructor-arg index="2" value="UTF-8" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- freemarker的配置 -->
+	<bean id="freemarkerConfig" class="com.gdsp.dev.web.mvc.view.CustomFreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/" />
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">10</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="datetime_format">yyyy-MM-dd</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="number_format">#.##</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- FreeMarker视图解析   如返回student。。在这里配置后缀名ftl和视图解析器。。-->
+	<bean id="viewResolver" class="com.gdsp.dev.web.mvc.view.CustomFreeMarkerResolver">
+		<property name="viewClass" value="com.gdsp.dev.web.mvc.view.CustomFreeMarkerView"/>
+		<property name="prefix" value="/gdsp/page/"/>
+		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html;charset=utf-8" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="allowRequestOverride" value="true" />
+		<property name="allowSessionOverride" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="order" value="1"/>
+	</bean>
+	 <!--配置视图解析-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/gdsp/page/" />
+    </bean>
+
+	<bean id="localeResolver"
+		  class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+	</bean>
+	<bean id="themeSource"
+		  class="org.springframework.ui.context.support.ResourceBundleThemeSource">
+	</bean>
+	<bean id="themeResolver"
+		  class="org.springframework.web.servlet.theme.CookieThemeResolver">
+		<property name="defaultThemeName" value="default" />
+	</bean>
+	<bean
+			class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.apache.shiro.authz.UnauthorizedException">/unauthorized</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" p:defaultEncoding="utf-8">
+		<!-- 以字节为单位的最大上传文件的大小 -->
+		<property name="maxUploadSize" value="314572800" />
+	</bean>
+	<!-- custom annotation -->
+	<bean id="customRequestMappingHandlerAdapter" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<!-- 必须要配置order,否则自定义的注解处理器会失效 -->
+		<property name="order" value="1" />
+		<property name="webBindingInitializer">
+			<bean class="com.gdsp.dev.web.mvc.bind.CustomWebBindingInitializer" />
+		</property>
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonConverter" /><!-- json转换器 -->
+			</list>
+		</property>
+		<property name="customArgumentResolvers">
+			<list>
+				<bean class="com.gdsp.dev.web.mvc.resolver.RequestMethodArgumentResolver"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="beanScannerConfigurer" class="com.gdsp.dev.core.scan.BeanScannerConfigurer">
+		<property name="rules">
+			<list>
+				<bean class="com.gdsp.dev.web.scanner.InterceptorScanRule">
+					<property name="basePackage" value="com.gdsp.**.web.**"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="logAspect" class="com.gdsp.platform.log.impl.LogAspect">
+		<property name="order" value="2"/>
+	</bean>
+	
+</beans>

@@ -1,0 +1,129 @@
+/*
+ * Component: Sidebar
+ * ------------------
+ */
+//Main Sidebar
+.main-sidebar{
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top:@navbar-height;
+  min-height: 100%;
+  width: @sidebar-width;
+  z-index: @zindex-sidebar;
+  margin: 0 0 10px @sidebar-margin;
+  //Using disposable variable to join statements with a comma
+  @transition-rule: @transition-speed @transition-fn,
+    width @transition-speed @transition-fn;
+  .transition-transform(@transition-rule);
+  .sidebar-collapse & {
+      .translate(-@sidebar-width, 0);
+  }
+  .sidebar-open & {
+      .translate(0, 0);
+  }
+  .slimScrollDiv{
+    margin-left: 0 - @sidebar-margin;
+  }
+  .sidebar{
+    margin-left: 0 - @sidebar-margin;
+  }
+  div.header {
+    padding: 4px 5px 4px 15px;
+  }
+  .sidebar-content{
+    bottom: 10px;
+    position: absolute;
+    top: @navbar-height + 29px;
+    width: 100%;
+  }
+}
+
+
+// remove border from form
+.sidebar-form {
+  input:focus {
+    border-color: transparent!important;
+  }
+}
+
+// Sidebar menu
+.sidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  //First Level
+  > li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    > a {
+      padding: 9px 11px 8px 15px;
+      color:#888888;
+      font-size: 14px;
+      display: block;
+      white-space: nowrap;
+      > .fa,
+      > .glyphicon,
+      > .ion {
+        width: 20px;
+      }
+    }
+    .label,
+    .badge {
+      margin-top: 3px;
+      margin-right: 5px;
+    }
+  }
+  li > a > .fa-angle-left {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-right: 10px;
+    margin-top: 3px;
+  }
+  li.active {
+    > a > .fa-angle-left {
+      .rotate(-90deg);
+    }
+    > .treeview-menu {
+      display: block;
+    }
+  }
+
+  // Tree view menu
+  .treeview-menu {
+    display: none;
+    list-style: none;
+    padding:0;
+    margin:0;
+    > li {
+      margin: 0;
+      > a {
+        padding: 9px 5px 9px 15px;
+        display: block;
+        font-size: 14px;
+        white-space: nowrap;
+        > .fa,
+        > .glyphicon,
+        > .ion {
+          width: 20px;
+        }
+        > .fa-angle-left,
+        > .fa-angle-down {
+          width: auto;
+        }
+      }
+    }
+  }
+}
+.fixed{
+  .main-sidebar {
+    .sidebar {
+      margin-left: 0;
+    }
+    div.header a{
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.log.dao.IResAccessLogDao">
+
+	<!-- 查询 分页列表 -->
+	<select id="findListByCondition" resultType="ResAccessLogVO">
+		<!--select * from res_accesslog-->
+		select a.id,a.res_id,a.name,a.type,a.pk_user,a.createTime,a.url,a.msg ,b.funname,b.funcode  from res_accesslog  a LEFT JOIN  st_menuregister b  on a.res_id=b.id
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond!= null">${cond._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	<select id="findPageByCondition" resultType="ResAccessLogVO">
+		<!-- 	权限拆分                                                         2016.12.28 -->
+		<!-- 	select id,res_id,name,type,url,msg,(select username from rms_user u where u.id=r.pk_user) username,createTime from res_accesslog r  -->
+			<!--  select id,res_id,name,type,url,msg,pk_user,createTime from res_accesslog -->
+			select a.id,a.res_id,a.name,a.type,a.pk_user,a.createTime,a.url,a.msg ,b.funname,b.funcode  from res_accesslog  a LEFT JOIN  st_menuregister b  on a.res_id=b.id
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	
+	<delete id="deleteByCdn">
+		delete from res_accesslog
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	 
+	</delete>
+	
+	<insert id="insert" parameterType="ResAccessLogVO">
+		INSERT INTO res_accesslog(id,res_id,name, type, url,pk_user,  createTime ) 
+		VALUES(#{id},#{res_id},#{name},#{type},#{url},  #{pk_user},#{createTime:BIGINT})
+	</insert>
+	
+	<!-- 访问记录排行top10 -->
+	<select id="res_Access_top" resultType="ResAccessTopVO">
+		SELECT
+			max(log.name) NAME,
+			max(log.type) type,
+			count(*) cnt
+		FROM
+			res_accesslog log
+		GROUP BY
+			res_id
+		ORDER BY
+			cnt DESC limit 10	
+	</select>
+	
+	<!-- 最近访问top10 -->
+	<select id="queryRecentVisitRecords" resultType="ResAccessTopVO">
+		SELECT 
+			res_id
+			,max(a.createtime) createtime
+			,a.url
+			,b.funname
+		FROM res_accesslog a 
+			LEFT JOIN st_menuregister b ON a.res_id = b.id
+		WHERE PK_USER = #{pk_user} 
+		GROUP BY res_id
+		ORDER BY createtime desc LIMIT #{count}
+	</select>
+	
+</mapper>

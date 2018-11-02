@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper	namespace="com.gdsp.platform.systools.indexanddim.dao.IDimGroupDao">
+<!-- 查询维度分组信息 -->
+	<select id="queryDimGroupByCondition" resultType="DimGroupVO" >
+		select * from bp_dimgroup 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		order by innercode
+	</select>
+<!--通过id查询维度组  -->
+	<select id="load" resultType="DimGroupVO" >
+		select * from bp_dimgroup where id=#{id}
+	</select>
+
+<!-- 添加维度组 -->
+	<insert id="insert">
+		insert into bp_dimgroup (id,groupname,memo,innercode,groupcode,pk_fatherid,createtime,createby,lastmodifytime,lastmodifyby,version)
+		values (#{id},#{groupname},#{memo},#{innercode},#{groupcode},#{pk_fatherid},#{createTime:BIGINT},#{createBy},#{lastModifyTime:BIGINT},#{lastModifyBy},#{version})
+	</insert>
+<!-- 修改维度组 -->
+	<update id="update">
+		update bp_dimgroup set groupname=#{groupname}, memo=#{memo},groupcode=#{groupcode},lastModifyTime=#{lastModifyTime:BIGINT}
+		,lastModifyBy=#{lastModifyBy}, version=#{version} where id=#{id}
+	</update>
+<!-- 通过查询条件查询维度分组信息 -->
+	<select id="queryDimGroupListByCondition" resultType="DimGroupVO">
+		select * from bp_dimgroup 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+<!-- 通过id删除维度分组 -->
+	<delete id="delete" parameterType="java.lang.String" >
+    	delete from bp_dimgroup
+   		where id = #{id}
+  </delete>
+<!-- 通过维度组id查询可关联的维度列表 -->
+	<select id="queryDimForDimGroupPower" parameterType="java.lang.String" resultType="DimVO" >
+		select dim.* from bp_dim dim
+		<if test="addCond != null ">where ${addCond} </if>
+	</select>
+<!-- 根据查询条件查询维度 -->
+	<select id="queryDimByDimGroupId" resultMap="DimGroupRltMaps">
+		select rlt.id,rlt.pk_dim,rlt.pk_dimgroup,dim.dimname,dim.dimfieldname,dim.dimtablename,dim.dimmemo,dim.memo,dim.dimtype from bp_dimgroup_rlt rlt inner join bp_dim dim
+		on rlt.pk_dim=dim.id
+			<if test="condition!= null"> where ${condition._CONDITION_}</if>
+		order by dim.dimname
+	</select>
+	<resultMap type="DimGroupRltVO" id="DimGroupRltMaps">
+	<id property="id" column="id" />
+		<result property="pk_dim" column="pk_dim" />
+		<result property="pk_dimgroup" column="pk_dimgroup" />
+		<association property="dimGroupVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimGroupVO">
+			<id property="id" column="pk_dimgroup"  />
+			<result property="groupname" column="groupname" />
+			<result property="memo" column="memo" />
+		</association>	
+		<association property="dimVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimVO">
+			<id property="id" column="pk_dim"  />
+			<result property="dimname" column="dimname" />
+			<result property="dimfieldname" column="dimfieldname" />
+			<result property="dimtablename" column="dimtablename" />
+			<result property="dimmemo" column="dimmemo" />
+			<result property="memo" column="memo" />
+			<result property="dimtype" column="dimtype"/>
+	
+		</association>	
+	</resultMap>
+<!-- 关联维度到维度组 -->
+	<insert id="insertDimGroupRlt" parameterType="java.util.List">
+		insert into bp_dimgroup_rlt(id,pk_dim,pk_dimgroup,createby,createtime) 
+		values
+		<foreach collection="list" item="item" index="index"  separator=","  >
+		(#{item.id},#{item.pk_dim},#{item.pk_dimgroup},#{item.createBy},#{item.createTime:BIGINT})
+		</foreach>
+	</insert>
+<!-- 删除维度组关联的维度 -->
+	<delete id="deleteDim">
+	delete from bp_dimgroup_rlt  where id in 
+		<foreach collection='array' index='index' item='item' 
+		open='(' separator=',' close=')'>#{item}
+		</foreach>
+	</delete>
+<!-- 校验维度组编码唯一性 -->
+	<select id="existSameDimGroupCode" resultType="int">
+	 	select count(1) from bp_dimgroup where groupcode = #{groupcode}
+		 <if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+	</select>
+<!-- 检验维度组名称唯一性 -->
+	<select id="existSameDimGroupName" resultType="int">
+		select count(1) from bp_dimgroup 
+		<if test="addCond != null ">where ${addCond} </if>
+		
+	</select>
+	<select id="isSameDimGroupName" resultType="int">
+		select count(1) from bp_dimgroup where groupname = #{groupname}
+	 	<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+	</select>
+	<!-- 根据查询条件查询维度 -->
+	<select id="queryDimByGroupId" resultMap="DimGroupRltMap">
+		select rlt.id,rlt.pk_dim,rlt.pk_dimgroup,dim.dimname,dim.memo,dim.dimmemo from bp_dimgroup_rlt rlt inner join bp_dim dim
+		on rlt.pk_dim=dim.id
+		<trim prefix="where" prefixOverrides="and |or ">
+				<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	
+		order by dim.dimname
+	</select>
+	<resultMap type="DimGroupRltVO" id="DimGroupRltMap">
+	<id property="id" column="id" />
+		<result property="pk_dim" column="pk_dim" />
+		<result property="pk_dimgroup" column="pk_dimgroup" />
+		<association property="dimGroupVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimGroupVO">
+			<id property="id" column="pk_dimgroup"  />
+			<result property="groupname" column="groupname" />
+			<result property="memo" column="memo" />
+		</association>	
+		<association property="dimVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimVO">
+			<id property="id" column="pk_dim"  />
+			<result property="dimname" column="dimname" />
+			<result property="memo" column="memo"/>
+			<result property="dimmemo" column="dimmemo"/>
+		</association>	
+	</resultMap>
+<select id="queryId" resultType="String">
+	select id from bp_dimgroup where innercode=#{innercode};
+</select>
+</mapper>

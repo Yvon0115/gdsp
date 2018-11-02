@@ -1,0 +1,59 @@
+/* 
+    Created on : 2015-8-11, 16:18:09
+    Author     : joe
+    Update     : xiangguo
+*/
+
+.close-tab {
+    font-size: 10px;
+    position:absolute;
+    right: 5px;
+    top: 9px;
+    padding-left: 1px;
+    z-index: 100;
+    cursor: hand;
+    cursor: pointer;
+    color: #94A6B0;
+}
+.tab-a {
+	text-decoration:none;
+	border-bottom:1px solid red;
+	display:inline-block;
+	height:29px;
+	/* top: 0px; */
+	padding-top: 0px;
+	padding-bottom: 15px;
+}
+.topbar-collapse {
+    float:right;
+}
+
+.iframeClass {
+	z-index:auto;
+    visibility: inherit;
+    width: 100%;
+    height:100%;
+    frameborder: 'no';
+    border: 0;
+    marginwidth: 0;
+    marginheight: 0;
+    scrolling-x: 'no';
+    scrolling-y: auto;
+    allowtransparency: true;
+    position:static;
+}
+
+.iframeZIndexClass {
+	z-index:1050;
+    visibility: inherit;
+    width: 100%;
+    height:100%;
+    frameborder: 'no';
+    border: 0;
+    marginwidth: 0;
+    marginheight: 0;
+    scrolling-x: 'no';
+    scrolling-y: auto;
+    allowtransparency: true;
+    position:absolute;
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.indexanddim.dao.IIndGroupDao">
+<select id="queryAllIndGroup" resultType="IndTreeVO">
+	select * from bp_indgroups order by innercode
+</select>
+<select id="existSameCode" resultType="Integer">
+	select count(1) from bp_indgroups where groupCode = '${groupCode}'
+	<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+</select>
+<select id="queryIndGroupByInn" resultType="IndTreeVO">
+	select a.* from bp_indgroups a where a.id = '${parentId}'
+</select>
+<select id="queryIndGroupById" resultType="IndTreeVO">
+	select a.* from bp_indgroups a where a.id = '${id}'
+</select>
+<insert id="insert">
+	insert into bp_indgroups
+	(id,groupName,groupCode,innercode,detail,pk_fatherid
+	,createTime,createBy,lastModifyTime,lastModifyBy,version)
+	values
+	(#{id},#{groupName},#{groupCode},#{innercode},#{detail}
+	,#{pk_fatherid},#{createTime:BIGINT},#{createBy}
+	,#{lastModifyTime:BIGINT},#{lastModifyBy},#{version})
+</insert>
+<update id="update">
+	update bp_indgroups set
+	groupName=#{groupName},groupCode=#{groupCode},detail=#{detail}
+	,lastModifyTime=#{lastModifyTime:BIGINT},lastModifyBy=#{lastModifyBy}
+	,version=#{version}
+	where id=#{id}
+</update>
+<select id="queryIndGroupListByCondition" resultType="IndTreeVO">
+	select * from bp_indgroups
+	<trim prefix="where" prefixOverrides="and |or ">
+		<if test="condition!= null">${condition._CONDITION_}</if>
+	</trim>
+	<if test="sort != null">
+		order by
+		<foreach collection="sort" item="order" separator=",">
+			${order.property} ${order.direction}</foreach>
+	</if>
+</select>
+<delete id="deleteIndGroup">
+	delete from bp_indgroups where id = '${id}'
+</delete>
+<select id="queryChildInd" resultMap="IndGroupRltMaps">
+	select
+	c.groupName,b.id,b.pk_index,b.pk_indexgroup
+	,a.indexName,a.indexCode,a.onlyflexiablequery,a.businessbore
+	from bp_indgroup_rlt b
+	inner join bp_indexinfo a on a.id=b.pk_index
+	inner join bp_indgroups c on c.id=b.pk_indexgroup
+	<if test="condition!= null"> where ${condition._CONDITION_}</if>
+	order by a.indexCode
+</select>
+
+
+<resultMap type="IndGroupRltVO" id="IndGroupRltMaps">
+	<id property="id" column="id" />
+	<result property="pk_index" column="pk_index" />
+	<result property="pk_indexgroup" column="pk_indexgroup" />
+	<association property="indTreeVO"
+		javaType="com.gdsp.platform.systools.indexanddim.model.IndTreeVO">
+		<id property="id" column="pk_indexgroup" />
+		<result property="groupName" column="groupName" />
+		<result property="detail" column="detail" />
+	</association>
+	<association property="indexInfoVO"
+		javaType="com.gdsp.platform.systools.indexanddim.model.IndexInfoVO">
+		<id property="id" column="pk_index" />
+		<result property="indexCode" column="indexCode" />
+		<result property="indexName" column="indexName" />
+		<result property="onlyflexiablequery" column="onlyflexiablequery" />
+        <result property="businessbore" column="businessbore"/>
+	</association>
+</resultMap>
+	
+<select id="queryRemainInd" resultType="IndexInfoVO">
+	select a.* from bp_indexinfo a
+	<trim prefix="where" prefixOverrides="and |or ">
+		<if test="condition!= null">${condition._CONDITION_}</if>
+	</trim>
+	<if test="sort != null">
+		order by
+		<foreach collection="sort" item="order" separator=",">
+			${order.property} ${order.direction}</foreach>
+	</if>
+</select>
+<!-- <insert id="insertIndGroupRlt" parameterType="java.util.List">
+	insert into
+	bp_indgroup_rlt(id,pk_index,pk_indexgroup,createBy,createTime)
+	values
+	<foreach collection='list' index='index' item='item' open='('
+		separator='),(' close=')'>
+		#{item.id},#{item.pk_index},#{item.pk_indexgroup}
+		,#{item.createBy},#{item.createTime:BIGINT}
+	</foreach>
+</insert> -->
+<select id="queryRltByGroupId" resultType="IndGroupRltVO">
+	select * from bp_indgroup_rlt where pk_indexgroup= #{id}
+</select>
+<delete id="deleteRelation">
+	delete from bp_indgroup_rlt where id in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>#{item}
+	</foreach>
+</delete>
+<select id="queryKpiTreeMap" resultType="IndTreeVO">
+    select id,pk_fatherid ,groupName  from bp_indgroups
+</select>
+</mapper>

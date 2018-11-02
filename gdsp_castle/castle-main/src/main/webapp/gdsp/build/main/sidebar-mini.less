@@ -1,0 +1,125 @@
+/*
+ * Component: Sidebar Mini
+ */
+
+//Add sidebar-mini class to the body tag to activate this feature
+.sidebar-mini {
+    //When the sidebar is collapsed...
+    &.sidebar-collapse {
+
+      //Apply the new margining to the main content and footer
+      .content-wrapper,
+      .main-footer {
+        margin-left: 56px!important;
+        z-index: @zindex-content + 10;
+      }
+
+      //Modify the sidebar to shrink instead of disappearing
+      .main-sidebar {
+        //Don't go away! Just shrink
+        .translate(0, 0);
+        width: 50px!important;
+
+      }
+
+      .sidebar-menu {
+        > li {
+          position: relative;
+          > a {
+            margin-right: 0;
+          }
+          > a > span {
+            border-top-right-radius: 4px;
+            box-shadow: 6px 6px 2px rgba(128,128,128,0.1);
+          }
+
+          &:not(.treeview) {
+            > a > span {
+              border-bottom-right-radius: 4px;
+            }
+          }
+
+          > .treeview-menu {
+            //Add some padding to the treeview menu
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 6px 6px rgba(128,128,128,0.3);
+            z-index: @zindex-sidebar + 50;
+          }
+
+          //Show menu items on hover
+          &:hover {
+            > a {
+              //overflow: visible;
+            }
+            > a > span:not(.pull-right),
+            > .treeview-menu {
+              display: block!important;
+              position: absolute;
+              width: @sidebar-width - 50;
+              left: 50px;
+            }
+
+            //position the header & treeview menus
+            > a > span {
+              top: 0;
+              margin-left: -3px;
+              padding: 9px 5px 9px 20px;
+              background-color: inherit;
+            }
+            > .treeview-menu {
+              top: 38px;
+              margin-left: -3px;
+            }
+          }
+        }
+      }
+
+      //Make the sidebar links, menus, labels, badges
+      //and angle icons disappear
+      .main-sidebar .user-panel > .info,
+      .sidebar-form,
+      .sidebar-menu > li > a > span,
+      .sidebar-menu > li > .treeview-menu,
+      .sidebar-menu >li > a > .pull-right{
+        display: none!important;
+      }
+      div.header{
+        padding: 4px 18px 4px 0px;
+        div{
+          display: none!important;
+        }
+      }
+      .main-header {
+
+        //Since the logo got smaller, we need to fix the navbar's position
+        .navbar {
+          margin-left: 50px;
+        }
+      }
+    }
+}
+
+//A fix for text overflow while transitioning from sidebar mini to full sidebar
+.main-sidebar > div.header div{
+  white-space: nowrap!important;
+  overflow: hidden;
+}
+.sidebar-menu:hover {
+  overflow: visible;
+}
+.sidebar-form,
+.sidebar-menu > li.header {
+  overflow: hidden;
+  text-overflow: clip;
+}
+.sidebar-menu li > a {
+  position: relative;
+  > .pull-right {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    margin-top: -7px;
+  }
+}

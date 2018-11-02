@@ -1,0 +1,1 @@
+<#include "../layout/"+page.layoutType?default("default")+"-layout.ftl">

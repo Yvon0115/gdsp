@@ -1,0 +1,2 @@
+webapp.webcontext=/castle
+webapp.port=8080

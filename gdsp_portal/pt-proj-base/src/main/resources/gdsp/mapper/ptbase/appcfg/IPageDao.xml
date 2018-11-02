@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.IPageDao">
+
+	<insert id="insert" parameterType="com.gdsp.ptbase.appcfg.model.PageVO">
+		INSERT INTO ac_page(id, page_name, page_desc, layout_id, dir_id, sortnum, createBy, createTime, lastModifyBy, lastModifyTime,
+		version)
+		VALUES(#{id},
+		#{page_name}, #{page_desc},#{layout_id},#{dir_id}, #{sortnum}, #{createBy}, #{createTime:BIGINT}, #{lastModifyBy}, #{lastModifyTime:BIGINT}, 1)
+	</insert>
+
+	<update id="update" parameterType="com.gdsp.ptbase.appcfg.model.PageVO">
+		UPDATE ac_page
+		SET page_name=#{page_name}, page_desc=#{page_desc}, layout_id=#{layout_id}, dir_id=#{dir_id}, sortnum= #{sortnum},
+		createBy=#{createBy}, createTime=
+		#{createTime:BIGINT},
+		lastModifyBy= #{lastModifyBy}, lastModifyTime= #{lastModifyTime:BIGINT}, version=#{version}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateDefLayout" parameterType="java.lang.String">
+		UPDATE ac_page
+		SET layout_id= #{layout_id}
+		WHERE id = #{page_id}
+	</update>
+	
+	<update id="batchUpdate" parameterType="com.gdsp.ptbase.appcfg.model.PageVO">
+		UPDATE ac_page
+		  <set>
+		      <if test="sortnum != null" >
+		        sortnum = #{sortnum},
+		      </if>
+		      <if test="version != null" >
+		        version = #{version}
+		      </if>
+		  </set>
+		 WHERE id = #{id}
+	</update>
+
+   	<select id="queryPageVOListByDirid" resultType="pageVO">
+		select 
+			* 
+		from ac_page
+		<trim prefix="where" prefixOverrides="and |or ">
+			dir_id = #{dir_id} 
+			<if test="cond != null">and ${cond._CONDITION_}</if>
+		</trim>
+		<if test="sort!=null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if> 
+	</select>
+
+	<delete id="delete">
+		delete from ac_page
+		<where>
+			<if test="ids!=null">
+				and id in
+				<foreach collection="ids" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+
+	<select id="load" resultType="pageVO">
+		select * from ac_page where id=#{id}
+	</select>
+
+	<select id="findListByCondition" resultType="com.gdsp.ptbase.appcfg.model.PageVO">
+		select * from ac_page
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+		<if test="sort!=null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="findCountByCondition" resultType="java.lang.Integer">
+		select count(id) from ac_page
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+	</select>
+	
+	<select id="findMaxSortNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select max(sortnum) from ac_page where dir_id = #{dir_id}
+	</select>
+	
+	<select id="getCognosTreeNodesByParentID" resultType="ACTreeNodeVO">
+			SELECT
+			*
+		FROM
+			(
+				SELECT
+					dir.dir_name AS text,
+					dir.id AS id,
+					dir.id as btreeid,
+					dir.parent_id AS parent_id,
+					1 AS isdir,
+					0 AS selectable
+				FROM
+					ac_common_dir dir
+				WHERE
+					parent_id =  #{parent_id}
+				ORDER BY
+					sortnum
+			) tt
+		UNION ALL
+			SELECT
+				*
+			FROM
+				(
+					SELECT
+						resource.page_name AS text,
+						resource.id AS id,
+						resource.id as btreeid,
+						resource.dir_id AS parent_id,
+						0 AS isdir,
+						1 AS selectable
+					FROM
+						ac_page resource
+					WHERE
+						dir_id = #{parent_id}
+					ORDER BY
+						sortnum
+				) dd
+		</select>
+		
+		
+</mapper>

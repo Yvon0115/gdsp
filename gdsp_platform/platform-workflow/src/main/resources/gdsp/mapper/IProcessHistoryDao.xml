@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IProcessHistoryDao">
+	<sql id="flow_processhistoryColumns">
+		id,deploymentid,processinsid,actid,actname,options,userid,result,formid,
+		createby,createtime,lastmodifyby,lastmodifytime,version,taskid
+	</sql>
+	<!-- 插入 流程历史 -->
+	<insert id="saveProcessHistory" parameterType="ProcessHistoryVO">
+		INSERT INTO flow_processhistory (
+		<include refid="flow_processhistoryColumns" />
+		)
+		VALUES
+		(#{id},#{deploymentId},#{processInsId},#{actId},#{actName},#{options},#{userId},#{result},#{formId},
+		#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version},#{taskId})
+	</insert>
+
+	<!-- 不可更新 <update id="updateProcessHistory"> update flow_category set categorycode=#{categoryCode},categoryname=#{categoryName},memo=#{memo},lastModifyBy=#{lastModifyBy},lastModifyTime=#{lastModifyTime:BIGINT},version=#{version} 
+		where id=#{id} </update> -->
+
+	<!-- 根据ID删除流程历史(预留功能,暂未使用) -->
+	<delete id="deleteProcessHistory">
+		DELETE FROM flow_processhistory
+		WHERE id IN
+		<foreach collection='array' index='index' item='item' open='('
+			separator=',' close=')'>
+			#{item}
+		</foreach>
+	</delete>
+
+	<!-- 通过 主键 查询 流程历史 -->
+	<select id="findProcessHistoryById" resultType="ProcessHistoryVO">
+		SELECT
+		<include refid="flow_processhistoryColumns" />
+		FROM flow_processhistory
+		WHERE id=#{id}
+	</select>
+
+	<!-- 查询 流程历史 分页列表 -->
+	<select id="queryProcessHistoryByCondition" resultType="ProcessHistoryVO">
+		SELECT
+		<include refid="flow_processhistoryColumns" />
+		FROM flow_processhistory
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+
+	<!-- 查询 流程历史 列表 -->
+	<select id="queryProcessHistoryListByCondition" resultType="ProcessHistoryVO">
+		SELECT
+		<include refid="flow_processhistoryColumns" />
+		FROM flow_processhistory
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+	
+	<!-- 权限拆分，通用查询不可直接在SQL中查询用户表修改为调用公共接口查询用户 
+		   修改人：于成龙 
+		   修改时间：2017年11月10日 -->
+	<!-- 条件筛选流程历史 -->
+	<select id="queryProcessHistoryByProcInstID" resultType="ProcessHistoryVO">
+		SELECT DISTINCT
+		H.id id,
+		H.deploymentid deploymentid,
+		H.processinsid processinsid,
+		H.actid actid,
+		H.actname actname,
+		H.options options,
+		H.result result,
+		H.formid formid,
+		H.createtime createtime,
+		T.ID_ taskId
+		FROM flow_processhistory H
+		LEFT JOIN act_ru_task T ON T.PROC_INST_ID_=H.processinsid
+		where H.processinsid = #{procInsId}
+	</select>
+
+	<!-- 权限拆分，通用查询不可直接在SQL中查询用户表修改为调用公共接口查询用户 
+		   修改人：于成龙 
+		   修改时间：2017年11月10日 -->
+	<!-- 流程历史 条件查询(search框和多条件查询共用一个) -->
+	<select id="queryAllHistoryForAdmin" resultType="com.gdsp.platform.workflow.model.HistoryVO">
+		SELECT
+		P.proc_inst_id_ id,
+		P.proc_inst_id_ procinsid,
+		P.start_time_ starttime,
+		P.end_time_ endtime,
+		P.duration_ duration,
+		D.deploymentname deploymentname,
+		D.deploymentcode deploymentcode,
+		C.categoryname categoryname,
+		C.categorycode categorycode,
+		H.userid userid,
+		H.formid formid,
+		H.actid actid
+		FROM act_hi_procinst P
+		LEFT JOIN flow_deployment D ON P.proc_def_id_=D.procdefid
+		LEFT JOIN flow_category C ON D.categoryid=C.id
+		LEFT JOIN flow_processhistory H ON P.proc_inst_id_ = H.processinsid
+		<trim prefix="where" prefixOverrides="and |or ">
+			D.deploymentcode IS NOT NULL
+			AND P.end_time_ is not null
+			AND H.actid =
+			'startuser'
+			<if test="condition!= null"> AND ${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+
+	<!-- 单个 流程历史 详情 -->
+	<select id="queryProcessHistoryByInsId" resultType="ProcessHistoryVO">
+		SELECT
+		H.id id,
+		H.deploymentid deploymentid,
+		H.processinsid processinsid,
+		H.actid actid,
+		H.actname actname,
+		H.options options,
+		H.result result,
+		H.formid formid,
+		H.taskId taskId,
+		H.userId userid,
+		H.createtime createtime
+		FROM flow_processhistory H
+		WHERE H.processinsid=#{procInsId}
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+	
+	<!-- 通过流程实例id查询审批结果 -->
+	<select id="queryApproveResultByInstId" resultType="java.lang.Integer">
+		select 
+			H.result
+		from 
+			flow_processhistory H
+		where 
+			H.createtime = (
+				select 
+					max(createtime) 
+				from 
+					flow_processhistory 
+				where 
+					PROCESSINSID=#{proInstId}
+				)
+	</select>
+
+	<delete id="deleteProcessHisByTaskIdAndProinstId">
+		delete from flow_processhistory where taskId=#{taskId}  and processinsid=#{proInstId}
+	</delete>
+</mapper>

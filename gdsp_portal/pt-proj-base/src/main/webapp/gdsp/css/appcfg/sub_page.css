@@ -1,0 +1,44 @@
+.treeview .list-group .node-page_tree{
+	border-left:none;
+	border-right:none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.treeview .list-group .node-page_tree:first-child {
+	border-top:none;
+}
+.treeview .list-group .node-page_tree:last-child{
+	border-bottom:none;
+}
+.page_custom .form-group .control-container{
+	height: 30px;
+	padding-left:6px;
+	padding-right:6px;
+}
+.page_custom .form-group .customlabel{
+	width:40px;
+}
+.page_custom .form-group .customcontrol{
+	width:200px;
+}
+.page_custom .form-group input{
+	border-color:#d2d2d2;
+}
+.page_custom .form-group .input-group-addon{
+	border-color:#d2d2d2;
+}
+
+.sub-content-wrapper {
+	min-height: 100%;
+	padding:0 !important;
+	margin: 0!important;
+	background: transparent!important;
+}
+.sub-content-wrapper .content{
+	margin: 0!important;
+}
+.sub-content-wrapper .content .ui-sortable{
+	padding-left:0px;
+	padding-right:15px;
+}

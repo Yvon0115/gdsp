@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent><!-- 父项目为castle，以下是继承的项目的坐标 -->
+        <groupId>com.gdsp.castle</groupId>
+        <artifactId>castle</artifactId>
+        <version>3.1-SNAPSHOT</version>
+        <relativePath>../castle</relativePath><!-- 继承的项目的相对路径-->
+    </parent>
+	<!-- Platform项目的坐标 -->
+    <groupId>com.gdsp.platform</groupId>
+    <artifactId>platform</artifactId>
+    <version>3.1-SNAPSHOT</version>
+    <properties>
+		<dev-version>3.1-SNAPSHOT</dev-version>
+		<castle-version>3.1-SNAPSHOT</castle-version>
+	    <platform-version>3.1-SNAPSHOT</platform-version>
+    </properties>
+	<!-- 打包方式pom，聚合类型，会将子项目（模块）一起打包 -->
+    <packaging>pom</packaging>
+    <name>platform[平台]</name>
+	<!--子模块-->
+    <modules>
+        <module>platform-base</module>
+        <module>platform-grant</module>
+    	<module>platform-comm</module>
+    	<module>platform-schedule</module>
+        <module>platform-workflow</module>
+        <module>platform-tools</module>
+  </modules>
+	<!--  platform项目依赖的库文件声明（没有真正依赖，只是声明，dependencyManagement标签的作用） -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.gdsp.dev</groupId>
+                <artifactId>dev-web</artifactId>
+               <!--  <version>${project.version}</version> -->
+                <version>${dev-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.dev</groupId>
+                <artifactId>dev-persist</artifactId>
+             <!--    <version>${project.version}</version> -->
+                <version>${dev-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.dev</groupId>
+                <artifactId>dev-server</artifactId>
+              <!--   <version>${project.version}</version> -->
+                <version>${dev-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.castle</groupId>
+                <artifactId>castle-main</artifactId>
+                <version>${castle-version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-base</artifactId>
+               <!--  <version>${project.version}</version> -->
+                <version>${platform-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-base</artifactId>
+               <!--  <version>${project.version}</version> -->
+                <version>${platform-version}</version>
+                <classifier>impl</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-base</artifactId>
+               <!--  <version>${project.version}</version> -->
+                <version>${platform-version}</version>
+                <classifier>web</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-base</artifactId>
+                <!-- <version>${project.version}</version> -->
+                <version>${platform-version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-grant</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-grant</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>impl</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-grant</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>web</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-grant</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-comm</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-comm</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>impl</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-comm</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>web</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-comm</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-schedule</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-schedule</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>impl</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-schedule</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>web</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-schedule</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-workflow</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-workflow</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>impl</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-workflow</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>web</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-workflow</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-tools</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-tools</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>impl</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-tools</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <classifier>web</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.platform</groupId>
+                <artifactId>platform-tools</artifactId>
+                <version>${platform-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+            
+        </dependencies>
+    </dependencyManagement>
+	<!-- Platform项目依赖的插件声明（不是真正依赖，只是声明，pluginManagement标签的作用） -->
+    <build>
+        <pluginManagement>
+            <plugins>
+				<!-- eclipse.m2e的插件运行定义, 在eclipse.m2e环境下定义一些Maven插件的运行任务的时候，会出现Eclipse的错误 -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[2.0,)</versionRange>
+                                        <goals>
+                                            <goal>copy-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+				<!--打包jar包的插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <executions>
+						<!--默认jar -->
+                        <execution>
+                            <id>default-jar</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>prepare-package</phase><!-- package生命周期之前 -->
+                            <configuration>
+                                <skipIfEmpty>false</skipIfEmpty><!-- 项目为空也打 -->
+                                <forceCreation>true</forceCreation><!-- 强制创建 -->
+                                <useDefaultManifestFile>false</useDefaultManifestFile>
+                                <archive>
+                                    <addMavenDescriptor>false</addMavenDescriptor>
+                                </archive>
+								<!-- 打包时，包含以下路径的文 -->
+                                <includes>
+                                    <include>**/model/**</include>
+                                    <include>**/service/**</include>
+                                    <include>**/utils/**</include>
+                                    <include>**/openapi/**</include>
+                                    <include>**/helper/**</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+						<!-- 附加分类器xxx-impl.jar -->
+                        <execution>
+                            <id>impl</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                            <configuration>
+                                <classifier>impl</classifier><!-- impl分类 -->
+                                <skipIfEmpty>true</skipIfEmpty>
+                                <forceCreation>false</forceCreation>
+                                <useDefaultManifestFile>false</useDefaultManifestFile>
+                                <archive>
+                                    <addMavenDescriptor>false</addMavenDescriptor>
+                                </archive>
+                                <!-- 打包以下路径的文件 -->
+                                <includes>
+                                    <include>**/impl/**</include>
+                                    <include>**/dao/**</include>
+                                    <include>gdsp/mapper/**</include>
+                                    <include>gdsp/mapper-*/**</include>
+                                </includes>
+								<!-- 不打包以下路径的文件 -->
+                                <excludes>
+                                    <exclude>**/model/**</exclude>
+                                    <exclude>**/service/**</exclude>
+                                    <exclude>**/utils/**</exclude>
+                                    <exclude>**/pubclass/**</exclude>
+                                    <exclude>**/helper/**</exclude>
+                                </excludes>
+                            </configuration>
+                        </execution>
+						<!-- 附加分类器xxx-web.jar -->
+                        <execution>
+                            <id>web</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                            <configuration>
+                                <classifier>web</classifier><!-- web分类 -->
+                                <skipIfEmpty>true</skipIfEmpty>
+                                <forceCreation>false</forceCreation>
+                                <useDefaultManifestFile>false</useDefaultManifestFile>
+                                <archive>
+                                    <addMavenDescriptor>false</addMavenDescriptor>
+                                </archive>
+								<!-- 打包以下路径的文件 -->
+                                <includes>
+                                    <include>**/web/**</include>
+                                </includes>
+								<!-- 不打包以下路径的文件 -->
+                                <excludes>
+                                    <exclude>**/model/**</exclude>
+                                    <exclude>**/service/**</exclude>
+                                    <exclude>**/utils/**</exclude>
+                                    <exclude>**/pubclass/**</exclude>
+                                    <exclude>**/helper/**</exclude>
+                                    <exclude>**/impl/**</exclude>
+                                    <exclude>**/dao/**</exclude>
+                                    <exclude>mapper/**</exclude>
+                                    <exclude>mapper-*/**</exclude>
+                                </excludes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+				<!-- 操作项目依赖的插件，包括解压、拷贝等 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+						<!-- 解压依赖库的目标 -->
+                        <execution>
+                            <id>unpack-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>unpack-dependencies</goal>
+                            </goals>
+                            <configuration>
+								<!-- 以下配置的意思是，解压依赖的war -->
+                                <includeTypes>war</includeTypes>
+                                <excludeTransitive>true</excludeTransitive>
+                                <overWriteSnapshots>true</overWriteSnapshots>
+                                <type>war</type>
+								<!-- 输出目录：target/xxx.war -->
+                                <outputDirectory>
+                                    ${project.build.directory}/${project.artifactId}.war 
+                                </outputDirectory>
+                            </configuration>
+                        </execution>
+						<!-- 拷贝依赖库的目标 -->
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+								<!-- 以下配置的意思是，拷贝jar到输出目录，target/xxx.war/WEB-INF/lib -->
+                                <includeTypes>jar</includeTypes>
+                                <overWriteSnapshots>true</overWriteSnapshots>
+								<!-- 不拷贝的库 -->
+                                <excludeGroupIds>org.eclipse.jetty,org.eclipse.jetty.orbit</excludeGroupIds>
+                                <excludeArtifactIds>jetty-schemas,javax.servlet-api,javax.servlet.jsp,javax.servlet.jsp-api,javax.el</excludeArtifactIds>
+                                <type>jar</type>
+                                <excludeScope>provided</excludeScope>
+                                <outputDirectory>${project.build.directory}/${project.artifactId}.war/WEB-INF/lib</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+				<!-- 运行ant脚本插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>package</id>
+                            <phase>package</phase><!-- 运行在package时期 -->
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+								<!-- ant任务 -->
+                                <tasks>
+									<!-- 拷贝资源文件 -->
+                                    <copy todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/classes" overwrite="true">
+                                        <fileset dir="src/main/resources" includes="*.properties,*.xml,gdsp/**"  excludes="gdsp/conf/jdbc_jar/*,**/mapper*/**"/>
+                                    </copy>
+                                    <copy todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/classes" overwrite="true">
+                                        <fileset dir="deploy/${resource.folder}/" includes="*,spring/*.*" erroronmissingdir="false"/>
+                                    </copy>
+                                    <!-- 拷贝web资源 -->
+                                    <copy todir="${project.build.directory}/${project.artifactId}.war" overwrite="true">
+                                        <fileset dir="src/main/webapp" excludes="build,build/**/*,logs,log/**/*"/>
+                                    </copy>
+                                    <!-- 排除源码包和API -->
+                                    <copy todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/lib">
+                                        <fileset dir="${project.build.directory}" includes="*.jar" excludes="*-sources.jar,*-javadoc.jar"/>
+                                    </copy>
+									<!-- 压缩文件 -->
+                                    <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}-war.zip">
+                                        <zipfileset dir="${project.build.directory}/${project.artifactId}.war"/>
+                                    </zip>
+									<!-- 改名 -->
+                                    <copy file="${project.build.directory}/${project.artifactId}-${project.version}-war.zip" tofile="${project.build.directory}/${project.artifactId}-${project.version}.war"/>
+									<!-- 删除临时文件，包括刚才重命名后的zip -->
+                                    <delete file="${project.build.directory}/${project.artifactId}-${project.version}-war.zip"/>
+                                    <delete dir="${project.build.directory}/${project.artifactId}.war"/>
+                                </tasks>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+				<!-- 构建帮助插件 -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-artifacts</id>
+                            <phase>package</phase><!-- 运行在package时期 -->
+                            <goals>
+                                <goal>attach-artifact</goal><!--这个目标的作用是 打包时附加一些额外的构件，比如：.war文件-->
+                            </goals>
+                            <configuration>
+                                <artifacts>
+                                    <artifact>
+                                        <file>${project.build.directory}/${project.artifactId}-${project.version}.war</file>
+                                        <type>war</type>
+                                    </artifact>
+                                </artifacts>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+				<!-- 打包时生成源码包插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <configuration>
+                        <attach>true</attach>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase><!-- 运行在compile时期 -->
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

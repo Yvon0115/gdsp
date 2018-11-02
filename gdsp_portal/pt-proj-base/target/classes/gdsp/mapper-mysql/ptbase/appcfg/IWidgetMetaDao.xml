@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.IWidgetMetaDao">
+	<insert id="insert" parameterType="WidgetMetaVO">
+		INSERT INTO ac_widget_meta(id,name,dirid,type,style, preference, loadurl, memo, createBy, createTime, lastModifyBy, lastModifyTime, version)
+		VALUES(#{id},#{name}, #{dirId},#{type},#{style}, #{preference}, #{loadUrl}, #{memo}, #{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},1)
+	</insert>
+
+	<insert id="insertBatchVO">
+		INSERT INTO ac_widget_meta(id,name , dirid, type, style, preference, loadurl,memo,  createBy, createTime, lastModifyBy, lastModifyTime,version)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+	       (#{item.id}, 
+	       #{item.name}, 
+	       #{item.dirId},
+	       #{item.type},
+	       #{item.style}, 
+           #{item.preference}, 
+	       #{item.loadUrl}, 
+	        #{item.memo}, 
+	       #{item.createBy}, 
+	       #{item.createTime:BIGINT}, 
+	       #{item.lastModifyBy}, 
+	       #{item.lastModifyTime:BIGINT},  #{item.version})
+	    </foreach>
+	</insert>
+	
+	<update id="update" parameterType="WidgetMetaVO">
+		UPDATE ac_widget_meta
+		SET name=#{name}, dirid=#{dirId}, type=#{type}, style=#{style}, preference=#{preference},
+		loadurl=#{loadUrl}, memo=#{memo}, lastModifyBy=#{lastModifyBy}, lastModifyTime=#{lastModifyTime:BIGINT}, version=version+1
+		WHERE  id = #{id} and version &lt;= #{version}
+	</update>
+
+	<delete id="delete">
+		delete from ac_widget_meta
+		where id in
+				<foreach collection="array" index="index" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+	</delete>
+
+	<select id="load" resultType="WidgetMetaVO">
+		select * from ac_widget_meta where id=#{id}
+	</select>
+
+	<select id="findWidgetsByPageId" resultType="PageWidgetVO">
+		select  m.* from ac_widget_meta m inner join ac_page_widget p on m.id=p.widget_id where p.page_id = #{pageId}
+	</select>
+	<select id="findWidgetMetasByDirId" resultType="PageWidgetVO">
+		select  * from ac_widget_meta where dirid = #{dirId}
+	</select>
+	<select id="findAllWidgetMetaInDirectory" resultType="map">
+		select m.id as "id",m.name as "name",m.type as "type",m.dirid as "parent_id",1 as "leaf" from ac_widget_meta m inner join ac_common_dir d on m.dirid=d.id where category='widgetmeta'
+	</select>
+</mapper>

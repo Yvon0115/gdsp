@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.portal.sso.user.dao.IUserSyncTmpDao">
+
+	<sql id="tmp_rms_user_title">
+		id
+		,userId
+		,account
+		,name
+		,islocked
+		,isdisabled
+		,mobile
+		,tel
+		,email
+		,sex
+		,memo
+		,userCreateTime
+		,userLastModifyTime
+		,syncState
+		,createby
+		,createtime
+		,lastmodifyby
+		,lastmodifytime
+		,version
+	</sql>
+	<!-- 批量插入临时表数据 -->
+	<insert id="insertTmpUsers" parameterType="java.util.List">
+		insert into tmp_rms_user (<include refid="tmp_rms_user_title"></include>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+		    	(#{item.id}
+		    	,#{item.userId}
+		    	,#{item.account}
+		    	,#{item.name}
+		    	,#{item.isLocked:BOOLEAN}
+		    	,#{item.isDisabled:BOOLEAN}
+		    	,#{item.mobile}
+		    	,#{item.tel}
+		    	,#{item.email}
+		    	,#{item.sex}
+		    	,#{item.memo}
+		    	,#{item.userCreateTime:BIGINT}
+		    	,#{item.userLastModifyTime:BIGINT}
+		    	,#{item.syncState:BOOLEAN}
+		    	,#{item.createBy}
+		    	,#{item.createTime:BIGINT}
+		    	,#{item.lastModifyBy}
+		    	,#{item.lastModifyTime:BIGINT}
+		    	,#{item.version})
+	    	</foreach>
+	</insert>
+	
+	<!-- 批量更新临时表数据 -->
+	<update id="updateTmpUsers" parameterType="java.util.List">
+		update tmp_rms_user
+			<trim prefix="set" suffixOverrides=",">
+				<trim prefix="userId =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.userId!=null">
+							when account=#{item.account} then #{item.userId}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="name =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.name!=null">
+							when account=#{item.account} then #{item.name}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="isLocked =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.isLocked!=null">
+							when account=#{item.account} then #{item.isLocked:BOOLEAN}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="isDisabled =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.isDisabled!=null">
+							when account=#{item.account} then #{item.isDisabled:BOOLEAN}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="mobile =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.mobile!=null">
+							when account=#{item.account} then #{item.mobile}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="tel =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.tel!=null">
+							when account=#{item.account} then #{item.tel}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="email =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.email!=null">
+							when account=#{item.account} then #{item.email}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="sex =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.sex!=null">
+							when account=#{item.account} then #{item.sex}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="memo =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.memo!=null">
+							when account=#{item.account} then #{item.memo}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="userCreateTime =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.userCreateTime!=null">
+							when account=#{item.account} then #{item.userCreateTime:BIGINT}
+						</if>
+					</foreach>
+				</trim>
+				<trim prefix="userLastModifyTime =case" suffix="end,">
+					<foreach collection="list" item="item">
+						<if test="item.userLastModifyTime!=null">
+							when account=#{item.account} then #{item.userLastModifyTime:BIGINT}
+						</if>
+					</foreach>
+				</trim>
+			</trim>
+			<where>  
+		        <foreach collection="list" separator="or" item="item">  
+		            account = #{item.account}  
+		        </foreach>  
+		    </where> 
+	</update>
+	
+	<!-- 批量更新临时表同步状态（添加用户功能调用） -->
+	<update id="updateUserStates" parameterType="java.util.List">
+		update tmp_rms_user set syncState = 
+			<foreach collection="list" item="item" index="index" 
+		        separator=" " open="case account" close="end">
+		        when #{item.account} then #{item.syncState}
+		    </foreach>
+		    where account in
+		    <foreach collection="list" index="index" item="item" 
+		        separator="," open="(" close=")">
+		        #{item.account}
+		    </foreach>
+	</update>
+	
+	<!-- 查询所有临时表数据 -->
+	<select id="findTmpUsers" resultType="com.gdsp.portal.sso.user.model.UserSyncDataVO">
+		select 
+		<include refid="tmp_rms_user_title"></include>
+		from tmp_rms_user
+	</select>
+	
+	<!-- 查询所有为添加到正是表的用户数据 -->
+	<select id="findUsersNeedAllocated" resultType="com.gdsp.portal.sso.user.model.UserSyncDataVO">
+		select 
+		<include refid="tmp_rms_user_title"></include>
+		from tmp_rms_user 
+		where syncState = "N"
+		order by userCreateTime desc
+	</select>
+	
+	<!-- 查询待分配临时用户集合,分页数据 -->
+	<select id="findTmpUser2Allocated" resultType="com.gdsp.portal.sso.user.model.UserSyncDataVO">
+		select 
+		<include refid="tmp_rms_user_title"></include>
+		from tmp_rms_user 
+		where syncState = "N"
+		order by userCreateTime desc
+	</select>
+	
+	<!-- 根据id查询临时表用户 -->
+	<select id="findSyncTmpUsersByIds" resultType="com.gdsp.portal.sso.user.model.UserSyncDataVO">
+		select 
+		<include refid="tmp_rms_user_title"></include>
+		from tmp_rms_user
+		where id in
+	    <foreach collection="list" index="index" item="item" 
+	        separator="," open="(" close=")">
+	        #{item}
+	    </foreach>
+	</select>
+	
+	<!-- 根据帐号查询临时表数据集合 -->
+	<select id="findTmpUserByAccount" resultType="com.gdsp.portal.sso.user.model.UserSyncDataVO" parameterType="java.util.List">
+		select 
+		<include refid="tmp_rms_user_title"></include>
+		from tmp_rms_user
+		where account in
+	    <foreach collection="list" index="index" item="item" 
+	        separator="," open="(" close=")">
+	        #{item}
+	    </foreach>
+	</select>
+	
+	<!-- 批量删除临时表数据 -->
+	<!--<delete id="delete">
+		delete from tmp_rms_user
+		where account in
+		<foreach collection="array" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</delete>-->
+
+</mapper>

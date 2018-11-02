@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IDeploymentDao">
+    <sql id="deploymentColumns">
+    	id,deploymentcode,deploymentname,deployid,procdefid,state,formtypeid,categoryid,metainfo,memo,
+    	createby,createtime,lastmodifyby,lastmodifytime,version
+    </sql>
+    
+    
+     <resultMap type="com.gdsp.platform.workflow.model.DeploymentVO" id="resultMap">
+		<result property="id" column="ID" />
+		<result property="deploymentCode" column="deploymentcode" />
+		<result property="deploymentName" column="deploymentname" />
+		<result property="deployId" column="deployid" />
+		<result property="procDefId" column="procdefid" />
+		<result property="state" column="state" />
+		<result property="formTypeId" column="formtypeid" />
+		<result property="categoryId" column="categoryid" />
+		<result property="metaInfo" column="metainfo" javaType="String"
+			jdbcType="VARBINARY"/>
+		<result property="memo" column="memo" />
+		<result property="createBy" column="createBy" />
+		<result property="createTime" column="createTime" />
+		<result property="lastModifyBy" column="lastModifyBy" />
+		<result property="lastModifyTime" column="lastModifyTime" />
+		<result property="version" column="version" />
+	</resultMap>
+    
+    
+    <!-- 插入流程部署 -->
+    <insert id="saveDeployment" parameterType="deploymentVO">
+    	INSERT  INTO flow_deployment (
+    	<include refid="deploymentColumns" /> )
+    	VALUES (#{id},#{deploymentCode},#{deploymentName},#{deployId},#{procDefId},#{state},
+    	#{formTypeId},#{categoryId},#{metaInfo},#{memo},
+    	#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+    </insert>
+    
+    <!-- 根据ID更新记录 -->
+    <update id="updateDeployment">
+    	UPDATE flow_deployment 
+    	SET deploymentcode=#{deploymentCode},deploymentname=#{deploymentName},deployid=#{deployId},
+    	procdefid=#{procDefId},state=#{state},formtypeid=#{formTypeId},categoryid=#{categoryId},metainfo=#{metaInfo},memo=#{memo},
+    	lastModifyBy=#{lastModifyBy},lastModifyTime=#{lastModifyTime:BIGINT},version=#{version} 
+    	WHERE id=#{id}
+    </update>
+    
+    <!-- 根据部署ID删除 -->
+	<delete id="deleteDeploymentByDeploymentId" >
+		DELETE FROM flow_deployment
+		WHERE deployId = #{delopymentID}
+	</delete>
+    
+    <!-- 根据ID删除流程部署 -->
+    <delete id="deleteDeployment">
+    	DELETE FROM flow_deployment  
+    	WHERE id IN
+		<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+    </delete>
+    
+    <!-- 根据ID启用流程部署 -->
+    <update id="setUpDeployment">
+    	UPDATE flow_deployment SET  state=1
+    	WHERE id IN
+		<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+    </update>
+    
+    <!-- 根据ID停用流程部署 -->
+    <update id="stopDeployment">
+    	UPDATE flow_deployment SET state=0
+    	WHERE id IN
+		<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+    </update>
+    
+    <!-- 通过主键查询 -->
+    <select id="findDeploymentById" resultType="deploymentVO">
+    	SELECT
+		<include refid="deploymentColumns" />
+		FROM flow_deployment  
+		WHERE id=#{id}
+    </select>
+    
+    <!-- 通过部署编码查询 -->
+    <select id="findByDeploymentCode" resultType="deploymentVO">
+    	SELECT
+		<include refid="deploymentColumns" />
+		FROM flow_deployment  
+		WHERE deploymentCode=#{deploymentCode}
+		AND version = (
+			SELECT
+				MAX(VERSION)
+			FROM
+				flow_deployment
+			WHERE
+				deploymentCode =#{deploymentCode}
+		)
+    </select>
+    
+	<!-- 查询 分页列表 -->
+	<select id="queryDeploymentByCondition" resultMap="resultMap">
+		SELECT
+			ff.id,
+			ff.deploymentcode,
+			ff.deploymentname,
+			ff.deployid,
+			ff.procdefid,
+			ff.state,
+			ff.formtypeid,
+			ff.categoryid,
+			ff.metainfo,
+			ff.memo,
+			ff.createby,
+			ff.createtime,
+			ff.lastmodifyby,
+			ff.lastmodifytime,
+			ff.categoryType,
+			ff.version
+		FROM
+			(
+				SELECT
+					f.id,
+					f.deploymentcode,
+					f.deploymentname,
+					f.deployid,
+					f.procdefid,
+					f.state,
+					f.formtypeid,
+					f.categoryid,
+					f.metainfo,
+					f.memo,
+					f.createby,
+					f.createtime,
+					f.lastmodifyby,
+					f.lastmodifytime,
+					f.version,
+					c.categoryname categoryType
+				FROM
+					flow_deployment f
+				INNER JOIN flow_category c ON f.categoryid = c.id
+			<trim prefix="where" prefixOverrides="and |or ">
+				<if test="condition!= null">${condition._CONDITION_}</if>
+			</trim>
+			<if test="sort != null"> 
+				order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach>
+			</if> 
+			) ff
+		INNER JOIN (
+			SELECT
+				deploymentcode,
+				MAX(version) AS version
+			FROM
+				flow_deployment
+			GROUP BY
+				deploymentcode
+		) flow_f ON ff.deploymentcode = flow_f.deploymentcode
+		AND ff.version = flow_f.version
+		
+	</select>
+
+	<!-- 查询 列表 -->
+	<select id="queryDeploymentListByCondition" resultType="deploymentVO">
+		SELECT
+			ff.id,
+			ff.deploymentcode,
+			ff.deploymentname,
+			ff.deployid,
+			ff.procdefid,
+			ff.state,
+			ff.formtypeid,
+			ff.categoryid,
+			ff.metainfo,
+			ff.memo,
+			ff.createby,
+			ff.createtime,
+			ff.lastmodifyby,
+			ff.lastmodifytime,
+			ff.version
+		FROM(
+		SELECT
+		<include refid="deploymentColumns" />
+		FROM flow_deployment 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> 	
+			order by  <foreach collection="sort" item="order" separator=",">  ${order.property} ${order.direction}</foreach>
+		</if> 
+		)ff INNER JOIN (
+			SELECT
+				deploymentcode,
+				MAX(version) AS version
+			FROM
+				flow_deployment
+			GROUP BY
+				deploymentcode
+		) flow_f ON ff.deploymentcode = flow_f.deploymentcode
+		AND ff.version = flow_f.version
+	</select>
+	
+	<!-- 查询用户被驳回待办 -->
+	<!-- 查询已弃用 -->
+	<select id="findRejectedTasks" resultType="com.gdsp.platform.workflow.model.TaskVO">
+		SELECT
+			D.DEPLOYMENTCODE,
+			D.DEPLOYMENTNAME,
+			C.CATEGORYNAME,
+			A.username,
+			A.PROCESSINSID procInsId,
+			'startuser' nodeId,
+			'startuser' nodeName,
+		  	B.FORMID
+		FROM flow_businessform B
+		LEFT JOIN (
+			SELECT DISTINCT
+				fprlt.pk_businessformid fid,
+		    ru.USERNAME username,
+				ph.PROCESSINSID
+			FROM
+				flow_form_proceinst_rlt fprlt
+			LEFT JOIN flow_processhistory ph ON fprlt.proceinstId = ph.PROCESSINSID
+			LEFT JOIN rms_user  ru on ru.ID = ph.USERID
+			WHERE
+				fprlt.proceinstId IN (
+					SELECT
+						H.PROCESSINSID
+					FROM
+						flow_processhistory H
+					WHERE
+						RESULT = 3
+		      AND USERID = #{userId}
+				) 
+		) A ON A.fid = B.id
+		LEFT JOIN flow_deployment D ON D.ID = B.PK_DEPLOYMENTID
+		LEFT JOIN flow_category C ON C.ID = D.CATEGORYID
+		WHERE
+			B.STATUS = 1 
+			AND A.PROCESSINSID is not NULL
+	</select>
+	
+	<!-- 查询个人任务分页列表 -->
+	<select id="queryTaskByCondition" resultType="com.gdsp.platform.workflow.model.TaskVO">
+		SELECT DISTINCT 
+			T.ID_ id,T.PROC_INST_ID_ procInsId,T.PROC_DEF_ID_ procDefId,T.TASK_DEF_KEY_ nodeId,
+			T.NAME_ nodeName,T.CREATE_TIME_ createTime,T.DUE_DATE_ dueTime,
+			D.DEPLOYMENTCODE deploymentCode,D.DEPLOYMENTNAME deploymentName,
+			C.CATEGORYNAME categoryName,
+			F.formurl url,
+			H.formid formid,
+			H.userId userId
+		FROM ACT_RU_TASK T
+			INNER JOIN FLOW_DEPLOYMENT D ON T.PROC_DEF_ID_=D.PROCDEFID
+			INNER JOIN FLOW_CATEGORY C   ON D.CATEGORYID = C.ID
+			INNER JOIN FLOW_PROCESSHISTORY H ON T.PROC_INST_ID_=H.PROCESSINSID
+			INNER JOIN flow_nodeinfo N   ON D.id=N.deploymentid and N.actid=T.task_def_key_
+			LEFT  JOIN flow_formtype F   ON D.formtypeid=F.id
+			LEFT  JOIN act_ru_variable V ON T.execution_id_=V.execution_id_
+		WHERE H.ACTID='startuser' 
+			AND H.actname &lt;&gt; 'startuser' 
+			AND (V.text_ IN
+			<foreach collection='list' index='index' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach> 
+			OR T.ASSIGNEE_ IN
+			<foreach collection='list' index='index' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach> 
+			OR T.ID_ IN (
+				SELECT 
+					TASK_ID_ 
+				FROM ACT_RU_IDENTITYLINK
+				WHERE TYPE_='candidate' AND USER_ID_ IN
+				<foreach collection='list' index='index' item='item' open='(' separator=',' close=')'>
+					#{item}
+				</foreach>	
+				)
+		)
+		<if test="condition!= null">AND ${condition._CONDITION_}</if>
+		order by T.CREATE_TIME_ DESC
+	</select>
+	
+	<!-- 查询我的流程分页列表 -->
+	<select id="queryAllMyProcByCondition" resultType="com.gdsp.platform.workflow.model.HistoryVO">
+		SELECT DISTINCT
+			P.proc_inst_id_ procInsId,
+			P.start_time_ starttime,
+			P.end_time_ endtime,
+			P.duration_ duration,
+			D.deploymentname deploymentname,
+			C.categoryname categoryname ,
+			H.userid userid,
+			H.formid formid
+		FROM act_hi_procinst P 
+			LEFT JOIN flow_processhistory H ON P.proc_inst_id_ = H.processinsid
+			LEFT JOIN flow_deployment D     ON P.proc_def_id_=D.procdefid
+			LEFT JOIN flow_category C 	    ON D.categoryid=C.id 
+		WHERE D.deploymentname IS NOT NULL
+			AND H.userid=#{userId}
+			AND H.actid = 'startuser'
+			<if test="condition!= null">AND ${condition._CONDITION_}</if>
+	
+		<if test="sort != null">
+			 order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+	<!-- 通过流程定义ID查询 -->
+    <select id="findByProcDefId" resultType="deploymentVO">
+    	SELECT 
+		<include refid="deploymentColumns" />
+		FROM flow_deployment  
+		WHERE procDefId=#{procDefId}
+    </select>
+    
+    <!-- 查询流程监控分页 -->
+    <select id="queryProcForAdmin" resultType="com.gdsp.platform.workflow.model.TaskVO">
+    	SELECT DISTINCT 
+	    	T.ID_ id,
+	    	T.PROC_INST_ID_ procInsId,
+	    	T.PROC_DEF_ID_ procDefId,
+	    	T.TASK_DEF_KEY_ nodeId,
+	    	T.NAME_ nodeName,
+	    	T.CREATE_TIME_ createTime,
+	    	T.DUE_DATE_ dueTime,
+	    	D.ID deploymentId,
+	    	D.DEPLOYMENTCODE deploymentCode,
+	    	D.DEPLOYMENTNAME deploymentName,
+	    	C.CATEGORYNAME categoryName,
+	    	U.USERNAME userId,
+	    	H.formid formid
+		FROM ACT_RU_TASK T
+		LEFT JOIN FLOW_DEPLOYMENT D ON T.PROC_DEF_ID_=D.PROCDEFID
+		LEFT JOIN FLOW_CATEGORY C   ON D.CATEGORYID = C.ID
+		LEFT JOIN FLOW_PROCESSHISTORY H ON T.PROC_INST_ID_=H.PROCESSINSID
+		LEFT JOIN rms_user U ON u.id=H.USERID
+		WHERE D.DEPLOYMENTCODE IS NOT NULL
+		AND H.ACTID = 'startuser'
+		<trim prefix="and" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	
+			<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach>
+		</if> 
+    </select>
+    
+    <!-- 关联流程类型表进行查询 -->
+	<select id="queryDeploymentAltCategory" resultType="com.gdsp.platform.workflow.model.DeploymentAltCategoryVO">
+		SELECT
+			d.ID,
+			d.DEPLOYMENTCODE,
+			d.DEPLOYMENTNAME,
+			c.CATEGORYNAME
+		FROM
+			(
+				SELECT
+					ff.ID,
+					ff.DEPLOYMENTCODE,
+					ff.DEPLOYMENTNAME,
+					ff.CATEGORYID
+				FROM
+					flow_deployment ff
+				INNER JOIN (
+					SELECT
+						deploymentcode,
+						MAX(version) AS version
+					FROM
+						flow_deployment
+					GROUP BY
+						deploymentcode
+				) flow_f ON ff.deploymentcode = flow_f.deploymentcode
+				AND ff.version = flow_f.version
+			) d,
+			flow_category c
+		WHERE
+			d.CATEGORYID = c.ID
+		<trim prefix="and" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	
+			<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach>
+		</if>
+		 
+	</select>
+	
+	<!-- 统计编码在库中出现的个数 -->	
+	<select id="countByCode" resultType="java.lang.Integer">
+		SELECT 
+			COUNT(*)
+		FROM
+			flow_deployment d
+		WHERE
+			d.DEPLOYMENTCODE = #{codeValue}
+	</select>
+	<!-- 查询个人不可撤回流程实例id集合，即已审批的流程实例id集合 -->
+	<select id="findIrrevocableProcInstIds" resultType="java.lang.String">
+		SELECT DISTINCT 
+			PROCESSINSID 
+		FROM
+			flow_processhistory
+		WHERE
+			RESULT != 5
+		AND 
+			PROCESSINSID in (
+				SELECT H.PROCESSINSID 
+					FROM flow_processhistory H 
+				WHERE H.RESULT = 5 
+					AND H.USERID = #{userId}
+		)
+	</select>
+</mapper>

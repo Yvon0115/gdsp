@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+		default-lazy-init="true">
+
+	<description>Spring-Mybatis-Log配置</description>
+	
+	<bean id="mergeHandlerLog" class="com.gdsp.dev.persist.ext.merge.handler.ResourceMergeHandlerFileImpl">
+		<property name="mergeResources">
+			<array>
+				<value>classpath*:gdsp/merge/**/*.xml</value>
+				<value>classpath*:gdsp/merge-${jdbc.dbtype}/**/*.xml</value>
+			</array>
+		</property>
+	</bean>
+	<!-- MyBatis配置 -->
+	<bean id="sqlSessionFactoryLog" class="com.gdsp.dev.persist.ext.SpringSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceLog" />
+		<property name="objectFactory">
+			<bean class="com.gdsp.dev.persist.ext.MybatisObjectFactory"></bean>
+		</property>
+		<property name="objectWrapperFactory">
+			<bean class="com.gdsp.dev.persist.ext.MybatisObjectWrapperFactory">
+				<property name="resultMapKeyCase" value="${mybatis.resultMapKeyCaseMode:0}"/>
+			</bean>
+		</property>
+		<property name="plugins">
+			<array>
+			<ref bean="paginationInterceptor" />
+			</array>
+		</property>
+		<property name="mergeHandler" ref="mergeHandlerLog" />
+		<property name="mapperLocations">
+			<array>
+				<value>classpath*:gdsp/mapper/**/*.xml</value>
+				<value>classpath*:gdsp/mapper-${jdbc.dbtype}/**/*.xml</value>
+			</array>
+		</property>
+		<property name="typeAliasesPackage" value="com.gdsp"/>
+		<property name="typeAliasesSuperType" value="com.gdsp.dev.core.model.entity.BaseEntity"/>
+		<property name="typeHandlersPackage" value="com.gdsp.dev.persist.types"/>
+		<property name="configLocation" value="classpath:gdsp/mybatis/mybatis-config.xml" />
+	</bean>
+	<bean id="sqlSessionTemplateLog" class="com.gdsp.dev.persist.ext.MybatisSqlTemplate">
+		<constructor-arg ref="sqlSessionFactoryLog"/>
+	</bean>
+	<!-- 扫描basePackage下所有以@LogDao标识的 接口-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.gdsp.**.dao" />
+		<property name="annotationClass" value="com.gdsp.dev.persist.ext.LogDao"/>
+		<!--<property name="sqlSessionTemplateBeanName" value="sqlSessionTemplateTD"/>-->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryLog"/>
+	</bean>
+		
+	<!-- Tomcat JDBC连接池 -->
+	<bean id="dataSourceLog" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+		<property name="driverClassName" value="${log.jdbc.driver}" />
+		<property name="url" value="${log.jdbc.url}" />
+		<property name="username" value="${log.jdbc.username}" />
+		<property name="password" value="${log.jdbc.password}" />
+		<property name="defaultAutoCommit" value="true" />
+		<property name="maxActive" value="${jdbc.pool.maxActive}" />
+		<property name="maxIdle" value="${jdbc.pool.maxIdle}" />
+		<property name="minIdle" value="0" />
+		<property name="initialSize"  value="${jdbc.pool.initialSize}"/>
+	</bean>
+</beans>

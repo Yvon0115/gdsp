@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.ICategoryDao">
+    <sql id="categoryColumns">
+    	id,categorycode,categoryname,innercode,pk_fathercode,memo,createby,createtime,lastmodifyby,lastmodifytime,version
+    </sql>
+    <!-- 插入流程类别 -->
+    <insert id="saveCategory" parameterType="categoryVO">
+    	insert into flow_category (
+    	<include refid="categoryColumns" /> )
+    	values (#{id},#{categoryCode},#{categoryName},#{innercode},#{pk_fathercode},#{memo},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+    </insert>
+    
+    <!-- 根据ID更新记录 -->
+    <update id="updateCategory">
+    	update flow_category 
+    	set categorycode=#{categoryCode},categoryname=#{categoryName},memo=#{memo},lastModifyBy=#{lastModifyBy},lastModifyTime=#{lastModifyTime:BIGINT},version=#{version},pk_fathercode=#{pk_fathercode} 
+    	where id=#{id}
+    </update>
+    
+    <!-- 根据ID删除流程类别 -->
+    <delete id="deleteCategory">
+    	delete from flow_category  
+    	where id in
+		<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+    </delete>
+    
+    <!-- 通过主键查询流程类别 -->
+    <select id="findCategoryById" resultType="categoryVO">
+    	select 
+		<include refid="categoryColumns" />
+		from flow_category  
+		where id=#{id}
+    </select>
+    
+	<!-- 查询 分页列表 -->
+	<select id="queryCategoryByCondition" resultType="categoryVO">
+		select 
+		<include refid="categoryColumns" />
+		from flow_category
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+
+	<!-- 查询 列表 -->
+	<select id="queryCategoryListByCondition" resultType="categoryVO">
+		select 
+		<include refid="categoryColumns" />
+		from flow_category 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	
+	<select id="countCategoryByCode" resultType="int">
+		select count(id) from flow_category  where categorycode=#{categoryCode}
+		<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+	</select>
+	<select id="countCategoryByName" resultType="int">
+		select count(id) from flow_category  where categoryname=#{categoryName}
+		<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+	</select>
+</mapper>

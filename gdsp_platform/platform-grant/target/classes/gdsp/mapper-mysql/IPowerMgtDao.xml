@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.auth.dao.IPowerMgtDao">
+	
+	<select id="queryMenuPageByCondForPower" resultType="MenuRegisterVO">
+		select distinct 
+			ma.id 
+			,ma.funname 
+			,ma.funcode 
+			,ma.dispcode 
+			,ma.parentid 
+			,ma.innercode 
+			,ma.funtype 
+			,ma.ispower 
+			,ma.url 
+			,ma.helpname 
+			,ma.hintinf 
+			,ma.isenable 
+			,ma.memo 
+			,ma.createby 
+			,ma.createtime 
+			,ma.lastmodifytime
+			,ma.lastmodifyby 
+			,ma.version 
+			,ma.menuid 
+			,ma.safelevel 
+			,ma.is_system_menu 
+			,ma.pageid 
+			,ma.isrootmenu 
+			,ma.isreport
+			,ma.iconfield		
+		from st_menuregister ma inner join st_menuregister mb
+			on ma.innercode = left(mb.innercode,length(ma.innercode)) inner join rms_power_menu mp on mp.resource_id = mb.id
+		where ma.isenable in ('y', 'Y')
+
+		<if test="addCond != null and addCond!=''">
+			 and (${addCond})
+		</if>
+		<if test="condition != null and condition._CONDITION_!=null">
+			and (${condition._CONDITION_})
+		</if>
+
+		order by ma.dispcode,ma.innercode
+	</select>
+	<select id="queryMenuMapByCondForPower" resultType="MenuRegisterVO">
+		select distinct 
+			ma.id 
+			,ma.funname 
+			,ma.funcode 
+			,ma.dispcode 
+			,ma.parentid 
+			,ma.innercode 
+			,ma.funtype 
+			,ma.ispower 
+			,ma.url 
+			,ma.helpname 
+			,ma.hintinf 
+			,ma.isenable 
+			,ma.memo 
+			,ma.createby 
+			,ma.createtime 
+			,ma.lastmodifytime
+			,ma.lastmodifyby 
+			,ma.version 
+			,ma.menuid 
+			,ma.safelevel 
+			,ma.is_system_menu 
+			,ma.pageid 
+			,ma.isrootmenu 
+			,ma.isreport
+			,ma.iconfield
+		 ,sf.doc_name as funname_safelevel 
+		from st_menuregister ma
+			inner join st_menuregister mb on ma.innercode = left(mb.innercode,length(ma.innercode))
+			inner join rms_power_menu mp on mp.resource_id = mb.id
+			left join cp_defdoc sf on ma.safelevel=sf.id
+		where ma.isenable in ('y', 'Y')
+			<if test="addCond != null and addCond!=''">
+				and (${addCond}) 
+			</if> order by ma.dispcode,ma.innercode 
+	</select>
+	<insert id="insertBatch">
+		insert into rms_power_menu (id,pk_role,resource_id,createby,createtime )
+    	VALUES 
+	    <foreach collection="list" item="item" index="index" separator="," >
+	    	(#{item.id},
+	    	#{item.pk_role},
+	    	#{item.resource_id},
+	    	#{item.createBy},
+	    	#{item.createTime:BIGINT})
+	    </foreach>
+  	</insert>
+</mapper>

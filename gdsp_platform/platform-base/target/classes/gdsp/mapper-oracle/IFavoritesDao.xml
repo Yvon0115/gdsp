@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.widgets.favorites.dao.IFavoritesDao">
+    <resultMap type="com.gdsp.platform.widgets.favorites.model.FavoritesVO" id="favoritesVo">
+        <id property="id" column="id" jdbcType="CHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="pid" column="pid" jdbcType="VARCHAR"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="INTEGER"/>
+        <result property="createBy" column="createby" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createtime" jdbcType="BIGINT"/>
+        <result property="lastModifyBy" column="lastmodifyby" jdbcType="VARCHAR"/>
+        <result property="lastModifyTime" column="lastmodifytime" jdbcType="BIGINT"/>
+    </resultMap>
+    
+	<sql id="favoritesColumns">
+    	id,pid,name,url,file_type,createby,createtime,lastmodifyby,lastmodifytime
+    </sql>
+    
+	<insert id="insert" parameterType="com.gdsp.platform.widgets.favorites.model.FavoritesVO">
+    	INSERT INTO cp_favorites 
+    	(
+    	<include refid="favoritesColumns"/>
+    	) 
+    	VALUES 
+    	(
+    	#{id,jdbcType=CHAR},
+    	#{pid,jdbcType=VARCHAR},
+    	#{name,jdbcType=VARCHAR},
+    	#{url,jdbcType=VARCHAR},
+    	#{fileType,jdbcType=INTEGER},
+    	#{createBy,jdbcType=VARCHAR},
+    	#{createTime : BIGINT},
+    	#{lastModifyBy,jdbcType=VARCHAR},
+    	#{lastModifyTime : BIGINT}
+    	)
+    </insert>
+    
+    <select id="queryFavoritesVOMapListByCondition" resultMap="favoritesVo">
+    	select 
+			<include refid="favoritesColumns"/>
+		from cp_favorites
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition != null">
+				${condition._CONDITION_}
+			</if>
+		</trim>
+		<if test="sort != null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+    </select>
+    
+    <!-- 同名校验 -->
+	<select id="existSameNameFavorites" parameterType="com.gdsp.platform.widgets.favorites.model.FavoritesVO" resultType="java.lang.Integer">
+		select count(1) from cp_favorites  
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="name!= null and name!=''">name =#{name}</if>
+			<if test="pid!= null and pid!=''">and pid = #{pid}</if>
+			<if test="createBy!= null and createBy!=''">and createBy=#{createBy}</if>
+			<if test="id != null and id!=''">
+			and id&lt;&gt;#{id}
+			</if>
+		</trim>
+	</select>
+	
+	<!-- 非空校验 -->
+	<select id="existBlankSameNameFavorites" parameterType="com.gdsp.platform.widgets.favorites.model.FavoritesVO" resultType="java.lang.Integer">
+		select count(1) 
+		from cp_favorites  
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="name!= null and name!=''">name =#{name}</if>
+			<if test="pid==0">and pid is null</if>
+			<if test="createBy!= null and createBy!=''">and createBy=#{createBy}</if>
+			<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+		</trim>
+	</select>
+	
+	<delete id="delete">
+    	delete from
+    		cp_favorites
+    	where
+    		id=#{id} or pid = #{id}
+    </delete>
+    
+</mapper>

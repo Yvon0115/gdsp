@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.auth.dao.IUserGroupRltDao">
+		<!-- 根据条件查询用户组的用户列表 -->
+	<select id="queryUserGroupRltByCond" resultMap="userGroupRltMap">
+	<!-- 权限拆分                                                                        2016.12.28 -->
+	<!-- 		select rlt.id,rlt.pk_usergroup,rlt.pk_user,g.groupname,g.memo,u.username,u.memo as umemo , -->
+	<!-- 		u.account,u.mobile,u.email,o.orgname -->
+	<!-- 		from rms_usergroup_rlt rlt inner join rms_usergroup g on rlt.pk_usergroup = g.id -->
+	<!-- 		inner join rms_user u on rlt.pk_user = u.id -->
+	<!-- 		left join rms_orgs o on o.id=u.pk_org  -->
+	<!-- 		<trim prefix="where" prefixOverrides="and |or "> -->
+	<!-- 			<if test="condition!= null">${condition._CONDITION_}</if> -->
+	<!-- 		</trim>	 -->
+	select rlt.id,rlt.pk_usergroup,rlt.pk_user,g.groupname,g.memo
+	from rms_usergroup_rlt rlt inner join rms_usergroup g on rlt.pk_usergroup = g.id
+	where rlt.pk_usergroup=#{groupId}
+	</select>
+	<select id="queryUserGroupRltByCondition" resultMap="userGroupRltMap" >
+	select rlt.id,rlt.pk_usergroup,rlt.pk_user,g.groupname,g.memo
+	from rms_usergroup_rlt rlt inner join rms_usergroup g on rlt.pk_usergroup = g.id
+	<if test="condition!= null"> where ${condition._CONDITION_}</if>
+	</select>
+
+	<resultMap type="UserGroupRltVO" id="userGroupRltMap">
+		<id property="id" column="id" />
+		<result property="pk_usergroup" column="pk_usergroup" />
+		<result property="pk_user" column="pk_user" />
+		<association property="groupVO" javaType="UserGroupVO">
+			<id property="id" column="pk_usergroup"  />
+			<result property="groupname" column="groupname" />
+			<result property="memo" column="memo" />
+		</association>	
+		<association property="userVO" javaType="UserVO">
+			<id property="id" column="pk_user"  />
+			<result property="username" column="username" />
+			<result property="account" column="account"/>
+			<result property="mobile" column="mobile"/>
+			<result property="email" column="email"/>
+			<result property="orgname" column="orgname"/>
+			<result property="memo" column="umemo" />
+		</association>	
+	</resultMap>
+	<select id="queryUerIdsByGroupId" resultType="UserGroupRltVO">
+		select id,pk_usergroup,pk_user from rms_usergroup_rlt  where pk_usergroup=#{groupID}
+	</select>
+	<select id="queryUerIdsByPkUser" resultType="UserGroupRltVO" >
+		select id,pk_usergroup,pk_user from rms_usergroup_rlt  where pk_user=#{userID}
+	</select>
+</mapper>

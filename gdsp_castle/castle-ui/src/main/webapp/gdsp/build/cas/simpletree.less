@@ -1,0 +1,70 @@
+/* SimpleTree */
+.simpletree {
+  margin:0;
+  padding: 0;
+  display: none;
+  min-width: 100%;
+  ul {
+	margin: 0;
+	padding: 0;
+  }
+  li { clear:both; display:block; line-height:26px; cursor:pointer;white-space: nowrap;}
+  a,span { display:inline-block; height:26px; line-height:26px;}
+  div { display:block; vertical-align: middle;}
+  div div { display:inline-block; width:22px; height:26px; border:none;}
+  a,a:hover{ text-decoration:none;}
+  .center_collapsable,.first_collapsable,.last_collapsable,.center_expandable,.first_expandable,.last_expandable,.one_expandable,.one_collapsable{
+    display: inline-block;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    font-size-adjust: none;
+    font-stretch: normal;
+    font-feature-settings: normal;
+    font-language-override: normal;
+    font-kerning: auto;
+    font-synthesis: weight style;
+    font-variant: normal;
+    text-rendering: auto;
+    transform: translate(0px, 0px);
+  }
+  .center_collapsable,.first_collapsable,.last_collapsable,.one_collapsable{
+    padding:4px 3px 4px 7px;
+    &::before {
+      content: "\f107";
+    }
+  }
+
+  .center_expandable, .first_expandable,.last_expandable,.one_expandable{
+    padding:5px 0px 0px 10px;
+    &::before {
+      content: "\f105";
+    }
+  }
+  .indent { background:none;}
+  .line { }
+  .nline { }
+  .last .nline { }
+  .checked,.unchecked,.indeterminate { background:url(../images/tree/check.png) no-repeat;}
+  .unchecked { background-position:0 2px;}
+  .hover .unchecked { background-position:0 -48px;}
+  .checked { background-position:0 -98px;}
+  .hover .checked { background-position:0 -148px;}
+  .indeterminate { background-position:0 -198px;}
+  .hover .indeterminate { background-position:0 -248px;}
+  li a,li span { margin-left:2px;color:#183152;}
+  .hover { background:#f5f5f5;}
+  .selected {
+	background-color:#0088cc;
+	box-shadow: 0 0 2px #BDBDBD;
+	-webkit-box-shadow: 0 0 2px #BDBDBD;
+	-moz-box-shadow: 0 0 2px #BDBDBD;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+  }
+  .selected a{
+	color:#ffffff;
+  }
+}

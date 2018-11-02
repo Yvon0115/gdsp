@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IApprAuthorityDao">
+	<sql id="flow_apprauthorityColumns">
+		id,nodeinfoid,apprtype,apprtypeid,apprtypecode,apprtypename,createby,createtime,lastmodifyby,lastmodifytime,version
+	</sql>
+	
+	<!-- 添加审批权限记录 -->
+	<insert id="saveApprAuthority" parameterType="apprAuthorityVO">
+		insert 
+		into flow_apprauthority 
+		(<include refid="flow_apprauthorityColumns"/>)
+		values (#{id},#{nodeInfoId},#{apprType},#{apprTypeId},#{apprTypeCode},#{apprTypeName},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+	</insert>
+	
+	<!-- 删除权限记录 -->
+	<delete id="deleteApprAuthority">
+		delete 
+		from flow_apprauthority
+		where id in 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>
+	</delete>
+	
+		<!-- 删除权限记录 -->
+	<delete id="deleteApprAuthorityByNodeInfoIDs">
+		delete 
+		from flow_apprauthority
+		where nodeinfoid in 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>
+	</delete>
+	
+	<!-- 更新权限记录 -->
+	<update id="updateApprAuthority">
+		update flow_apprauthority
+		set nodeinfoid=#{nodeInfoId},apprtype=#{apprType},apprtypeid=#{apprTypeId},apprtypecode=#{apprTypeCode},apprtypename=#{apprTypeName},lastmodifyby=#{lastModifyBy},lastmodifytime=#{lastModifyTime:BIGINT},version=#{version}
+		where id = #{id}
+	</update>
+	
+	<!-- 根据主键查询 -->
+	<select id="findApprAuthorityById" resultType="apprAuthorityVO">
+		select <include refid="flow_apprauthorityColumns"/>
+		from flow_apprauthority
+		where id = #{id}
+	</select>
+	
+	<!-- 查询分页结果 -->
+	<select id="queryAppraAuthorityByCondition" resultType="apprAuthorityVO">
+		select <include refid="flow_apprauthorityColumns"/>
+		from flow_apprauthority
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="condition!=null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	<!-- 查询列表 -->
+	
+	<select id="queryApprAuthorityListByCondition" resultType="apprAuthorityVO">
+		select <include refid="flow_apprauthorityColumns"/>
+		from flow_apprauthority
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="condition!=null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- portal页处理 -->
+<mapper namespace="com.gdsp.ptbase.portal.dao.IPortalPageDao">
+
+	<!-- 插入一条用户默认首页记录 -->
+	<insert id="insert" parameterType="UserDefaultPageVO">
+		INSERT INTO pt_user_defaultpage 
+		VALUES('${id}','${pk_user}','${page_id}','${menu_id}')
+	</insert>
+	
+	<!-- 更新一条用户默认首页记录 -->
+	<update id="updateUserHomePage" parameterType="UserDefaultPageVO">
+		UPDATE pt_user_defaultpage 
+		SET PK_PAGE = '${page_id}'
+		WHERE PK_USER='${pk_user}'
+			AND PK_MENU='${menu_id}'
+	</update>
+	
+	<!-- 删除一条用户默认首页记录 -->
+	<delete id="deleteUserHomePage" parameterType="UserDefaultPageVO">
+		DELETE FROM pt_user_defaultpage
+		WHERE PK_USER=${vo.pk_user}
+			AND PK_PAGE = ${vo.page_id}
+			AND PK_MENU=${vo.menu_id}
+	</delete>
+
+</mapper>

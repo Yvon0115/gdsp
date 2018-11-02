@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.user.dao.IUserDao">
+	<sql id="base_colunm_list">
+		u.id
+		,u.account
+		,u.username
+		,u.usertype
+		,u.onlyadmin
+		,u.user_password
+		,u.mobile
+		,u.tel
+		,u.email
+		,u.sex
+		,u.pk_org
+		,u.isreset
+		,u.islocked
+		,u.abletime
+		,u.disabletime
+		,u.memo
+		,u.createby
+		,u.createtime
+		,u.lastmodifytime
+		,u.lastmodifyby
+		,u.version
+		,u.origin
+		,u.update_pwd_time
+		,u.isdisabled
+	</sql>
+	<!-- 查询 列表 -->
+	<select id="queryUserList" resultType="userVO">
+		select
+		<include refid="base_colunm_list"></include>
+		from rms_user u
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		order by account
+	</select>
+
+	<!-- 用户预览查询，查询用户及所属用户组名、角色名、机构名 -->
+	<select id="queryUserPreByIds" resultType="userVO">
+		SELECT
+		u.ID,
+		u.USERNAME,
+		u.ACCOUNT,
+		u.MEMO,
+		o.orgname,
+		GROUP_CONCAT(DISTINCT ug.groupname) AS groupname,
+		GROUP_CONCAT(DISTINCT r.rolename) AS rolename
+		FROM
+		rms_user u
+		LEFT JOIN
+		rms_user_role ur ON u.ID = ur.pk_user
+		LEFT JOIN rms_role r ON
+		ur.pk_role = r.id
+		LEFT JOIN rms_orgs o ON u.PK_ORG = o.id
+		LEFT JOIN
+		rms_usergroup_rlt ugr ON u.ID = ugr.pk_user
+		LEFT JOIN rms_usergroup ug
+		ON ugr.pk_usergroup = ug.id
+		WHERE
+		u.ID IN
+		(SELECT u.ID FROM rms_user u
+		WHERE ID in
+		<foreach collection="userIds" item="item" index="index"
+			separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		UNION
+		SELECT u.ID FROM rms_usergroup_rlt ug inner join rms_user u on
+		ug.pk_user =
+		u.id where ug.pk_usergroup in
+		<foreach collection="userGroupIds" item="item" index="index"
+			separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		UNION
+		SELECT u.ID FROM rms_user_role ur inner join rms_user u on
+		ur.pk_user = u.id
+		where ur.pk_role in
+		<foreach collection="roleIds" item="item" index="index"
+			separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		UNION
+		SELECT u.ID FROM rms_user u WHERE pk_org in (select id from
+		rms_orgs where
+		pk_org in
+		<foreach collection="orgIds" item="item" index="index"
+			separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		))
+		group by u.ID
+	</select>
+	<!-- 权限拆分 2016.12.29 未被调用 -->
+	<!-- <select id="queryUserByIds" resultType="userVO"> -->
+	<!-- SELECT -->
+	<!-- u.ID, -->
+	<!-- u.USERNAME, -->
+	<!-- u.mobile, -->
+	<!-- u.email, -->
+	<!-- u.ACCOUNT, -->
+	<!-- u.MEMO, -->
+	<!-- o.orgname -->
+	<!-- FROM -->
+	<!-- rms_user u -->
+	<!-- LEFT JOIN rms_orgs o ON u.PK_ORG = o.id -->
+	<!-- WHERE -->
+	<!-- u.ID IN -->
+	<!-- <foreach collection="userIds" item="item" index="index" separator="," 
+		open="(" close=")"> -->
+	<!-- #{item} -->
+	<!-- </foreach> -->
+	<!-- </select> -->
+	<select id="queryUserByUserIds" resultType="userVO">
+		SELECT
+		<include refid="base_colunm_list"></include>
+		FROM rms_user u where u.id in
+		<foreach collection='array' item='item' open='(' separator=','
+			close=')'>
+			#{item}
+		</foreach>
+	</select>
+	<!-- 通过机构id查询用户信息列表 -->
+	<select id="querUsersByOrgIds" parameterType="java.util.List"
+		resultType="userVO">
+		select ru.id,ru.account,ru.usertype, ru.username,ru.pk_org,'Y' leaf
+		from rms_user ru where ru.pk_org in
+		<foreach collection='list' index='index' item='item' open='('
+			separator=',' close=')'>
+			#{item}
+		</foreach>
+	</select>
+	<!-- 通过用户id<list> 查询用户信息 -->
+	<select id="querUserByUserIds" parameterType="java.util.List"
+		resultType="userVO">
+		SELECT
+		u.ID,
+		u.USERNAME,
+		u.mobile,
+		u.email,
+		u.ACCOUNT,
+		u.MEMO,
+		u.usertype
+		FROM
+		rms_user u
+		WHERE
+		u.ID IN
+		<foreach collection='list' index='index' item='item' open='('
+			separator=',' close=')'>
+			#{item}
+		</foreach>
+	</select>
+	<!-- 这个语句在oracle数据库中不适用，在做出确定后再删除 2017-04-14 by：lyf -->
+	<!-- <select id="queryUserByOrgId" resultType="userVO"> SELECT u.* FROM 
+		rms_user u WHERE 去除无用的条件 wqh 2017/02/16 u.usertype =${userVO.usertype} <![CDATA[ 
+		u.id <> '${loginUserId}' ]]> <if test="orgIdList != null and orgIdList.size>0"> 
+		AND u.pk_org IN <foreach collection='orgIdList' index='index' item='item' 
+		open='(' separator=',' close=')'> #{item} </foreach> </if> <if test="userVO.username 
+		!= null and userVO.username != ''"> AND u.username like '%${userVO.username}%' 
+		</if> <if test="userVO.account != null and userVO.account != ''"> AND u.account 
+		like '%${userVO.account}%' </if> <if test="userVO.sex != null"> AND u.sex 
+		=${userVO.sex} </if> ORDER BY account ASC </select> -->
+
+	<!-- 通过用户id<list> 查询用户信息，单表查询 -->
+	<select id="findAllUsersList" parameterType="java.util.List"
+		resultType="userVO">
+		select
+		id,
+		username,
+		account,
+		pk_org,
+		usertype
+		from
+		rms_user
+	</select>
+	<select id="queryUserListByAddCond" resultType="userVO">
+		select
+		<include refid="base_colunm_list"></include>
+		from rms_user u
+		<if test="addCond != null ">where ${addCond} </if>
+	</select>
+
+	<!-- -->
+	<select id="queryNoAuthUserListByCondition" resultType="userVO">
+		SELECT
+		u.ID,
+		u.ACCOUNT,
+		u.USERNAME,
+		u.usertype,
+		u.mobile,
+		u.email,
+		u.MEMO,
+		u.pk_org
+		FROM
+		rms_user u
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">
+				${condition._CONDITION_}
+			</if>
+		</trim>
+	</select>
+
+	<!-- 根据用户名查询用户的验证信息 -->
+	<select id="queryUserAuthInfoByAccount" resultType="userVO">
+		SELECT
+		id,
+		account,
+		user_password,
+		islocked,
+		isreset,
+		username,
+		update_pwd_time,
+		isDisabled
+		FROM rms_user
+		where account = #{account}
+	</select>
+	
+	<!-- 根据帐号集合查询用户信息 -->
+	<select id="findUserByAccountList" resultType="userVO">
+		SELECT
+		id,
+		account,
+		user_password,
+		islocked,
+		isreset,
+		username,
+		update_pwd_time,
+		isDisabled
+		FROM rms_user
+		where account in
+		<foreach collection="list" index="index" item="item" 
+	        separator="," open="(" close=")">
+	        #{item.account}
+	    </foreach>
+	</select>
+
+	<!-- 停用 -->
+	<update id="disable">
+		update rms_user set isDisabled = 'Y'
+		where id in
+		<foreach collection='array' index='index' item='item' open='('
+			separator=',' close=')'>
+			#{item}
+		</foreach>
+	</update>
+
+	<!-- 启用 -->
+	<update id="enable">
+		update rms_user set isDisabled = 'N'
+		where id in
+		<foreach collection='array' index='index' item='item' open='('
+			separator=',' close=')'>
+			#{item}
+		</foreach>
+	</update>
+
+	<select id="queryUserByOrgIdCondition" resultType="userVO">
+		SELECT
+		u.*
+		FROM
+		rms_user u
+		WHERE
+		u.usertype =${userVO.usertype} 
+			<![CDATA[
+				and u.id <> '${loginUserId}'
+			]]>
+		<if test="orgIdList != null and orgIdList.size>0">
+			AND u.pk_org IN
+			<foreach collection='orgIdList' index='index' item='item'
+				open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+		<if test="condition != null">
+			AND ${condition._CONDITION_}
+		</if>
+		ORDER BY
+		account ASC
+	</select>
+
+	<!-- 用户个人信息修改 -->
+	<update id="resetPersonalInf" parameterType="userVO">
+		update rms_user set
+		username=#{username},mobile=#{mobile},email=#{email},user_password =
+		#{user_password},tel=#{tel},lastModifyBy=#{lastModifyBy},lastModifyTime=#{lastModifyTime:BIGINT}
+		<if test='update_pwd_time!=null and update_pwd_time!="" '>
+			,update_pwd_time=#{update_pwd_time:BIGINT}
+		</if>
+		where id=#{id}
+	</update>
+	
+</mapper>

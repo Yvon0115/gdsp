@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.log.dao.IOperationLogDao">
+	<select id="operationLogList" resultType="OperationLogVO">
+        select 
+        r.id,
+        r.type, 
+        r.table_name, 
+        r.table_desc, 
+        r.createBy,
+        r.createTime
+        from cp_log_op r
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="condition!= null">${condition._CONDITION_}</if>
+        </trim>
+        order by r.createTime desc
+	</select>
+    <select id="load" resultType="OperationLogVO">
+    	select * 
+        from cp_log_op 
+        where  id=#{id}
+    </select>
+    <select id="findDetailByCondition" resultType="DetailOpLogVO">
+        select 
+        m.col_name, 
+        m.col_desc, 
+        m.old_data, 
+        m.new_data
+        from cp_log_content m
+        left join cp_log_op n
+        on m.log_id = n.id
+        where n.id =#{id}
+    </select>
+    <select id="findDetailInfoById" resultType="DetailOpLogVO">
+        select 
+        p.col_name, 
+        p.col_desc, 
+        p.old_data, 
+        p.new_data
+        from cp_log_content p
+        left join cp_log_op q
+        on p.log_id = q.id
+        where q.id =#{id}
+    </select>
+</mapper>

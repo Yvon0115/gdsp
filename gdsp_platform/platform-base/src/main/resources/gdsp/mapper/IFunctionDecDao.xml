@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.config.customization.dao.IFunctionDecDao">
+	<select id="findExportFunDecList" resultType="com.gdsp.platform.config.customization.model.FuncDecDataIOVO">
+		select me.id as id,me.funname as funname,me.URL as URL, me.PARENTID as PARENTID,me.FUNTYPE as FUNTYPE,me.FUNCODE as FUNCODE 
+		 from st_menuregister me  where (me.isenable = 'Y' or me.isenable = 'y') and id in
+		<foreach collection="commonDirIdArr" item="commDirId" open="(" close=")"  separator=",">
+			#{commDirId}
+		</foreach>
+	</select>
+	
+	
+	<!--  
+	<select id="queryMenuRegisterVOMapListByCondition" resultType="FunctionDecVO">
+		select * from st_menuregister
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	 </select>
+	 
+	 
+	 <select id="load" resultType="FunctionDecVO">
+		select * from st_menuregister where id = #{id} 
+	</select>
+	 
+	 
+	 <select id="queryFunctionDecVOsPages" resultType="FunctionDecVO">
+		select * from st_menuregister
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		order by createTime 
+	</select>
+	
+    -->
+</mapper>

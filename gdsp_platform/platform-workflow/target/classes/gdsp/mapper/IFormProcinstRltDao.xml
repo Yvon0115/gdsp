@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IFormProcinstRltDao">
+	<sql id="allcolumn">
+		id,pk_businessformid,proceinstId,createby,createtime,lastmodifyby,lastmodifytime,version
+	</sql>
+	
+	<resultMap type="com.gdsp.platform.workflow.model.FormProcinstRltVO" id="colomnmap">
+		<result property="id" column="ID" />
+		<result property="pk_businessformid" column="pk_businessformid" />
+		<result property="proceinstId" column="proceinstId" />
+		
+		<result property="createBy" column="createBy" />
+		<result property="createTime" column="createTime" />
+		<result property="lastModifyBy" column="lastModifyBy" />
+		<result property="lastModifyTime" column="lastModifyTime" />
+		<result property="version" column="version" />
+	</resultMap>
+	
+	<select id="queryFormProcinstRltByBusiFormId" resultMap="colomnmap">
+		select <include refid="allcolumn" /> from flow_form_proceinst_rlt
+		where pk_businessformid=#{busFormId}
+	</select>
+	<select id="queryFormProceRltByProceinstID" resultMap="colomnmap">
+		select <include refid="allcolumn" /> from flow_form_proceinst_rlt
+		where proceinstId=#{proceinstId}
+	</select>
+	<insert id="insert" parameterType="com.gdsp.platform.workflow.model.FormProcinstRltVO">
+		insert into flow_form_proceinst_rlt 
+		(<include refid="allcolumn" />)
+		values
+		(#{id},#{pk_businessformid},#{proceinstId},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime},#{version})
+	</insert>
+</mapper>

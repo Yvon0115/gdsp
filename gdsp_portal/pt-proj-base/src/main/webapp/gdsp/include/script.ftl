@@ -1,0 +1,1 @@
+var __contextPath="${ContextPath}",__extendOptions=["main/options","${__jsPath}/portal/options.js"],__jsPath="${__jsPath}",__scriptPath="${__scriptPath}",__cssPath="${__cssPath}";

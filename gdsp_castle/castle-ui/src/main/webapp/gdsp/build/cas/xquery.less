@@ -1,0 +1,35 @@
+/* PAGINATION */
+.xquery {
+  .control-container{
+    padding:0 6px;
+    .bottom-padding{
+      display: none!important;
+    }
+    .valid-flag{
+      display: none!important;
+    }
+
+  }
+  .form-group:last-child .control-container{
+    padding-right: 0px;
+  }
+  .form-group:first-child .control-container{
+    padding-left: 0px;
+  }
+  .form-control {
+    border-radius:2px!important;
+    border-color:@xquery-input-border;
+  }
+  /* Input group */
+  .input-group {
+    .form-control {
+      border-radius:2px 0 0 2px!important;
+    }
+    .input-group-addon {
+      border-radius: 0 2px 2px 0;
+      border-color: @xquery-input-border;
+    }
+  }
+
+
+}

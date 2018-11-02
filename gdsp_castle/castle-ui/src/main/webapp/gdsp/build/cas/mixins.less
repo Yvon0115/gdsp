@@ -1,0 +1,16 @@
+// Mixins
+// --------------------------------------------------
+
+// Bootstrap mixins
+@import "../bootstrap/mixins.less";
+//border radius creator
+.border-radius(@radius) {
+  border-radius: @radius;
+}
+//Different radius each side
+.border-radius(@topleft; @topright; @bottomleft; @bottomright) {
+  border-top-left-radius: @topleft;
+  border-top-right-radius: @topright;
+  border-bottom-right-radius: @bottomright;
+  border-bottom-left-radius: @bottomleft;
+}

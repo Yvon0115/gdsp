@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.integration.framework.reportentry.dao.WidgetReportDao">
+    <sql id="ReportColumn" >
+    id,resource_id,report_name,parent_path,report_path,leaf,cube_flag,data_source,param_type,
+    param_template_path,comments,createBy,createTime,lastModifyBy,lastModifyTime,version,report_type
+    </sql>
+	<insert id="insert">
+		INSERT INTO ac_report_node(<include refid="ReportColumn" /> )
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+	       (
+	       #{item.id},#{item.resource_id},#{item.report_name},#{item.parent_path},
+	       #{item.report_path},#{item.leaf},#{item.cube_flag}, 
+	       #{item.data_source},#{item.param_type},#{item.param_template_path},
+	       #{item.comments},#{item.createBy},#{item.createTime:BIGINT}, 
+	       #{item.lastModifyBy},#{item.lastModifyTime:BIGINT}, #{item.version}, 
+	       #{item.report_type}
+	       ) 
+	    </foreach>
+	</insert>
+</mapper>

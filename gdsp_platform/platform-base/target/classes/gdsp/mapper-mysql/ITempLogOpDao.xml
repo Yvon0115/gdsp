@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.log.dao.ITempLogOpDao">
+	
+	<insert id="insertBatchOpVo">
+  	insert into tmp_cp_log_op (id,table_name,table_desc,createby,createtime,service_id,data_id,type )
+    VALUES 
+    	<foreach collection="opList" item="item" index="index" separator="," >
+	    	(#{item.id},
+	    	#{item.tableName},
+	    	#{item.tableDesc},
+	    	#{item.createBy},
+	    	#{item.createTime:BIGINT},
+	    	#{item.serviceId},
+	    	#{item.dataId},
+	    	#{item.type}
+	    	)
+    	</foreach>
+  </insert>
+</mapper>

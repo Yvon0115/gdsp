@@ -1,0 +1,44 @@
+// Give the tabs something to sit on
+.nav-tabs {
+  border-bottom: none;
+  > li {
+    float: left;
+    // Make the list-items overlay the bottom border
+    margin-bottom: 0px;
+
+    // Actual tabs (as links)
+    > a {
+      margin-right: 2px;
+      border: 1px solid transparent;
+      border-radius:0;
+      background-color: transparent;
+      cursor: pointer;
+      color:#000;
+      font-weight: bold;
+      font-size: 12px;
+      &:hover {
+        color: @light-blue-hover;
+        border: 1px solid transparent;
+        background-color: transparent;
+        border-bottom: 2px solid @light-blue-hover;
+      }
+    }
+
+    // Active state, and its :hover to override normal :hover
+    &.active > a {
+      &,&:focus {
+        color: @light-blue;
+        border: 1px solid transparent;
+        border-bottom: 2px solid @light-blue;
+        background-color: transparent;
+      }
+      &:hover{
+        color: @light-blue-hover;
+        border: 1px solid transparent;
+        background-color: transparent;
+        border-bottom: 2px solid @light-blue-hover;
+      }
+    }
+  }
+
+}

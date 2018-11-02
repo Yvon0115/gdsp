@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logSetting>
+    <table name="rms_user" memo="用户表操作">
+        <column memo="账号">account</column>
+        <column memo="用户名">username</column>
+        <column memo="用户类型">usertype</column>
+        <column memo="是否只有管理权限">onlyadmin</column>
+        <column memo="用户密码">user_password</column>
+        <column memo="移动电话">tel</column>
+        <column memo="邮箱">email</column>
+        <column memo="性别">sex</column>
+        <column memo="机构码">pk_org</column>
+        <column memo="是否锁定">islocked</column>
+        <column memo="启动时间">abletime</column>
+        <column memo="停用时间">disabletime</column>
+        <column memo="描述">memo</column>
+        <column memo="来源">origin</column>
+        <column memo="密码修改时间">update_pwd_time</column>
+    </table>
+    <table name="rms_role" memo="角色表操作">
+        <column memo="角色名">rolename</column>
+        <column memo="机构码">pk_org</column>
+        <column memo="说明">memo</column>
+        <column memo="时效角色标识">aginglimit</column>
+    </table>
+	<table name="rms_user_role" memo="用户委派角色表操作">
+        <column memo="角色id">pk_role</column>
+        <column memo="用户id">pk_user</column>
+        <column memo="时效截止日期">aging_enddate</column>
+    </table>
+    <table name="rms_orgs" memo="机构表操作">
+        <column memo="机构编码">orgcode</column>
+        <column memo="机构名">orgname</column>
+        <column memo="上级机构编码">pk_fatherorg</column>
+        <column memo="内部码">innercode</column>
+        <column memo="描述">memo</column>
+        <column memo="简称">shortname</column>
+    </table>
+    <table name="rms_power_org" memo="机构委派角色表操作">
+        <column memo="角色id">pk_role</column>
+        <column memo="机构id">resource_id</column>
+    </table>
+    <table name="rms_power_menu" memo="菜单委派角色表操作">
+        <column memo="角色id">pk_role</column>
+        <column memo="功能节点id">resource_id</column>
+    </table>
+    <table name="rms_power_page" memo="页面委派角色表操作">
+        <column memo="角色id">pk_role</column>
+        <column memo="功能节点id">resource_id</column>
+        <column memo="对象类型">objtype</column>
+    </table>
+    <table name="cp_datadic" memo="维度数据字典管理表操作">
+        <column memo="数据字典名称">dic_name</column>
+        <column memo="数据字典编码">dic_code</column>
+        <column memo="数据字典描述">dic_desc</column>
+    </table>
+    <table name="cp_datadicval" memo="维度值数据字典管理表操作">
+        <column memo="维值名称">dimvl_name</column>
+        <column memo="维值编码">dimvl_code</column>
+        <column memo="维值描述">dimvl_desc</column>
+        <column memo="上级维值id">pk_fatherid</column>
+        <column memo="数据字典id">pk_dicid</column>
+    </table>
+    <table name="cp_power_dic" memo="权限控制维度表">
+        <column memo="数据源id">pk_dataSource</column>
+        <column memo="数据字典id">pk_dataDicId</column>
+    </table>
+    <table name="cp_role_datadic" memo="数据授权表操作">
+        <column memo="角色id">pk_role</column>
+        <column memo="数据字典id">pk_dic</column>
+        <column memo="维值id">pk_dicval</column>
+    </table>
+</logSetting>

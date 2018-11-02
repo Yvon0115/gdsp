@@ -1,0 +1,66 @@
+/*
+ * Skin: Black
+ * -----------
+ */
+@import "../../bootstrap/mixins.less";
+@import "../../bootstrap/variables.less";
+@import "../variables.less";
+@import "../mixins.less";
+
+/* skin-black navbar */
+@skin-dark-bg: rgb(33, 42, 63);
+@skin-dark-shadow: #222d32;
+.skin-black {
+  //Navbar & Logo 
+  .main-header {
+    .box-shadow(0px 1px 1px rgba(0, 0, 0, 0.1));
+    .navbar-toggle {
+      color: #fff;
+    }
+    .navbar-brand {
+      color: #fff;
+      border-right: 1px solid @skin-dark-bg;
+    }
+    > .navbar {
+      .navbar-variant(@skin-dark-bg);
+      > .sidebar-toggle {
+        color: #fff;
+        border-right: 1px solid @skin-dark-bg;
+      }
+      .navbar-nav {
+        > li > a {
+          border-right: 1px solid @skin-dark-bg;
+        }
+      }
+      .navbar-custom-menu .navbar-nav,
+      .navbar-right {
+        > li {
+          > a {
+            border-left: 1px solid @skin-dark-bg;
+            border-right-width: 0;
+          }
+        }
+      }
+    }
+    > .logo {
+      .logo-variant(@skin-dark-bg; #fff);
+      border-right: 1px solid @skin-dark-bg;
+      @media (max-width: @screen-header-collapse) {
+        .logo-variant(@skin-dark-bg; #fff);
+        border-right: none;
+      }
+    }
+
+    li.user-header {
+      background-color: @skin-dark-bg;
+    }
+  }
+
+  //Content Header
+  .content-header {
+    background: #e0e0ff;
+    box-shadow: none;
+  }
+  //Create the sidebar skin
+  .skin-dark-sidebar(#fff);
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.IPageWidgetDao">
+	<resultMap type="PageWidgetVO" id="fullPageWidget">
+		<id property="id" column="p_id" />
+		<result property="column_id" column="p_column_id" />
+		<result property="widget_type" column="p_widget_type" />
+		<result property="widget_style" column="p_widget_style" />
+		<result property="widget_id" column="p_widget_id" />
+		<result property="page_id" column="p_page_id" />
+		<result property="title" column="p_title" />
+		<result property="width" column="p_width" />
+		<result property="height" column="p_height" />
+		<result property="auto_height" column="p_auto_height" />
+		<result property="title_show" column="p_title_show" />
+		<result property="actions" column="p_actions" />
+		<result property="sortnum" column="p_sortnum" />
+		<association property="meta"  javaType="WidgetMetaVO"  >
+			<id property="id" column="m_id" />
+			<result property="name" column="m_name" />
+			<result property="dirId" column="m_dirid" />
+			<result property="dirId" column="m_memo" />
+			<result property="style" column="m_style" />
+			<result property="type" column="m_type" />
+			<result property="preference" column="m_preference" />
+			<result property="loadUrl" column="m_loadurl" />
+		</association>
+	</resultMap>
+	<insert id="insert" parameterType="PageWidgetVO">
+		INSERT INTO ac_page_widget(id, column_id, widget_type, widget_style, widget_id, page_id, title, width, height, auto_height,title_show,
+		actions,sortnum, createBy, createTime, lastModifyBy, lastModifyTime, version)
+		VALUES(#{id},#{column_id}, #{widget_type},#{widget_style},#{widget_id}, #{page_id}, #{title}, #{width}, #{height}, #{auto_height},#{title_show},
+		#{actions},#{sortnum},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},1)
+	</insert>
+
+	<update id="update" parameterType="PageWidgetVO">
+		UPDATE ac_page_widget
+		SET column_id=#{column_id}, widget_type=#{widget_type}, widget_style=#{widget_style}, widget_id=#{widget_id}, page_id=#{page_id},
+		title=#{title}, width=#{width}, height=#{height}, auto_height=#{auto_height},title_show=#{title_show},actions=#{actions},sortnum=#{sortnum}, createBy=#{createBy},
+		createTime=#{createTime:BIGINT}, lastModifyBy=#{lastModifyBy}, lastModifyTime=#{lastModifyTime:BIGINT}, version=#{version}
+		WHERE  id = #{id}
+	</update>
+
+	<update id="updateDefColumn" parameterType="java.lang.String">
+		UPDATE ac_page_widget
+		SET column_id= #{column_id}
+		WHERE  page_id = #{page_id}
+	</update>
+
+	<delete id="delete">
+		delete from ac_page_widget
+		where id in
+		<foreach collection="array" index="index" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteWidgetByPageId">
+		delete from ac_page_widget 
+		where page_id in
+		<foreach collection="array" index="index" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="load" resultType="PageWidgetVO">
+		select * from ac_page_widget where id=#{id}
+	</select>
+
+	<select id="findWidgetByPageId" resultType="PageWidgetVO">
+		select distinct c.* from 
+		(select a .* from ac_page_widget a inner join ac_layout_column b on a.column_id = b.column_id 
+		where page_id = #{pageid} order by b.sortnum, a.sortnum) c ORDER BY c.sortnum
+	</select>
+	<select id="findFullWidgetByPageId" resultMap="fullPageWidget">
+		select p.id as p_id,p.column_id as p_column_id,p.widget_type as p_widget_type,p.widget_style as p_widget_style,p.widget_id as p_widget_id
+		,p.page_id as p_page_id,p.title as p_title,p.width as p_width,p.height as p_height,p.auto_height as p_auto_height,P.title_show AS p_title_show,p.actions as p_actions,p.sortnum as p_sortnum
+		,m.id as m_id,m.name as m_name,m.dirid as m_dirid,m.memo as m_memo,m.type as m_type,m.style as m_style,m.preference as m_preference,m.loadurl as m_loadurl
+		from ac_page_widget p inner join ac_layout_column l on p.column_id = l.column_id inner join ac_widget_meta m on p.widget_id=m.id
+		where page_id = #{pageId}
+		order by l.sortnum,p.sortnum
+	</select>
+	
+	<select id="findWidgetByWidgetId" resultType="PageWidgetVO">
+		select * from ac_page_widget where widget_id = #{widgetId} order by sortnum
+	</select>
+  <select id="findWidgetIdByPageId" parameterType="java.lang.String" resultType="java.lang.String" >
+   select widget_id from ac_page_widget where id=#{id}
+  </select>
+</mapper>

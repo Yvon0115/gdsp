@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datadic.dao.IDataDicValueDao">
+	<select id="queryDataDicValTree" resultType="DataDicValueVO">
+		select id,dimvl_name,dimvl_code,dimvl_desc,pk_fatherId,pk_dicId from cp_datadicval 
+		where pk_dicId=#{pk_dicId}
+	</select>
+	<insert id="addDataDicValue">
+		insert into cp_datadicval(id,dimvl_name,dimvl_code,dimvl_desc,pk_fatherId,pk_dicId,createTime,createBy,version)
+		values (#{id,jdbcType=CHAR},#{dimvl_name,jdbcType=VARCHAR},#{dimvl_code,jdbcType=VARCHAR},#{dimvl_desc,jdbcType=VARCHAR},#{pk_fatherId,jdbcType=VARCHAR},#{pk_dicId,jdbcType=VARCHAR},#{createTime,jdbcType=BIGINT},#{createBy,jdbcType=VARCHAR},#{version})
+	</insert>
+	<delete id="deleteDataDicVal">
+		delete from cp_datadicval  where id in
+		 <foreach collection="array" item="id" index="index" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<select id="load" resultType="DataDicValueVO" >
+		select id,dimvl_name,dimvl_code,dimvl_desc,pk_fatherId,pk_dicId from cp_datadicval where id=#{id}
+	</select>
+	<select id="checkDataDicValCode" resultType="int">
+		select count(1) from cp_datadicval  
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="dimvl_code!= null">dimvl_code=#{dimvl_code}</if>
+			<if test="dimvl_name!= null">or dimvl_name=#{dimvl_name}</if>
+			<if test="pk_dicId!= null and pk_dicId!= ''">and pk_dicId=#{pk_dicId}</if>
+			<if test="id!= null and id!=''">and id!=#{id}</if>
+		</trim>
+	</select>
+	<update id="updateDataDicValue">
+		update cp_datadicval  
+	     set dimvl_name=#{dimvl_name:VARCHAR},dimvl_code=#{dimvl_code:VARCHAR},dimvl_desc=#{dimvl_desc:VARCHAR}
+	     ,pk_fatherId=#{pk_fatherId},lastModifyTime=#{lastModifyTime:BIGINT},lastModifyBy=#{lastModifyBy:VARCHAR}
+	     ,version=#{version} where id=#{id} 
+	</update>
+	<select id="queryChildDataDicValue" resultType="DataDicValueVO">
+		select id from cp_datadicval where pk_fatherId in
+		<foreach collection="array" item="pk_fatherId" index="index" separator="," open="(" close=")">
+			#{pk_fatherId}
+		</foreach>
+	</select>
+	<select id="queryParent" resultType="DataDicValueVO" >
+		select id,dimvl_code,dimvl_name from cp_datadicval where id in
+		<foreach collection="list" item="id" index="index" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</select>
+      <select id="findDataDicInfo" resultType="RoleAuthorityVO">
+        select dic.dic_code,dic.dic_name,st.dimvl_name,st.dimvl_code from cp_datadic dic,cp_datadicval st
+        where dic.id=st.pk_dicId and st.id in
+         <foreach collection='list' index='index' item='item'
+            open='(' separator=',' close=')'> #{item}
+        </foreach>
+    </select>
+</mapper>

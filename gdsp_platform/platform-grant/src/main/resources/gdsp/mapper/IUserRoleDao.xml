@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.auth.dao.IUserRoleDao">
+
+
+	<!-- TODO 无调用者  待确认后删除 -->
+	<!-- 根据用户id查询用户的角色列表  -->
+	<!--  
+	<select id="queryUserRoleByCond" resultMap="userRoleListMap">
+		select ur.id,ur.pk_role,ur.pk_user,r.rolename,r.pk_org,r.memo,
+		u.account,u.username,u.mobile,u.email,u.sex,u.memo as umemo,o.orgname as uorgname ,o1.orgname as rorgname
+		from rms_user_role ur inner join rms_role r on ur.pk_role = r.id
+		inner join rms_user u on ur.pk_user = u.id
+		left join rms_orgs o on o.id=u.pk_org 
+		left join rms_orgs o1 on o1.id=r.pk_org
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	
+		 order by rorgname, rolename
+	</select>
+	-->
+	
+	<resultMap type="UserRoleVO" id="userRoleListMap">
+		<id property="id" column="id" />
+		<result property="pk_role" column="pk_role" />
+		<result property="pk_user" column="pk_user" />
+		<result property="agingEndDate" column="aging_enddate" />
+		<result property="isPrompted" column="isprompted" />
+		<association property="roleVO" javaType="RoleVO">
+			<id property="id" column="pk_role"  />
+			<result property="rolename" column="rolename" />
+			<result property="pk_org" column="pk_org" />
+			<result property="memo" column="memo" />
+			<result column="rorgname" property="orgname"/>
+		</association>	
+		<association property="userVO" javaType="UserVO">
+			<id column="PK_USER" property="id"   />
+			<result column="ACCOUNT" property="account" jdbcType="VARCHAR" />
+			<result column="USERNAME" property="username"/>
+		    <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+		    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		    <result column="SEX" property="sex" jdbcType="TINYINT" />
+		    <result column="UMEMO" property="memo"  />
+		    <result column="uorgname" property="orgname"/>
+		</association>	
+	</resultMap>
+	
+	<!-- TODO 无调用者  待确认后删除 -->
+	<!--  
+	<select id="queryUsersByRoleIDAndUserID" resultType="UserVO">
+		SELECT
+			u.*, o.orgname
+		FROM
+			rms_user u
+		LEFT JOIN rms_orgs o ON u.pk_org = o.id
+		WHERE
+				u.usertype = 1
+				AND u.id NOT IN (
+					SELECT
+						pk_user
+					FROM
+						rms_user_role
+					WHERE
+						pk_role = '${roleID}'
+				)
+				<if test="userType != 0">
+					AND u.pk_org IN (
+						SELECT
+							resource_id
+						FROM
+							rms_power_org
+						WHERE
+							pk_role = '${loginUserID}'
+						OR pk_role IN (
+							SELECT
+								pk_role
+							FROM
+								rms_user_role
+							WHERE
+								pk_user = '${loginUserID}'
+						)
+					)
+					AND <![CDATA[u.id <> '${loginUserID}']]> 
+				</if>
+		ORDER BY
+			o.orgname
+	</select>
+	-->
+	
+	<!-- TODO 无调用  待删除 -->
+	<!--
+	<select id="queryUsersByRoleIDAndUserIDAndUserName" resultType="UserVO">
+		SELECT
+			u.*, o.orgname
+		FROM
+			rms_user u
+		LEFT JOIN rms_orgs o ON u.pk_org = o.id
+		WHERE
+				u.usertype = 1
+				AND u.id NOT IN (
+					SELECT
+						pk_user
+					FROM
+						rms_user_role
+					WHERE
+						pk_role = '${roleID}'
+				)
+				<if test="userType != 0">
+					AND u.pk_org IN (
+						SELECT
+							resource_id
+						FROM
+							rms_power_org
+						WHERE
+							pk_role = '${loginUserID}'
+						OR pk_role IN (
+							SELECT
+								pk_role
+							FROM
+								rms_user_role
+							WHERE
+								pk_user = '${loginUserID}'
+						)
+					)
+					AND <![CDATA[u.id <> '${loginUserID}']]> 
+				</if>
+				<if test="username != null">
+					AND u.username like '${username}%' or u.account like '${username}%'
+				</if>
+		ORDER BY
+			o.orgname
+	</select>
+	-->
+	
+	
+	<!-- 更新角色用户关联 - 权限时效  wqh 2016/12/15 -->
+	<update id="update" parameterType="UserRoleVO">
+		update rms_user_role
+		set aging_enddate=#{agingEndDate:BIGINT},
+			isprompted = #{isPrompted}
+		where pk_role=#{pk_role}
+			and pk_user=#{pk_user}
+	</update>
+	
+	<!-- 查询关联表所有记录 -->
+	<!--
+	<select id="queryAllRelations" resultMap="userRoleListMap">
+		select 
+			ur.id,
+			ur.pk_role,
+			ur.pk_user,
+			ur.aging_enddate,
+			ur.isprompted,
+			r.rolename,
+			r.pk_org,
+			r.memo,
+			u.account,
+			u.username,
+			u.mobile,
+			u.email,
+			u.sex,
+			u.memo as umemo,
+			o.orgname as uorgname ,
+			o1.orgname as rorgname
+		from rms_user_role ur 
+			inner join rms_role r on ur.pk_role = r.id
+			inner join rms_user u on ur.pk_user = u.id
+			left join rms_orgs o on o.id=u.pk_org 
+			left join rms_orgs o1 on o1.id=r.pk_org
+	</select>
+	-->
+	<!-- 查询用户角色关联表所有记录 -->
+	<select id="findAllRelations" resultType="UserRoleVO">
+		SELECT
+			id,
+			pk_role,
+			pk_user,
+			aging_enddate as agingEndDate,
+			isprompted,
+			createby,
+			createtime
+		FROM rms_user_role
+	</select>
+	
+	<!-- 根据id删除关联表记录  wqh 2016/12/15 -->
+	<delete id="deleteRelationsByIds" >
+		DELETE 
+		FROM rms_user_role
+		WHERE id in 
+		<foreach collection='ids' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+	</delete>
+	<!-- 更新权限时效提醒标识 -->
+	<update id="updateIsPromptedByIds">
+		UPDATE 
+			rms_user_role
+		SET
+			isprompted = 'Y'
+		WHERE
+			id in
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>	
+	</update>
+	
+	<!-- 根据用户id查询关联关系 -->
+    <select id="queryUserRoleRelationsByUserId" resultType="UserRoleVO">
+        SELECT
+        	id,
+        	PK_USER,
+        	PK_ROLE,
+        	AGING_ENDDATE as AGINGENDDATE,
+        	CREATEBY,
+        	CREATETIME 
+        FROM rms_user_role
+        WHERE PK_USER=#{userID}
+    </select>
+    <select id="load" resultType="UserRoleVO">
+    	select 
+    	id,
+		pk_role,
+		pk_user,
+		aging_enddate as agingEndDate,
+		isprompted,
+		createby,
+		createtime
+        from rms_user_role 
+        where  id=#{id}
+    </select>
+    
+    <!-- 根据条件查询关联关系 -->
+    <select id="queryUserRoleRelationsByCondition" resultType="UserRoleVO">
+    	SELECT
+			id,
+			pk_role,
+			pk_user,
+			aging_enddate as agingEndDate,
+			isprompted,
+			createby,
+			createtime
+		FROM rms_user_role
+    	<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null"> ${condition._CONDITION_} </if>
+		</trim>	
+    </select>
+    
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.demo.dao.IDemoDao">
+	<resultMap id="BaseResultMap" type="com.gdsp.platform.grant.demo.model.DemoVO">
+		<id column="id" jdbcType="CHAR" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="age" jdbcType="VARCHAR" property="age" />
+		<result column="tel" jdbcType="VARCHAR" property="tel" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="createBy" jdbcType="VARCHAR" property="createBy" />
+		<result column="createTime" jdbcType="BIGINT" property="createTime" />
+		<result column="lastModifyTime" jdbcType="BIGINT" property="lastModifyTime" />
+		<result column="lastModifyBy" jdbcType="VARCHAR" property="lastModifyBy" />
+		<result column="version" jdbcType="INTEGER" property="version" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, age, tel, email, createBy, createTime,
+		lastModifyTime,
+		lastModifyBy, version
+	</sql>
+	<select id="findPageByCondition" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from rms_demo
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond!= null">${cond._CONDITION_}</if>
+		</trim>
+	</select>
+	<delete id="delete" parameterType="java.lang.String">
+		delete from
+		rms_demo
+		where id in
+		<foreach collection='array' index='index' item='item' open='('
+			separator=',' close=')'>#{item}
+		</foreach>
+	</delete>
+	<insert id="insert" parameterType="com.gdsp.platform.grant.demo.model.DemoVO">
+		insert into rms_demo (id,
+		name, age, tel,
+		email, createBy, createTime,
+		lastModifyTime, lastModifyBy,
+		version
+		)
+		values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR},
+		#{age,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+		#{createTime,jdbcType=BIGINT},
+		#{lastModifyTime,jdbcType=BIGINT},
+		#{lastModifyBy,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}
+		)
+	</insert>
+	<update id="update" parameterType="com.gdsp.platform.grant.demo.model.DemoVO">
+		update rms_demo
+		set name =
+		#{name,jdbcType=VARCHAR},
+		age = #{age,jdbcType=VARCHAR},
+		tel
+		=
+		#{tel,jdbcType=VARCHAR},
+		email = #{email,jdbcType=VARCHAR},
+		createBy =
+		#{createBy,jdbcType=VARCHAR},
+		createTime = #{createTime,jdbcType=BIGINT},
+		lastModifyTime = #{lastModifyTime,jdbcType=BIGINT},
+		lastModifyBy =
+		#{lastModifyBy,jdbcType=VARCHAR},
+		version = #{version,jdbcType=INTEGER}
+		where id = #{id,jdbcType=CHAR}
+	</update>
+	<select id="existSameDemo" resultType="int">
+		select count(1) from rms_demo where name = #{name}
+		<if test="id != null and id !=''">
+			and id&lt;&gt;#{id}
+		</if>
+	</select>
+	<select id="load" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from rms_demo
+		where id=#{id}
+	</select>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IDelegateDao">
+	<sql id="flow_delegateColumns">
+		id,starttime,endtime,userid,acceptid,createby,createtime,lastmodifyby,lastmodifytime,version
+	</sql>
+	
+	<!-- 添加委托记录 -->
+	<insert id="insertDelegate" parameterType="delegateVO">
+		insert 
+		into flow_delegate
+		(<include refid="flow_delegateColumns"/>)
+		values (#{id},#{startTime:BIGINT},#{endTime:BIGINT},#{userId},#{acceptId},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+	</insert>
+	
+	<!-- 更新委托记录 -->
+	<update id="updateDelegate">
+		update flow_delegate
+		set starttime=#{startTime:BIGINT},endtime=#{endTime:BIGINT},userid=#{userId},acceptid=#{acceptId},lastmodifyby=#{lastModifyBy},lastmodifytime=#{lastModifyTime:BIGINT},version=#{version}
+		where id = #{id}
+	</update>
+	
+	<!-- 删除权限记录 -->
+	<delete id="deleteDelegate">
+		delete 
+		from flow_delegate
+		where id in 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 根据主键查询 -->
+	<select id="findDelegateById" resultType="delegateVO">
+		select <include refid="flow_delegateColumns"/>
+		from flow_delegate
+		where id = #{id}
+	</select>
+	
+	<!-- 权限拆分，通用查询不可直接在SQL中查询用户表修改为掉用公共接口查询用户 
+		   修改人：于成龙 
+		   修改时间：2017年11月10日 -->
+	<!-- 查询分页结果 -->
+	<select id="queryDelegateByCondition" resultType="delegateVO">
+		select d.*
+		from flow_delegate d
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+	<!-- 查询列表 -->
+	<select id="queryDelegateListByCondition" resultType="delegateVO">
+		select <include refid="flow_delegateColumns"/>
+		from flow_delegate
+		<trim prefix="where" prefixOverrides="and |or">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+	<!-- 查询相同代理人的一条信息 -->
+	<select id="queryDelegateUnderDistinct" resultType="delegateVO">
+		select distinct acceptId, createTime, startTime, endTime
+		from flow_delegate
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+	<!-- 根据主键查询 -->
+	<select id="findDelegateByAcceptIdAltCreateTime" resultType="delegateVO">
+		select <include refid="flow_delegateColumns"/>
+		from flow_delegate
+		where acceptId = #{acceptId} and createTime = #{createTime}
+	</select>
+	
+	<!-- 根据委托人，部署id以及在有效时间之内的代理人id -->
+	<select id="findAcceptId" resultType="delegateVO">
+		select d.* from
+		flow_delegate d left join flow_delegate_detail dd on d.ID = dd.KID
+		where d.USERID = #{userId} and dd.DEPLOYMENTID  = #{deploymentId}
+	</select>
+	
+	<!-- 根据委托主键查找该委托下的部署id -->
+	<select id="queryDeploymentIdByDelegateId" resultType="java.lang.String">
+		SELECT dd.DEPLOYMENTID
+		FROM flow_delegate_detail dd
+		WHERE dd.KID = #{delegateId}
+	</select>
+	
+</mapper>

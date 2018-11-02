@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gdsp.platform.grant.auth.dao.IPowerMgtDao" >
+	<resultMap id="BaseResultMap" type="PowerMgtVO" >
+	    <id column="ID" property="id" jdbcType="CHAR" />
+	    <result column="PK_ROLE" property="pk_role" jdbcType="VARCHAR" />
+	    <result column="RESOURCE_ID" property="resource_id" jdbcType="VARCHAR" />
+	    <result column="CREATEBY" property="createby" jdbcType="VARCHAR" />
+	    <result column="CREATETIME" property="createtime" jdbcType="BIGINT" />
+	</resultMap>
+  
+  	<sql id="Base_Column_List" >
+    	ID, PK_ROLE, RESOURCE_ID, CREATEBY, CREATETIME
+  	</sql>
+  	
+  	<select id="queryMenuRoleListByRoleId" resultMap="BaseResultMap">
+  		select <include refid="Base_Column_List" />
+  		from rms_power_menu m
+  		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+  	</select>
+  	
+  	<select id="queryMenuIdsByRoleId" resultType="String">
+  		select m.RESOURCE_ID
+  		from rms_power_menu m
+  		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+  	</select>
+  
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from rms_power_menu
+    	where ID = #{id,jdbcType=CHAR}
+  	</select>
+  	
+  	<delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    	delete from rms_power_menu
+   		where ID = #{id,jdbcType=CHAR}
+  	</delete>
+  	
+  	<insert id="insert" parameterType="PowerMgtVO" >
+    	insert into rms_power_menu (ID, PK_ROLE, RESOURCE_ID,CREATEBY, CREATETIME)
+    	values (#{id,jdbcType=CHAR}, #{pk_role,jdbcType=VARCHAR}, #{resource_id,jdbcType=VARCHAR}, 
+      		#{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT})
+  	</insert>
+  	
+  	<insert id="insertSelective" parameterType="PowerMgtVO" >
+    	insert into rms_power_menu
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        ID,
+	      </if>
+	      <if test="pkRole != null" >
+	        PK_ROLE,
+	      </if>
+	      <if test="resourceId != null" >
+	        RESOURCE_ID,
+	      </if>
+	      <if test="createby != null" >
+	        CREATEBY,
+	      </if>
+	      <if test="createtime != null" >
+	        CREATETIME,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        #{id,jdbcType=CHAR},
+	      </if>
+	      <if test="pkRole != null" >
+	        #{pk_role,jdbcType=VARCHAR},
+	      </if>
+	      <if test="resourceId != null" >
+	        #{resource_id,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createby != null" >
+	        #{createby,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createtime != null" >
+	        #{createtime,jdbcType=BIGINT},
+	      </if>
+	    </trim>
+  	</insert>
+  	<update id="updateByPrimaryKeySelective" parameterType="PowerMgtVO" >
+    	update rms_power_menu
+	    <set >
+	      <if test="pkRole != null" >
+	        PK_ROLE = #{pk_role,jdbcType=VARCHAR},
+	      </if>
+	      <if test="resourceId != null" >
+	        RESOURCE_ID = #{resource_id,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createby != null" >
+	        CREATEBY = #{createby,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createtime != null" >
+	        CREATETIME = #{createtime,jdbcType=BIGINT},
+	      </if>
+	    </set>
+    	where ID = #{id,jdbcType=CHAR}
+  	</update>
+  	<update id="updateByPrimaryKey" parameterType="PowerMgtVO" >
+    	update rms_power_menu
+    	set PK_ROLE = #{pk_role,jdbcType=VARCHAR},
+      		RESOURCE_ID = #{resource_id,jdbcType=VARCHAR},
+      		CREATEBY = #{createby,jdbcType=VARCHAR},
+      		CREATETIME = #{createtime,jdbcType=BIGINT}
+    	where ID = #{id,jdbcType=CHAR}
+  	</update>
+  	<resultMap type="PagePowerVO" id="pageUserMap">
+		<id property="id" column="id" />
+		<result property="pk_role" column="pk_user" />
+		<association property="userVO" javaType="UserVO">
+			<id column="pk_user" property="id"   />
+			<result column="account" property="account" jdbcType="VARCHAR" />
+			<result column="username" property="username"/>
+		    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		    <result column="email" property="email" jdbcType="VARCHAR" />
+		    <result column="sex" property="sex" jdbcType="TINYINT" />
+		    <result column="memo" property="memo"  />
+		    <result column="orgname" property="orgname"/>
+		</association>	
+	</resultMap>
+	
+	<!-- 根据条件查询页面用户列表 -->
+	<select id="queryPageUserByAddCond" resultMap="pageUserMap">
+		select p.id,p.pk_role as pk_user from rms_power_page p 
+<!-- 		<trim prefix="where" prefixOverrides="and |or "> -->
+<!-- 			<if test="addCond != null and addCond!=''">(${addCond}) </if>  -->
+<!-- 				<if test="condition!= null">${condition._CONDITION_}</if> -->
+<!-- 		</trim>	 -->
+		where p.resource_id=#{pageID} and objtype='1'
+		<if test="condition!= null"> and ${condition._CONDITION_}</if>
+	</select>
+	<resultMap type="PagePowerVO" id="pageRoleMap">
+		<id property="id" column="id" />
+		<result property="pk_role" column="pk_role" />
+		<association property="roleVO" javaType="RoleVO">
+			<id property="id" column="pk_role"  />
+			<result property="rolename" column="rolename" />
+			<result property="pk_org" column="pk_org" />
+			<result property="memo" column="memo" />
+			<result property="orgname" column="orgname"/>
+		</association>	
+	</resultMap>
+		<!-- 根据条件查询页面角色列表 -->
+	<select id="queryPageRoleByAddCond" resultMap="pageRoleMap">
+		select 
+			p.id,
+			p.pk_role,
+			r.rolename,
+			r.memo,
+			r.pk_org 
+		from rms_power_page p 
+			inner join rms_role r on r.id = p.pk_role
+		<trim prefix="where" prefixOverrides="and |or ">
+<!-- 			<if test="addCond != null and addCond!=''">(${addCond}) </if> -->
+				<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	
+		order by r.rolename
+	</select>
+
+    <select id="queryMenuPageByCond" resultType="MenuRegisterVO">
+        select distinct
+        	ma.id 
+			,ma.funname 
+			,ma.funcode 
+			,ma.dispcode 
+			,ma.parentid 
+			,ma.innercode 
+			,ma.funtype 
+			,ma.ispower 
+			,ma.url 
+			,ma.helpname 
+			,ma.hintinf 
+			,ma.isenable 
+			,ma.memo 
+			,ma.createby 
+			,ma.createtime 
+			,ma.lastmodifytime
+			,ma.lastmodifyby 
+			,ma.version 
+			,ma.menuid 
+			,ma.safelevel 
+			,ma.is_system_menu 
+			,ma.pageid 
+			,ma.isrootmenu 
+			,ma.isreport
+          from st_menuregister ma  left join rms_power_menu mp on mp.resource_id = ma.id
+        <where>
+                (ma.isenable = 'Y' or ma.isenable = 'y') 
+            <if test="addCond != null and addCond!=''">
+                and (${addCond})
+            </if>
+            <if test="condition != null and condition._CONDITION_!=null">
+                and (${condition._CONDITION_})
+            </if>
+        </where>
+        order by ma.funtype,ma.dispcode,ma.innercode
+    </select>
+    
+    <select id="existPowerForMenuByUrl" resultType="java.lang.Integer">
+    	SELECT
+			f.num1 + g.num2 AS num
+		FROM
+			(
+				SELECT
+					COUNT(*) AS num1
+				FROM
+					rms_power_menu a,
+					st_menuregister b
+				WHERE
+					a.pk_role = #{userID}
+				AND b.url = #{menuUrl}
+				AND a.resource_id = b.id 
+                AND (b.isenable = 'Y' or b.isenable = 'y')
+			) f,
+			(
+				SELECT
+					COUNT(*) AS num2
+				FROM
+					rms_power_menu d,
+					st_menuregister e
+				WHERE
+					d.pk_role IN (
+						SELECT
+							c.pk_role
+						FROM
+							rms_user_role c
+						WHERE
+							c.pk_user = #{userID}
+					)
+				AND e.url = #{menuUrl}
+				AND d.resource_id = e.id
+                AND (e.isenable = 'Y' or e.isenable = 'y')
+			) g
+    </select>
+    
+	<select id="isConnectToRole" resultType="PowerMgtVO">
+  		select 
+  			id,
+  			pk_role 
+  		from rms_power_menu  
+  		where  resource_id=#{id}
+	</select>
+  
+  	<!-- 联表sql 待更改（删除） -->
+	<!-- 根据条件查询页面用户列表 -->
+	<!-- <select id="getNumPageUserByAddCond" resultType="Integer">
+		select count(*) 
+		from rms_power_page p 
+			inner join rms_user u on u.id = p.pk_role
+			left join rms_orgs o on o.id=u.pk_org 
+		<trim prefix="where" prefixOverrides="and |or ">
+		<if test="addCond != null and addCond!=''">(${addCond}) </if>
+				<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	
+		order by o.orgname,u.account
+	</select> -->
+  
+  
+  
+  	<!-- 查询用户的默认首页列表 -->
+	<select id="queryUserDefaultPages" resultType="UserDefaultPageVO">
+		SELECT 
+			ID AS id,
+			PK_USER as pk_user,
+			PK_MENU as menu_id,
+			PK_PAGE AS page_id
+		FROM pt_user_defaultpage
+		WHERE PK_USER = #{userID}
+	</select>
+   	
+   <select id="findAllRoleMenuList" resultType="PowerMgtVO">
+		select
+			pk_role,
+			resource_id
+		from rms_power_menu 
+    </select>
+    
+    <select id="findAllRolePageList" resultType="PowerMgtVO">
+		select
+			pk_role,
+			resource_id
+		from rms_power_page 
+    </select>
+    
+	<!-- <insert id="insertBatch">
+		insert into rms_power_menu (id,pk_role,resource_id,createby,createtime )
+    	VALUES 
+	    <foreach collection="list" item="item" index="index" separator="," >
+	    	(#{item.id},
+	    	#{item.pk_role},
+	    	#{item.resource_id},
+	    	#{item.createBy},
+	    	#{item.createTime:BIGINT})
+	    </foreach>
+  	</insert> -->
+  
+	<delete id="deleteByRoleIdAndMenuIds">
+  		delete from rms_power_menu
+  		where pk_role = #{roleId} 
+  			and resource_id in
+  			<foreach collection="menuIds" item="item" index="index" separator="," open="(" close=")">
+  				#{item}
+  			</foreach>
+  </delete>
+  <!-- 通过id查询角色菜单关系 -->
+  <select id="loadMenu" resultType="PowerMgtVO">
+    	select 
+    		id
+    		,pk_role
+    		,resource_id
+    		,createby
+    		,createtime 
+        from rms_power_menu
+        where  id=#{id}
+   </select>
+   
+   <!-- 通过id查询角色页面关系 --> 
+   <select id="loadPage" resultType="PagePowerVO">
+    	select 
+    		id
+    		,pk_role
+    		,resource_id
+    		,objtype
+    		,createby
+    		,createtime 
+        from rms_power_page
+        where  id=#{id}
+   </select>
+   
+   <select id="queryPageListByRole" resultType="MenuRegisterVO">
+   		SELECT
+			*
+		FROM
+			(
+				SELECT
+					m.id AS id,
+					m.funname AS funname,
+					m.funcode AS funcode,
+					m.dispcode AS dispcode,
+					m.funtype AS funtype,
+					m.helpname AS helpname,
+					m.hintinf AS hintinf,
+					m.innercode AS innercode,
+					p.PAGEID AS pageid,
+					p.FUNNAME AS pageName,
+					p.url AS url,
+					pp.objtype,
+					p.id AS tabid,
+					'PageRegisterVO' AS tabEntityType
+				FROM
+					st_pageregister p
+				INNER JOIN st_menuregister m ON m.id = p.menuid
+				INNER JOIN rms_power_page pp ON p.id = pp.resource_id
+				WHERE
+					(m.isenable = 'Y' OR m.isenable = 'y')
+				AND m.funtype = 4
+				AND (
+					pp.pk_role in 
+					<if test="list != null and list.size >0">
+						<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+							#{item}
+						</foreach>
+					</if>
+					<if test="list == null or list.size == 0">
+						('')
+					</if>
+					)  order by m.dispcode,pp.objtype,p.dispcode) menuInf
+   </select>
+    
+</mapper>

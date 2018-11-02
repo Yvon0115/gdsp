@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<!-- 属性来源 -->
+<!-- 	<properties resource="datasource.properties" /> -->
+	<!-- 生成内容 -->
+	<context id="id" targetRuntime="com.gdsp.platform.systools.mybatisgenerator.MyIntrospectedTableMybatis3Impl">
+	    <!-- 编码 -->
+		<property name="javaFileEncoding" value="UTF-8" />
+		<!-- 主体内容生成 -->
+		<plugin type="com.gdsp.platform.systools.mybatisgenerator.CustomPlugin" />
+		<!-- 注释控制 -->
+		<commentGenerator type="com.gdsp.platform.systools.mybatisgenerator.MyCommentGenerator">
+			<property name="suppressAllComments" value="false" /><!-- 是否取消注释 -->
+			<property name="suppressDate" value="true" /> <!-- 是否生成注释代时间戳 -->
+		</commentGenerator>
+		<!-- JDBC连接 -->
+		<jdbcConnection connectionURL="jdbc:mysql://localhost:3306/gdsp"
+			driverClass="com.mysql.jdbc.Driver" password="root" userId="root" />
+		<!-- model创建(仅生成文件) -->
+		<javaModelGenerator targetPackage="org.xx.model"
+			targetProject="platform-grant/src/main/java">
+			<property name="rootClass"
+				value="com.gdsp.dev.core.model.entity.AuditableEntity" />
+		</javaModelGenerator>
+		<!-- mapper(仅生成文件) -->
+		<sqlMapGenerator targetPackage="gdsp.mapper"
+			targetProject="platform-grant/src/main/resources" />
+		<!-- dao接口(仅生成文件) -->
+		<javaClientGenerator targetPackage="org.grant.xx.dao"
+			targetProject="platform-grant/src/main/java" type="XMLMAPPER">
+			<!-- <property name="rootInterface" value="???" /> --><!-- 继承的接口 -->
+		</javaClientGenerator>
+		<!-- 表信息配置 -->
+		<table schema="root" tableName="rms_r"
+			domainObjectName="xx" 
+			enableCountByExample="false"
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableUpdateByExample="false">
+			<!-- <columnOverride column="???" property="???" /> -->
+		</table>
+	</context>
+</generatorConfiguration>

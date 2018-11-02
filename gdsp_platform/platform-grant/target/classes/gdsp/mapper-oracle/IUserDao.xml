@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.user.dao.IUserDao">
+	<sql id="base_colunm_lists">
+		u.id
+		,u.account
+		,u.username
+		,u.usertype
+		,u.onlyadmin
+		,u.user_password
+		,u.mobile
+		,u.tel
+		,u.email
+		,u.sex
+		,u.pk_org
+		,u.isreset
+		,u.islocked
+		,u.abletime
+		,u.disabletime
+		,u.memo
+		,u.createby
+		,u.createtime
+		,u.lastmodifytime
+		,u.lastmodifyby
+		,u.version
+		,u.origin
+		,u.update_pwd_time
+		,u.isdisabled
+	</sql>
+	<select id="queryUserByOrgId" resultType="userVO">
+		SELECT
+			<include refid="base_colunm_lists"></include>
+		FROM
+			rms_user u
+		WHERE
+			<!-- 去除无用的条件  wqh 2017/02/16 
+				u.usertype =${userVO.usertype}  -->
+			<![CDATA[
+				u.id <> '${loginUserId}'
+			]]>
+		<if test="orgIdList != null and orgIdList.size>0">
+			AND u.pk_org IN
+				<foreach collection='orgIdList' index='index' item='item' 
+			open='(' separator=',' close=')'>
+			#{item}
+			</foreach>
+		</if>
+		<if test="userVO.username != null and userVO.username != '' and userVO.username != '\'\''">
+			AND u.username like q''%${userVO.username}%''
+		</if>
+		<if test="userVO.username != null and userVO.username != '' and userVO.username == '\'\''">
+			AND u.username like q'%${userVO.username}%'
+		</if>
+		<if test="userVO.account != null and userVO.account != '' and userVO.account != '\'\''">
+			AND u.account like q''%${userVO.account}%''
+		</if>
+		<if test="userVO.account != null and userVO.account != ''  and userVO.account == '\'\''">
+			AND u.account like q'%${userVO.account}%'
+		</if>
+		<if test="userVO.sex != null">
+			AND u.sex =${userVO.sex}
+		</if>
+		ORDER BY
+			account ASC
+	</select>
+	
+	<select id="queryNoAuthUserList" resultType="userVO">
+		SELECT
+				u.ID,
+				u.ACCOUNT,
+				u.USERNAME,
+				u.usertype,
+				u.mobile,
+				u.email,
+				u.MEMO,
+				u.pk_org
+	  		FROM
+				rms_user u
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">
+			${condition._CONDITION_}
+			</if>
+		</trim>	
+		<if test="username != null and username != '' and username != '\'\''">
+		and (u.username like q''%${username}%'' or u.account like q''%${username}%'')
+		</if>
+		<if test="username != null and username == '\'\''">
+		and (u.username like q'%${username}%' or u.account like q'%${username}%')
+		</if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+        <!--这些是极其重要的调整, 它们会修改 MyBatis 在运行时的行为方式。-->
+        <setting name="jdbcTypeForNull" value="VARCHAR"/>
+        <setting name="safeResultHandlerEnabled" value="false"/>
+    </settings>
+</configuration>

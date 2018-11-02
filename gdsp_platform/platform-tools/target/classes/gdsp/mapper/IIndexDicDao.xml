@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.indexanddim.dao.IndexDicDao">
+
+	<select id="queryAllByHandler" resultType="com.gdsp.platform.systools.indexanddim.model.IndexDicVO">
+		select idx_cde as idx_cde ,idx_name as idx_name,dom_forn_indc as dom_forn_indc from NSPUBVIEW.CDE_IDX
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+</mapper>

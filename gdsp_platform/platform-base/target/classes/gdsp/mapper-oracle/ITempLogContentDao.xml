@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.log.dao.ITempLogContentDao">
+	
+	<insert id="insertBatch">
+  	insert all 
+    <foreach collection="opContentList" item="item" index="index" separator=" ">
+    	into tmp_cp_log_content (id,log_id,col_name,col_desc,new_data,old_data) 
+    	values (#{item.id},
+    	#{item.logId},
+    	#{item.colName},
+    	#{item.colDesc},
+    	#{item.newData},
+    	#{item.oldData}
+    	)
+    </foreach>
+    select 1 from dual
+  </insert>
+</mapper>

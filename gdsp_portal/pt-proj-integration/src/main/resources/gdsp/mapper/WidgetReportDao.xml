@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.integration.framework.reportentry.dao.WidgetReportDao">
+    <sql id="Report_Column" >
+    id,resource_id,report_name,parent_path,report_path,leaf,cube_flag,data_source,param_type,
+    param_template_path,comments,createBy,createTime,lastModifyBy,lastModifyTime,version,report_type
+    </sql>
+    <sql id="Report_Column_Datasource" >
+    a.id,a.report_name,a.parent_path,a.report_path,a.leaf,a.cube_flag,a.data_source,a.param_type,
+    a.param_template_path,a.comments,a.createBy,a.createTime,a.lastModifyBy,a.lastModifyTime,a.version,a.report_type,a.resource_id
+    </sql>
+	<select id="load" resultType="ReportVO">
+		select <include refid="Report_Column_Datasource" /> ,p.type as data_source_type
+		 from ac_report_node a
+		 LEFT JOIN pt_datasource p on a.data_source=p.id
+		where a.id=#{id}
+	</select>
+	<delete id="deleteReport">
+		delete from ac_report_node
+		 where id in 
+		 <foreach collection='array' index='index' item='item' 
+		 	open='(' separator=',' close=')'>#{item}</foreach>
+	</delete>
+	<update id="updateReport" parameterType="ReportVO">
+		update ac_report_node set
+		
+		<if test="cube_flag != null" >
+			 cube_flag=#{cube_flag},
+		</if>
+		<if test="param_type != null" >
+			 param_type=#{param_type},
+		</if>
+		<if test="param_template_path" >
+			 param_template_path=#{param_template_path},
+		</if>
+		<if test="comments != null" >
+			 comments=#{comments},
+		</if>
+		<if test="lastModifyBy != null" >
+			 lastModifyBy=#{lastModifyBy},
+		</if>
+		<if test="version != null" >
+			 version=#{version}+1,
+		</if>
+		<if test="report_type != null" >
+			 report_type=#{report_type},
+		</if>
+		<if test="lastModifyBy != null" >
+			 lastModifyTime=#{lastModifyTime,jdbcType=BIGINT}
+		</if>
+		 where id=#{id,jdbcType=CHAR}
+	</update>
+	<select id="queryReportPage" resultType="ReportVO">
+	 	select <include refid="Report_Column_Datasource" />,p.type as data_source_type
+	 	from ac_report_node a
+	 	LEFT JOIN pt_datasource p on a.data_source=p.id
+	 	<if test="path!=null">
+	 		where a.parent_path=#{path}
+	 	</if>
+	
+	 <if test="condition!= null and path!=null"> and ${condition._CONDITION_}</if>
+	  <if test="condition!= null and path==null"> where ${condition._CONDITION_}</if>
+	</select>
+	<select id="queryReportByDataSource" resultType="ReportVO">
+		select <include refid="Report_Column"/>
+		from ac_report_node
+		<trim prefix="where" prefixOverrides="and |or "> 
+		  <if test="condition!= null"> ${condition._CONDITION_}</if>
+		</trim>
+	</select>
+</mapper>

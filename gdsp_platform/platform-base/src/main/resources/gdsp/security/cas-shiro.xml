@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<description>基于cas的Shiro安全配置</description>
+
+    <!-- 基于cas client的Realm实现 -->
+    <bean id="casRealm" class="com.gdsp.dev.web.security.shiro.CasClientRealm">
+    	<!-- 授权服务 -->
+	    <property name="cachingEnabled" value="true"/>
+	    <property name="authenticationCachingEnabled" value="true"/>
+	    <property name="authenticationCacheName" value="authenticationCache"/>
+	    <property name="authorizationCachingEnabled" value="true"/>
+	    <property name="authorizationCacheName" value="authorizationCache"/>
+	    <!-- cas server地址 -->
+	    <property name="casServerUrlPrefix" value="${cas.server}"/>
+	    <!-- 客户端首页url，必须和loginUrl中的service参数保持一致-->
+	    <property name="casService" value="${cas.client}/navigation.d"/>
+    </bean>
+    
+    <!-- realm列表 -->
+    <util:list id="realmList">
+        <ref bean="casRealm"/>
+    </util:list>
+    
+    <!-- 配置cas过滤器 -->
+    <bean id="casFilter" class="org.apache.shiro.cas.CasFilter">
+	    <property name="failureUrl" value="/unauthorized.d"/>
+	    <property name="successUrl" value="/navigation.d"/>
+	</bean>
+    
+    <!-- Shiro的Web过滤器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+	    <property name="securityManager" ref="securityManager"/>
+	    <property name="loginUrl" value="${cas.server}?service=${cas.client}/navigation.d"/>
+	    <property name="filters">
+	        <util:map>
+	            <entry key="cas" value-ref="casFilter"/>
+	            <entry key="url" value-ref="urlMatchingFilter"/>
+	        </util:map>
+	    </property>
+	    <property name="filterChainDefinitions">
+	        <value>
+	        	/= anon
+	            /navigation.d = cas
+	            /** = authc,url
+	        </value>
+	    </property>
+	</bean>
+</beans>

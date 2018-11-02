@@ -1,0 +1,25 @@
+.smartbi-fa-comments{ 
+	display:block;
+	height:15px;
+	width:15px;
+	background:url(../images/smartbi-button-ima.png) no-repeat center;
+	background-position: -26px -102px;
+	float:right;
+	}
+.smartbi-fa-history{ 
+	display:block;
+	height:15px;
+	width:15px;
+	background:url(../images/smartbi-button-ima.png) no-repeat center;
+	background-position: -26px -52px;
+	float:right;
+	}
+.smartbi-fa-serch{ 
+	display:block;
+	height:15px;
+	width:15px;
+	background:url(../images/smartbi-button-ima.png) no-repeat center;
+	background-position: -26px -152px;
+	float:right;
+	}
+	

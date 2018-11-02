@@ -1,0 +1,79 @@
+/*
+ * Page: Login & Register
+ * ----------------------
+ */
+
+.login-logo,
+.register-logo {
+  font-size: 35px;
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 300;
+  a {
+    color: #444;
+  }
+}
+
+.login-page,
+.register-page {
+  background:@light-blue;
+  background-image: url(../images/login_bg.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-box,
+.register-box {
+  position: absolute;
+  left:50%;
+  top:50%;
+  width: 360px;
+  height:258px;
+  margin: -181px 80px;
+}
+
+.login-box-body,
+.register-box-body {  
+  background: transparent;
+  padding: 20px;
+  border-top: 0;
+  color: #666;
+  .form-control,.input-group-addon {
+    border-color: #d2d2d2;
+    background:#fdf59a;
+    color: #777;
+    height: 34px;
+  }
+  .form-control{
+    padding:6px 10px;
+  }
+  .input-group-addon {
+    padding:6px 9px;
+  }
+  .btn{
+    height:34px;
+    border-radius: 4px;
+  }
+  .login-btn{
+    padding-bottom:15px;
+    border-bottom: 1px solid #d2d2d2;
+  }
+  .rememberme{
+    padding-top:10px;
+    input[type="checkbox"],label{
+      vertical-align: middle;
+      margin:0 2px;
+      font-weight: normal;
+    }
+  }
+}
+.login-box-msg,
+.register-box-msg {
+  margin: 0 0 0 50px;
+  text-align: center;  
+  padding: 10px 20px 10px 20px;
+  color:@red;
+}
+.social-auth-links {
+  margin: 10px 0;
+}

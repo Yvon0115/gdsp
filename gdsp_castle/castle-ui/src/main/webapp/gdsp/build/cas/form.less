@@ -1,0 +1,388 @@
+/*
+ * Component: Form
+ * ---------------
+ */
+.form-control {
+  .border-radius(@input-radius)!important;
+  box-shadow: none;
+  border-color: @input-border;
+  height:@input-height-castle;
+  padding: @input-padding-castle-vertical @input-padding-castle-horizontal;
+  &:focus {
+    border-color: @light-blue !important;
+    box-shadow: none;
+  }
+  &::-moz-placeholder {
+    color: #bbb;
+    opacity: 1;
+  }
+  &:-ms-input-placeholder {
+    color: #bbb;
+  }
+  &::-webkit-input-placeholder {
+    color: #bbb;
+  }
+
+  &:not(select) {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}
+.has-feedback{
+  .form-control {
+    padding-right: 30px;
+  }
+  // Re-override the feedback icon.
+  .form-control-feedback {
+    top: 0;
+    height:30px;
+    width:30px;
+    line-height: 30px;
+    .glyphicon, .fa, .ion {
+      margin-right: 0px;
+    }
+  }
+}
+.form-group {
+
+  &.has-success {
+    label {
+      color: @green;
+    }
+    .form-control {
+      border-color: @green !important;
+      box-shadow: none;
+    }
+    .valid-flag,.right-input-icon {
+      color: @green;
+    }
+    .input-group .input-group-addon{
+      border-color: @green;
+    }
+  }
+
+  &.has-warning {
+    label {
+      color: @yellow;
+    }
+    .form-control {
+      border-color: @yellow !important;
+      box-shadow: none;
+    }
+    .valid-flag,.right-input-icon {
+      color: @yellow;
+    }
+    .input-group .input-group-addon{
+      border-color: @yellow;
+    }
+  }
+
+  &.has-error {
+    label {
+      color: @red;
+    }
+    .form-control {
+      border-color: @red !important;
+      box-shadow: none;
+    }
+    .valid-flag,.right-input-icon {
+      color: @red;
+    }
+    .input-group .input-group-addon{
+      border-color: @red;
+    }
+    .help-block{
+      border:1px solid rgba(200,0,0,.25);
+      .ar{
+        border-right-color: rgba(200,0,0,.25);
+      }
+      i{
+        color:@red;
+      }
+    }
+  }
+
+}
+
+/* Input group */
+.input-group {
+  .input-group-addon {
+    .border-radius(@input-radius);
+    border-color: @input-border;
+    background-color: #fff;
+    padding:@input-padding-castle-vertical @addon-padding-castle-horizontal;
+  }
+  .glyphicon, .fa, .ion {
+    margin-right: 0px;
+  }
+}
+/* button groups */
+.btn-group-vertical {
+  .btn {
+    &.btn-flat:first-of-type, &.btn-flat:last-of-type {
+      .border-radius(0);
+    }
+  }
+}
+
+.icheck > label {
+  padding-left: 0;
+}
+input[type="radio"],
+input[type="checkbox"] {
+  &.form-box{
+    height: @input-height-castle - 9x;
+  }
+}
+.col-date{
+
+}
+.col-datetime{
+
+}
+.col-time{
+}
+.inputbox-group{
+  display: table;
+  margin-top: 7px;
+  >label{
+    display: table-row;
+    >input{
+      margin-top: -2px;
+      vertical-align: middle;
+    }
+  }
+}
+.inputbox-horizontal{
+  display: table-row;
+  >label{
+    display: table-cell;
+    padding-right: 15px;
+    >input{
+      margin-top: -2px;
+      vertical-align: middle;
+    }
+  }
+}
+.combobox{
+  .dropdown-menu{
+    width:100%;
+  }
+}
+
+
+.form-horizontal,
+.form-inline {
+  .form-control{
+    &.right-icon {
+      padding-right: @font-size-base + (@padding-base-horizontal / 3) * 4;
+      position: relative;
+    }
+  }
+  .right-input-icon {
+    position: absolute;
+    right: (@grid-gutter-width / 2) + @padding-base-horizontal;
+    top: (@input-height-castle - @font-size-base) / 2;
+    transition: color 0.4s ease 0s;
+    cursor: pointer;
+  }
+}
+// valid flag
+// -------------------------
+.valid-flag{
+  height: @input-height-castle;
+  display: table-cell;
+  white-space: nowrap;
+  vertical-align: middle; // Match the inputs
+  position:absolute;
+  top:0;
+  right:-11px;
+  padding: (@input-height-castle - @font-size-base) / 2  6px;
+  font-size: @font-size-base;
+  font-weight: normal;
+  line-height: 1;
+  color: @red;
+  text-align: center;
+  .glyphicon, .fa, .ion {
+    margin-right: 0px;
+  }
+}
+
+
+
+.form-group-sm {
+  .valid-flag {
+    height: @input-height-small;
+    padding: (@input-height-small - @font-size-base) / 26px;
+    font-size: @font-size-small;
+    line-height: @line-height-small;
+    min-height: (@line-height-computed + @font-size-small);
+  }
+  .form-control{
+    &.right-icon {
+      padding-right: @font-size-small + (@padding-small-horizontal / 3) * 4;
+      position: relative;
+    }
+  }
+  .right-input-icon {
+    position: absolute;
+    right: (@grid-gutter-width / 2) + @padding-small-horizontal;
+    top: (@input-height-small - @font-size-small) / 2;
+    transition: color 0.4s ease 0s;
+  }
+}
+
+.form-group-lg {
+  .valid-flag {
+    height: @input-height-large;
+    padding: (@input-height-large - @font-size-base) / 2 6px;
+    font-size: @font-size-large;
+    line-height: @line-height-large;
+    min-height: (@line-height-computed + @font-size-large);
+  }
+  .form-control{
+    &.right-icon {
+      padding-right: @font-size-large + (@padding-large-horizontal / 3) * 4;
+      position: relative;
+    }
+  }
+  .right-input-icon {
+    position: absolute;
+    right: (@grid-gutter-width / 2) + @padding-large-horizontal;
+    top: (@input-height-small - @font-size-large) / 2;
+    transition: color 0.4s ease 0s;
+  }
+}
+
+.input-group-addon{
+  .icon-caret {
+    padding-left:@font-size-base / 2 - @caret-width-base - 1px;
+    padding-right:@font-size-base / 2 - @caret-width-base - 1px;
+  }
+}
+.formgroup{
+  >h5{
+    i,label {
+      cursor: pointer;
+      color: @text-color;
+    }
+  }
+}
+.form-flow {
+  padding: 0 15px;
+  // Inline-block all the things for "inline"
+  .form-group {
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+
+  // Make static controls behave like regular ones
+  .form-control-static {
+    display: inline-block;
+  }
+
+
+  // Input groups need that 100% width though
+  .input-group > .form-control {
+    width: 100%;
+  }
+  .form-placeholder{
+    height:69px;
+  }
+  .control-label {
+    margin-bottom: 0;
+    margin-top:5px;
+    vertical-align: middle;
+    padding:0 0;
+    text-align: right;
+    font-weight: normal;
+  }
+  .help-block{
+    font-size: 12px;
+    font-weight: normal;
+    margin-top: 2px;
+    line-height: 12px;
+    padding: 5px 4px;
+    min-height: 22px;
+    margin-bottom: 4px;
+    background: transparent;
+    position:relative;
+    min-width: 200px;
+    border-radius: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    .clearfix();
+    &.info{
+      border:1px solid #eee;
+      color:#000;
+    }
+    .ar{
+      border-width: 5px;
+      position: absolute;
+      display: block;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      top: 50%;
+      left: -5px;
+      margin-top: -5px;
+      border-right-color: rgba(200,200,200,.25);
+      border-left-width: 0;
+      &:after {
+        position: absolute;
+        display: block;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        bottom: -5px;
+        left: 1px;
+        content: " ";
+        border-width: 5px;
+        border-right-color: #fff;
+        border-left-width: 0;
+      }
+    }
+
+    i{
+      color:@light-blue;
+    }
+  }
+
+  .bottom-padding{
+    height: 8px;
+    font-size: 1px;
+    line-height: 1px;
+    display:block;
+    margin:0;
+  }
+  // Remove default margin on radios/checkboxes that were used for stacking, and
+  // then undo the floating of radios and checkboxes to match.
+  .radio,
+  .checkbox {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: middle;
+
+    label {
+      padding-left: 0;
+    }
+  }
+  .radio input[type="radio"],
+  .checkbox input[type="checkbox"] {
+    position: relative;
+    margin-left: 0;
+  }
+
+
+}
+label.placeholder{
+  display: block;
+  overflow: hidden;
+  position: absolute;
+  padding:5px 10px;
+  line-height: 20px;
+}

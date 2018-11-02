@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.ITimerTaskDao">
+	<sql id="flow_timertaskColumns">
+		id,deploymentid,exectype,formtypeid,actid,length,unit,isworkdays,createby,createtime,lastmodifyby,lastmodifytime,version
+	</sql>
+	
+	<!-- 添加 定时任务 -->
+	<insert id="saveTimerTask" parameterType="TimerTaskVO">
+		insert 
+		into flow_timertask
+		(<include refid="flow_timertaskColumns"/>)
+		values (#{id},#{deploymentId},#{execType},#{formTypeId},#{actId},#{length},#{unit},#{isWorkdays},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+	</insert>
+	
+	<!-- 更新 定时任务 -->
+	<update id="updateTimerTask">
+		update flow_timertask
+		set deploymentid=#{deploymentId},exectype=#{execType},formtypeid=#{formTypeId},actid=#{actId},length=#{length},unit=#{unit},isworkdays=#{isWorkdays},lastmodifyby=#{lastModifyBy},lastmodifytime=#{lastModifyTime:BIGINT},version=#{version}
+		where id = #{id}
+	</update>
+	
+	<!-- 根据 部署ID 删除 -->
+	<delete id="deleteTimerTaskByDeploymentId" >
+		delete
+		from flow_timertask
+		where deploymentId = #{delopymentID}
+	</delete>
+	
+	<!-- 删除 定时任务 -->
+	<delete id="deleteTimerTask">
+		delete 
+		from flow_timertask
+		where id in 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>
+	</delete>
+	
+	<!-- 根据 主键 查询 -->
+	<select id="findTimerTaskById" resultType="TimerTaskVO">
+		select <include refid="flow_timertaskColumns"/>
+		from flow_timertask
+		where id = #{id}
+	</select>
+	
+	<!-- 查询 分页结果 -->
+	<select id="queryTimerTaskByCondition" resultType="TimerTaskVO">
+		select <include refid="flow_timertaskColumns"/>
+		from flow_timertask
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="condition!=null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+	<!-- 查询 列表 -->
+	<select id="queryTimerTaskListByCondition" resultType="TimerTaskVO">
+		select <include refid="flow_timertaskColumns"/>
+		from flow_timertask
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="condition!=null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null">
+			order by <foreach collection="sort" item="order" separator=",">${order.property} ${order.direction}</foreach>
+		</if> 
+	</select>
+	
+	<!-- 查询所有的当前任务相关的定时任务 -->
+	<select id="queryAllTimerTaskList" resultType="TimerTaskVO">
+		select t.id_ taskid,t.create_time_ taskCreateTime,tt.exectype,tt.deploymentid,tt.formtypeid,tt.actid,tt.length,tt.unit,tt.isworkdays from act_ru_task t
+		left join act_re_procdef p on t.proc_def_id_ = p.id_
+		left join flow_deployment d on p.deployment_id_ = d.deployid
+		left join flow_timertask tt on d.id = tt.deploymentid and tt.actid = t.TASK_DEF_KEY_
+		order by t.id_
+	</select>
+	
+</mapper>

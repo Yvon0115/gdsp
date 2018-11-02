@@ -1,0 +1,180 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gdsp.dev</groupId>
+        <artifactId>dev-parent</artifactId>
+        <version>3.1-SNAPSHOT</version>
+        <relativePath>../dev/parent</relativePath>
+    </parent>
+    <groupId>com.gdsp.castle</groupId>
+    <artifactId>castle</artifactId>
+    <packaging>pom</packaging>
+    <name>castle</name>
+    <properties>
+    	<dev-version>3.1-SNAPSHOT</dev-version>
+    	<castle-version>3.1-SNAPSHOT</castle-version>
+    </properties>
+    <modules>
+        <module>castle-ui</module>
+        <module>castle-main</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.gdsp.castle</groupId>
+                <artifactId>castle-ui</artifactId>
+                <version>${castle-version}</version>
+                <!-- <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.castle</groupId>
+                <artifactId>castle-ui</artifactId>
+                <version>${castle-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.castle</groupId>
+                <artifactId>castle-main</artifactId>
+                <version>${castle-version}</version>
+<!--                 <version>${project.version}</version> -->
+            </dependency>
+            <dependency>
+                <groupId>com.gdsp.castle</groupId>
+                <artifactId>castle-main</artifactId>
+                <version>${castle-version}</version>
+<!--                 <version>${project.version}</version> -->
+                <type>war</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[2.0,)</versionRange>
+                                        <goals>
+                                            <goal>copy-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>unpack-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>unpack-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <includeTypes>war</includeTypes>
+                                <excludeTransitive>true</excludeTransitive>
+                                <overWriteSnapshots>true</overWriteSnapshots>
+                                <type>war</type>
+                                <outputDirectory>
+                                    ${project.build.directory}/${project.artifactId}.war 
+                                </outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>package</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <tasks>
+                                    <copy
+                                        todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/classes"
+                                        overwrite="true">
+                                        <fileset dir="src/main/resources"
+                                            includes="*.properties,*.xml,gdsp/conf/*.*,gdsp/spring/*.*,gdsp/mvc/*.*,gdsp/dubbo/*.*,gdsp/cache/*.*,gdsp/security/*.*,gdsp/mybatis/*.*" />
+                                    </copy>
+                                    <copy
+                                        todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/classes"
+                                        overwrite="true">
+                                        <fileset
+                                            dir="deploy/${resource.folder}/"
+                                            includes="*,spring/*.*"
+                                            erroronmissingdir="false" />
+                                    </copy>
+                                    <copy
+                                        todir="${project.build.directory}/${project.artifactId}.war"
+                                        overwrite="true">
+                                        <fileset dir="src/main/webapp"
+                                            excludes="build,build/**/*,logs,log/**/*" />
+                                    </copy>
+                                    <copy
+                                        todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/lib">
+                                        <fileset
+                                            dir="${project.build.directory}"
+                                            includes="*.jar" excludes="*-sources.jar,*-javadoc.jar"/>
+                                    </copy>
+                                    <zip
+                                        destfile="${project.build.directory}/${project.artifactId}-${project.version}-war.zip">
+                                        <zipfileset
+                                            dir="${project.build.directory}/${project.artifactId}.war" />
+                                    </zip>
+                                    <copy
+                                        file="${project.build.directory}/${project.artifactId}-${project.version}-war.zip"
+                                        tofile="${project.build.directory}/${project.artifactId}-${project.version}.war" />
+                                    <delete
+                                        file="${project.build.directory}/${project.artifactId}-${project.version}-war.zip" />
+                                    <delete
+                                        dir="${project.build.directory}/${project.artifactId}.war" />
+                                </tasks>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-artifacts</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>attach-artifact</goal>
+                            </goals>
+                            <configuration>
+                                <artifacts>
+                                    <artifact>
+                                        <file>${project.build.directory}/${project.artifactId}-${project.version}.war</file>
+                                        <type>war</type>
+                                    </artifact>
+                                </artifacts>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

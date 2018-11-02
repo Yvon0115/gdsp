@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.integration.framework.kpi.dao.IKpiReportDao">
+	<resultMap id="BaseResultMap" type="com.gdsp.integration.framework.kpi.model.KpiRepVO" >
+	    <id column="id" property="id" jdbcType="CHAR" />
+	    <result column="kpi_id" property="kpiId" jdbcType="CHAR" />
+	    <result column="report_id" property="reportId" jdbcType="CHAR" />
+	    <result column="createBy" property="createBy" jdbcType="VARCHAR" />
+	    <result column="createTime" property="createTime" jdbcType="INTEGER" />
+	    <result column="lastModifyBy" property="lastModifyBy" jdbcType="VARCHAR" />
+	    <result column="lastModifyTime" property="lastModifyTime" jdbcType="INTEGER" />
+	    <result column="version" property="version" jdbcType="INTEGER" />
+	 </resultMap>
+	
+	<insert id="insert" parameterType="KpiRepVO">
+		INSERT INTO ac_kpi_relation(
+			id,kpi_id,report_id,
+			createBy,createTime,lastModifyBy,
+			lastModifyTime,version
+			)
+		VALUES(
+			#{id},#{kpiId}, #{reportId}, 
+			#{createBy},#{createTime:BIGINT},#{lastModifyBy}, 
+			#{lastModifyTime:BIGINT}, 1)
+	</insert>
+	  
+	<delete id="delete">
+		delete from ac_kpi_relation
+		<where>
+			<if test="ids!=null">
+				and kpi_id in
+				<foreach collection="ids" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+			</if>
+            <if test="widgetId!=null">
+              and report_id=#{widgetId}
+            </if>
+		</where>
+	</delete>
+
+  <select id="queryKpiIdsByReport" resultType="string">
+  	select kpi_id from ac_kpi_relation where report_id = #{reportId}
+  </select>
+
+    <select id="load" resultType="KpiRepVO">
+        select * from ac_kpi_relation where id=#{id}
+    </select>
+    <select id="selectOwn" resultType="KpiRepVO">
+        select * from ac_kpi_relation where kpi_id=#{kid} and report_id=#{reportId}
+    </select>
+    
+<resultMap type="IndGroupRltVO" id="IndRepRltMaps">
+    <id property="id" column="id" />
+    <result property="pk_index" column="pk_index" />
+    <result property="pk_indexgroup" column="pk_indexgroup" />
+    <association property="indTreeVO"
+        javaType="com.gdsp.platform.systools.indexanddim.model.IndTreeVO">
+        <id property="id" column="pk_indexgroup" />
+        <result property="groupName" column="groupName" />
+        <result property="detail" column="detail" />
+    </association>
+    <association property="indexInfoVO"
+        javaType="com.gdsp.platform.systools.indexanddim.model.IndexInfoVO">
+        <id property="id" column="pk_index" />
+        <result property="indexCode" column="indexCode" />
+        <result property="indexName" column="indexName" />
+        <result property="onlyflexiablequery" column="onlyflexiablequery" />
+    </association>
+</resultMap>
+</mapper>

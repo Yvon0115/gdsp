@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper	namespace="com.gdsp.platform.systools.indexanddim.dao.IDimDao">
+<!-- 通过查询条件查询维度信息 -->
+<select id="queryDimByCondition" resultType="DimVO">
+	select * from bp_dim
+	<trim prefix="where" prefixOverrides="and |or ">
+		<if test="condition!= null">${condition._CONDITION_}</if>
+	</trim>
+	order by dimname
+</select>  
+<insert id="insert">
+	insert into bp_dim
+	(id,dimname,dimfieldname,dimdatatable,dimtablename,dimmemo,memo
+	,dimtype,createtime,createby,lastmodifytime,lastmodifyby,version)
+	values
+	(#{id},#{dimname},#{dimfieldname},#{dimdatatable},#{dimtablename}
+	,#{dimmemo},#{memo},#{dimtype},#{createTime:BIGINT},#{createBy}
+	,#{lastModifyTime:BIGINT},#{lastModifyBy},#{version})
+</insert>
+<update id="update">
+	update bp_dim set
+	dimname=#{dimname},dimfieldname=#{dimfieldname},dimdatatable=#{dimdatatable}
+	,dimtablename=#{dimtablename},dimmemo=#{dimmemo},memo=#{memo},
+	dimtype=#{dimtype},lastmodifytime=#{lastModifyTime:BIGINT}
+	,lastmodifyby=#{lastModifyBy},version=#{version}
+	where id=#{id}
+</update>
+<select id="existSameDimName" resultType="int">
+	select count(1) from bp_dim where dimname = #{dimname}
+	<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+</select>
+<select id="existSameDimField" resultType="int">
+	select count(1) from bp_dim where dimfieldname = #{dimfieldname}
+	<if test="id != null and id!=''">and id&lt;&gt;#{id}</if>
+</select>
+<select id="load" resultType="DimVO">
+	select * from bp_dim where id=#{id}
+</select>
+<delete id="deleteDim">
+	delete from bp_dim where id in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>#{item}
+	</foreach>
+</delete>
+<select id="queryDimValueByDimId" resultMap="DimValueRltMap">
+	select rlt.* ,dv.dimvalue,dv.dimvaluememo from bp_dim_rlt rlt inner
+	join bp_dimvalue dv on rlt.pk_dimvalue=dv.id
+	<trim prefix="where" prefixOverrides="and |or ">
+		<if test="condition!= null">${condition._CONDITION_}</if>
+	</trim>
+</select>
+<select id="getDimRltByValIds" resultMap="DimValueRltMap">
+	select rlt.* ,dv.dimvalue,dv.dimvaluememo from bp_dim_rlt rlt inner
+	join bp_dimvalue dv on rlt.pk_dimvalue=dv.id where rlt.pk_dimvalue in
+		<foreach collection='array' index='index' item='item' 
+		open='(' separator=',' close=')'>
+		#{item}
+		</foreach>
+</select>
+<resultMap type="DimRltVO" id="DimValueRltMap">
+		<id property="id" column="id" />
+		<result property="pk_dim" column="pk_dim" />
+		<result property="pk_dimvalue" column="pk_dimvalue" />
+		<association property="dimVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimVO">
+			<id property="id" column="pk_dim"  />
+			<result property="dimname" column="dimname" />
+			<result property="memo" column="memo" />
+		</association>	
+		<association property="dimValueVO" javaType="com.gdsp.platform.systools.indexanddim.model.DimValueVO">
+			<id property="id" column="pk_dimvalue"  />
+			<result property="dimvalue" column="dimvalue"/>
+			<result property="dimvaluememo" column="dimvaluememo"/>
+		</association>	
+	</resultMap>
+<select id="queryDimValueForDimPower" resultType="DimValueVO">
+	select dv.* from bp_dimvalue dv
+	<if test="addCond != null ">where ${addCond} </if>
+</select>
+<insert id="insertDimValue">
+	insert into bp_dimvalue
+	(id,dimvalue,dimvaluememo,createtime,createby,lastmodifytime,lastmodifyby,version)
+	values
+	(#{id},#{dimvalue},#{dimvaluememo},#{createTime:BIGINT}
+	,#{createBy},#{lastModifyTime:BIGINT},#{lastModifyBy},#{version})
+</insert>
+<update id="updateDimValue">
+	update bp_dimvalue set
+	dimvalue=#{dimvalue},dimvaluememo=#{dimvaluememo}
+	,lastmodifytime=#{lastModifyTime:BIGINT},lastmodifyby=#{lastModifyBy},version=#{version}
+	where id=#{id}
+</update>
+<insert id="insertdimRltVO">
+	insert into bp_dim_rlt
+	(id,pk_dim,pk_dimvalue,createby,createtime)
+	values(#{id},#{pk_dim},#{pk_dimvalue},#{createBy},#{createTime:BIGINT})
+</insert>
+<select id="loadDimValue" resultType="DimValueVO">
+	select * from bp_dimvalue where id
+	<if test="addCond != null "> ${addCond} </if>
+</select>
+<delete id="deleteRltDimValue">
+	delete from bp_dim_rlt where id in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>#{item}
+	</foreach>
+</delete>
+<delete id="deleteRltForDim">
+	delete from bp_dim_rlt where pk_dim in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>#{item}
+	</foreach>
+</delete>
+<delete id="deleteDimValue">
+	delete from bp_dimvalue where id in(select pk_dimvalue from bp_dim_rlt
+	where id in
+	<foreach collection='array' index='index' item='item' open='('
+		separator=',' close=')'>#{item}
+	</foreach>
+	)
+</delete>
+<select id="queryDimValue" resultType="DimValueVO">
+	<if test="addCond != null "> ${addCond} </if>
+</select>
+<!-- 通过维度名称查询维度id -->
+<select id="queryDimId" resultType="String">
+	select id from bp_dim where
+	dimname=#{dimName}
+</select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.ICommonDirDao">
+
+	<insert id="insert" parameterType="CommonDirVO">
+		INSERT INTO ac_common_dir(id, dir_name, parent_id, def1,sortnum, createBy, createTime, lastModifyBy, lastModifyTime, version,category)
+		VALUES(#{id},
+		#{dir_name}, #{parent_id}, #{def1},#{sortnum}, #{createBy}, #{createTime:BIGINT}, #{lastModifyBy}, #{lastModifyTime:BIGINT}, 1,#{category})
+	</insert>
+
+	<update id="update" parameterType="CommonDirVO">
+		UPDATE ac_common_dir
+		SET dir_name=#{dir_name}, parent_id=#{parent_id}, sortnum= #{sortnum}, createBy=#{createBy}, createTime=
+		#{createTime:BIGINT}, lastModifyBy= #{lastModifyBy}, lastModifyTime= #{lastModifyTime:BIGINT}, version=#{version}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="updateName" parameterType="CommonDirVO">
+		UPDATE ac_common_dir SET dir_name=#{dir_name} WHERE id = #{id}
+	</update>
+	<delete id="delete">
+		delete from ac_common_dir
+		<where>
+			id in
+			<foreach collection="array" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+	<select id="load" resultType="CommonDirVO">
+		select * from ac_common_dir where id=#{id}
+	</select>
+
+	<select id="findFirstLevelDirsByCategory" resultType="CommonDirVO">
+		select * from ac_common_dir where category=#{category}
+		<choose>
+			<when test="parentId != null">
+				parent_id=#{parentId}
+			</when>
+			<otherwise>
+				parent_id is null
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findDirTreeByCategory" resultType="map">
+		select id as "id",dir_name as "name",parent_id as "parent_id",def1 as "def1",def2 as "reportType",0 as "leaf" from ac_common_dir where category=#{category}
+	</select>
+	<select id="findListByCondition" resultType="CommonDirVO">
+		select * from ac_common_dir
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+		<if test="sort!=null">
+			order by
+			<foreach collection="sort" item="order" separator=",">
+				${order.property} ${order.direction}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="findCountByCondition" resultType="int">
+		select count(id) from ac_common_dir
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+	</select>
+	
+	<select id="findMaxSortNum"  resultType="int">
+		select max(sortnum) from ac_common_dir
+	</select>
+	
+	<select id="queryDirs" resultType="com.gdsp.ptbase.appcfg.model.CommonDirsVO">
+		SELECT
+			dir.id AS id,
+			dir.dir_name AS name,
+			dir.parent_id AS parent_id
+		FROM
+			ac_common_dir dir
+		WHERE
+			dir.category IS NULL
+		OR dir.category = 'pageres'
+		ORDER BY
+			dir.sortnum
+	</select>
+
+</mapper>

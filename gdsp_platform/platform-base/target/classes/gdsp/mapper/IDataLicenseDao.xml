@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datalicense.dao.IDataLicenseDao">
+
+	<!-- 查询单个角色的数据权限 -->
+	<select id="queryDataDicByRoleId"  parameterType="java.util.List" resultType="DataLicenseVO">
+        select id,pk_role,pk_dic,pk_dicval 
+        from cp_role_datadic 
+        where pk_role = #{roleId}
+    </select>
+
+
+	<!-- 根据角色ID集合查询数据权限项 -->
+    <select id="queryDataDicByRoleIds"  parameterType="java.util.List" resultType="DataLicenseVO">
+        select id,pk_role,pk_dic,pk_dicval 
+        from cp_role_datadic 
+        where pk_role in
+        <foreach collection='list' index='index' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+    </select>
+     
+     
+     
+    <select id="queryDimValueByRoleId"  parameterType="java.util.List" resultType="DataLicenseVO">
+	    SELECT dim.id,dim.dimvl_name,dim.dimvl_code,dim.pk_fatherId,dim.pk_dicId,
+		case when role.pk_dicval is null then 'N' else 'Y' end as ischecked
+        from cp_datadicval dim 
+		LEFT JOIN cp_role_datadic role on  dim.id=role.pk_dicval 
+		where dim.pk_dicId=#{dicId} and role.pk_role in
+	    <foreach collection='roleIds' index='index' item='item'  open='(' separator=',' close=')'> #{item} </foreach>
+	    order by dimvl_code
+    </select>
+
+     <!-- 查询角色的指定数据字典的数据权限 -->
+     <select id="queryPowerDataDicVal"  resultType="DataLicenseVO">
+        select id,pk_role,pk_dic,pk_dicval from cp_role_datadic
+        where  pk_dic in
+        <foreach collection='dicIdList' index='index' item='item' 
+        open='(' separator=',' close=')'>#{item}
+         </foreach>
+         and pk_role in 
+         <foreach collection='roleId' index='index' item='item' 
+        open='(' separator=',' close=')'>#{item}
+         </foreach>
+     </select>
+     
+     <delete id="deletePowerConn" >
+        delete from cp_role_datadic 
+        where pk_role=#{pk_role} 
+          and pk_dic=#{pk_dic} 
+          and pk_dicval in 
+          <foreach collection='pk_dicval' index='index' item='item' open='(' separator=',' close=')'>#{item} </foreach>
+     </delete>
+     
+     <select id="queryRole" resultType="DataLicenseVO">
+    	select id from cp_role_datadic where pk_dic in
+    	<foreach collection="array" index="index" item="id" separator="," open="(" close=")">
+    		#{id}
+    	</foreach>
+    </select>
+    <select id="queryRoleDicval" resultType="DataLicenseVO">
+		select id from cp_role_datadic where pk_dicval in
+		<foreach collection="array" item="id" index="index" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</select>
+	<select id="queryAllRoleDataList" resultType="DataLicenseVO">
+		select id,pk_role,pk_dic,pk_dicval from cp_role_datadic
+	</select>
+	<select id="queryAllDimList" resultType="RoleAuthorityVO">
+		select id,dic_name from cp_datadic
+	</select>
+	<select id="queryAllDimValueList" resultType="RoleAuthorityVO">
+		select id,dimvl_name from cp_datadicval
+	</select>
+	<!-- 通过id查询角色数据维度关系 --> 
+   	<select id="load" resultType="DataLicenseVO">
+    	select * 
+        from cp_role_datadic
+        where  id=#{id}
+   </select>
+    <select id="getDimValueTree" resultType="DataLicenseVO">
+		SELECT
+		dim.id,dim.dimvl_name,dim.dimvl_code,dim.pk_fatherId,dim.pk_dicId,
+		case
+		when role.pk_dicval is null then 'N' else 'Y' end as ischecked
+		from cp_datadicval dim
+		LEFT JOIN cp_role_datadic role on
+		dim.id=role.pk_dicval and role.pk_role=#{roleId}
+		where dim.pk_dicId=#{dicId}
+		order by dimvl_code
+    </select>
+   
+    <select id="getRoleDimValueTree"  resultType="DataLicenseVO" >
+        SELECT dim.id,dim.dimvl_name,dim.dimvl_code,dim.pk_fatherId,dim.pk_dicId,
+	    case when role.pk_dicval is null then 'N' else 'Y' end as ischecked
+	    from cp_datadicval dim 
+	    LEFT JOIN cp_role_datadic role on  dim.id=role.pk_dicval and role.pk_role=#{roleId}
+	    where dim.pk_dicId=#{dicId} 
+	        and role.pk_role=#{roleId} 
+	    order by dimvl_code
+    </select> 
+   
+</mapper>

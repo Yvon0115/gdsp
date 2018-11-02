@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.indexanddim.dao.IIndGroupDao">
+
+
+
+
+
+<insert id="insertIndGroupRlt" parameterType="java.util.List">
+	BEGIN
+	<foreach collection='list'  item='item' separator=";" >
+	insert into
+	bp_indgroup_rlt(id,pk_index,pk_indexgroup,createBy,createTime)
+	values
+		(#{item.id},#{item.pk_index},#{item.pk_indexgroup}
+		,#{item.createBy},#{item.createTime:BIGINT})
+	</foreach>
+	;END;
+</insert>
+
+</mapper>

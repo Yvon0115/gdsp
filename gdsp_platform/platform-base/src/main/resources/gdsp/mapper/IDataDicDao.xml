@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datadic.dao.IDataDicDao">
+	<resultMap id="DataResultMap" type="HashMap">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="dic_name" property="dic_name" jdbcType="VARCHAR" />
+        <result column="dic_code" property="dic_code" jdbcType="VARCHAR" />
+    </resultMap>
+    	<resultMap id="dataDicValueMap" type="DataDicVO">
+		<id property="dic_code" column="dic_code" />
+		<result property="id" column="id" />
+		<collection property="dataDicValueVO" ofType="DataDicValueVO">
+			<id property="id" column="sid" />
+			<result property="dimvl_code" column="dimvl_code" />
+			<result property="dimvl_name" column="dimvl_name" />
+			<result property="dimvl_desc" column="dimvl_desc" />
+			<result property="pk_dicId" column="pk_dicId" />
+		</collection>
+	</resultMap>
+    <select id="queryDataDicPageByCon" resultType="DataDicVO">
+        select id,dic_name,dic_code,dic_desc from cp_datadic
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="con!= null">${con._CONDITION_}</if>
+        </trim>
+    </select>
+    <select id="findDaDicValPageByDicId" resultType="DataDicValueVO"> 
+    	select
+        id,dimvl_name,dimvl_code,dimvl_desc,pk_fatherId,pk_dicId from
+        cp_datadicval where pk_dicId=#{pk_dicId}
+        ORDER BY dimvl_code
+    </select>
+    <select id="load" resultType="DataDicVO"> select
+        id,dic_name,dic_code,dic_desc from cp_datadic where id=#{id}
+    </select>
+    <insert id="insert"> insert into
+        cp_datadic(id,dic_name,dic_code,dic_desc,createTime,createBy,version)
+        values
+        (#{id,jdbcType=CHAR},#{dic_name,jdbcType=VARCHAR},#{dic_code,jdbcType=VARCHAR},#{dic_desc,jdbcType=VARCHAR},#{createTime,jdbcType=BIGINT},#{createBy,jdbcType=VARCHAR},#{version})
+    </insert>
+    <update id="updateDataDic"> update cp_datadic set
+        dic_name=#{dic_name:VARCHAR},dic_code=#{dic_code:VARCHAR},dic_desc=#{dic_desc:VARCHAR},lastModifyTime=#{lastModifyTime:BIGINT},lastModifyBy=#{lastModifyBy:VARCHAR},version=#{version}
+        where id=#{id}
+    </update>
+    <delete id="deleteDataDic">
+        delete from cp_datadic where id in
+        <foreach collection="array" item="id" index="index"
+            separator="," open="(" close=")"> #{id}
+        </foreach>
+    </delete>
+    <select id="existSameTypeCode" resultType="int">
+        select count(1) from cp_datadic
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="dic_code!= null">dic_code = #{dic_code}</if>
+            <if test="dic_name!= null">or dic_name = #{dic_name}</if>
+        	<if test="id!= null and id!=''">and id!=#{id}</if>
+        </trim>
+    </select>
+    <select id="queryDataDicValue" resultType="DataDicValueVO">
+        select id from cp_datadicval where pk_dicId in
+        <foreach collection="array" item="pk_dicId" index="index"
+            separator="," open="(" close=")"> #{pk_dicId}
+        </foreach>
+    </select>
+    <select id="queryDataDicDetail" resultMap="DataResultMap">
+        select id, dic_name,dic_code from cp_datadic where id in
+        <foreach collection='list' index='index' item='item'
+            open='(' separator=',' close=')'> #{item}
+        </foreach>
+    </select>
+    <select id="queryRaListByCondition" resultType="RoleAuthorityVO">
+        select m.rolename, m.dic_name, m.dimvl_name from (select (select
+        rolename from rms_role where id = p.pk_role) as rolename,
+        (select dic_name from cp_datadic where id = p.pk_dic) as
+        dic_name, (select dimvl_name from cp_datadicval where id =
+        p.pk_dicval) as dimvl_name from cp_role_datadic p) m
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="condition!= null">${condition._CONDITION_}</if>
+        </trim>
+        <if test="condition!= null"> and (m.dic_name like '%${datalimited}%' or
+            m.dimvl_name like '%${datalimited}%')
+        </if>
+        <if test="condition== null"> where (m.dic_name like '%${datalimited}%' or
+            m.dimvl_name like '%${datalimited}%')
+        </if>
+        <if test="sort != null">
+            order by
+            <foreach collection="sort" item="order" separator=",">
+                ${order.property} ${order.direction}
+            </foreach>
+        </if>
+    </select>
+    <select id="queryDataDicExtDicIds" resultType="DataDicVO">
+        select c.id,c.dic_code,c.dic_name,c.dic_desc from
+        cp_datadic c
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="list != null">
+                not exists ( select id from cp_datadic where
+                c.id in
+                <foreach collection="list" item="id" index="index"
+                    separator="," open="(" close=")"> #{id}
+                </foreach>
+                )
+            </if>
+            <if test="condition!= null">and ${condition._CONDITION_}</if>
+        </trim>
+    </select>
+    <select id="queryAllDataDicList" resultType="DataDicVO"> 
+    	select
+            id,dic_code,dic_name,dic_desc 
+        from cp_datadic
+    </select>
+    <select id="queryDataDicValByTypeCode" resultMap="dataDicValueMap">
+		select dic.id,dic.dic_code, dicval.id as sid, dicval.pk_dicId,dicval.dimvl_code,dicval.dimvl_name,dicval.dimvl_desc 
+		from cp_datadic dic inner join cp_datadicval dicval on dic.id = dicval.pk_dicId 
+		where dic.dic_code = #{typeCode} 
+	</select>
+	<!-- 根据编码获取数据字典数据项内容 -->
+	<select id="queryDataDicValueByCode" resultType="DataDicValueVO">
+		SELECT
+			dic.id,
+			dic.dic_code,
+			dicval.id AS sid,
+			dicval.pk_dicId,
+			dicval.dimvl_code,
+			dicval.dimvl_name,
+			dicval.dimvl_desc,
+			dicval.pk_fatherId
+		FROM
+			cp_datadic dic
+		INNER JOIN cp_datadicval dicval ON dic.id = dicval.pk_dicId
+		WHERE
+			dic.dic_code =#{typeCode}
+		AND
+			dicval.dimvl_code =#{dataCode}
+	</select>
+	
+</mapper>

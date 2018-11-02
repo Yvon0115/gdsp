@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.grant.supplier.dao.ISupplierDao">
+
+	<sql id="base_column_list">
+		id
+		,supcode
+		,supname
+		,pk_fathersup
+		,innercode
+		,createby
+		,createtime
+		,lastmodifytime
+		,lastmodifyby
+		,version
+		,shortname
+	</sql>
+	<select id="queryAllSupList" resultType="SupplierVO">
+		select
+		<include refid="base_column_list" />
+		from rms_supplier order by innercode
+	</select>
+	<select id="load" resultType="SupplierVO">
+		select
+		a.id,a.supcode,a.supname,a.shortname,a.pk_fathersup,a.innercode,a.createtime,
+		a.createby,a.lastmodifytime,a.lastmodifyby,a.version, b.supname as
+		pk_fathername
+		from rms_supplier a left join rms_supplier b on
+		a.pk_fathersup = b.id
+		where a.id= #{id}
+	</select>
+	<select id="existSameNameSup" resultType="int">
+		select count(1) from rms_supplier where supname =#{supname} and
+		pk_fathersup = #{pk_fathersup}
+		<if test="id != null and id != ''">
+			and id&lt;&gt;#{id}
+		</if>
+	</select>
+	<insert id="insert">
+		insert into rms_supplier
+		(id,supcode,supname,pk_fathersup,innercode,createby,createtime,lastmodifytime,lastmodifyby,version,shortname)
+		values
+		(#{id},#{supcode},#{supname},#{pk_fathersup},#{innercode},#{createBy},#{createTime:BIGINT},#{lastModifyTime:BIGINT},#{lastModifyBy},#{version},#{shortname})
+	</insert>
+	<select id="existSameSup" resultType="int">
+		select count(1) from rms_supplier where supcode = #{supcode}
+		<if test="id != null and id !=''">
+			and id&lt;&gt;#{id}
+		</if>
+	</select>
+	<update id="update">
+		update rms_supplier set
+		supcode=#{supcode},supname=#{supname},pk_fathersup=#{pk_fathersup},lastModifyTime=#{lastModifyTime:BIGINT},lastModifyBy=#{lastModifyBy},version=#{version},shortname=#{shortname}
+		where id=#{id}
+	</update>
+	<delete id="delete">
+		delete from rms_supplier where id = #{id}
+	</delete>
+	<select id="querySelfAndChildSupListByInnercode" resultType="SupplierVO">
+		select
+		<include refid="base_column_list"></include>
+		from rms_supplier where innercode like '${innercode}%'
+		order by
+		innercode
+	</select>
+</mapper>

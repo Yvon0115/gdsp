@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.ptbase.appcfg.dao.ILayoutColumnDao">
+	<select id="findLayoutColumns" resultType="layoutColumnVO">
+		select * from ac_layout_column where layout_id=#{layoutId} order by sortnum
+	</select>
+	
+ 	<insert id="insert" parameterType="layoutColumnVO" keyProperty="id">
+	insert into ac_layout_column (id,layout_id,column_id,colspan,sortnum ) values (#{id},#{layout_id},#{column_id},#{colspan},#{sortnum})
+	</insert>
+</mapper>

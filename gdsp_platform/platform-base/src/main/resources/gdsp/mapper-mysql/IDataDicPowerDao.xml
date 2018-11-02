@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datalicense.dao.IDataDicPowerDao">
+    <!-- 插入数据源数据字典关联关系 -->
+    <insert id="insert">
+        insert into
+        cp_power_dic(id,pk_dataSource,pk_dataDicId,createBy,createTime)
+        values
+        <foreach collection="list" item="item" index="index"
+            separator=",">
+            (#{item.id},#{item.pk_dataSource},#{item.pk_dataDicId},#{item.createBy},#{item.createTime:BIGINT})
+        </foreach>
+    </insert>
+</mapper>

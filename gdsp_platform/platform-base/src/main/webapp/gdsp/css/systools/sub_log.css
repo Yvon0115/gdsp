@@ -1,0 +1,15 @@
+#queryCondition div.control-container {
+    padding: 0 42.5px !important;
+}
+.phTips{
+	left: 10px;
+	margin-left:0px !important;
+	top: -5px\0 !important; /* ie9 */
+}
+#timeScope{
+	margin-bottom: 8px;
+}
+.uname{
+	left: 53px;
+    top: 0px;
+}

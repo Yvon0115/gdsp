@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.config.customization.dao.ISystemConfDao">
+	<!--查询报表类型信息-->
+	<select id="queryReportType" resultType="DefDocVO">
+		select t.doc_code,t.doc_name 
+		from cp_defdoc t 
+		where t.type_id = (select trim(s.id) from cp_defdoclist s where s.type_code = 'bi_type')
+	</select>
+	<!--查询最新系统配置信息-->
+	<select id="querySystemConf" resultType="SystemConfVO">
+		select t.id,t.syshomestate,t.syshomeurl,t.reportints,t.createby,t.createtime
+		from st_conf t
+		where t.createtime = (select max(t.createtime) from st_conf t where 1=1)
+	</select>
+	<!--保存系统配置信息-->
+	<insert id="insert" parameterType="SystemConfVO">
+		insert into st_conf (id,syshomestate,syshomeurl,reportints,createby,createtime)
+		values(#{id},#{sysHomeState},#{sysHomeUrl},#{reportInts},#{createBy},#{createTime:BIGINT})
+	</insert>
+    <update id="updateSystemConf" parameterType="SystemConfVO">
+        update st_conf set 
+        syshomestate=#{sysHomeState},
+        syshomeurl=#{sysHomeUrl},
+        reportints=#{reportInts}
+        where id=#{id}
+    </update>
+</mapper>

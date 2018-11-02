@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gdsp.platform.systools.notice.dao.ISysNoticeDao" >
+  <resultMap id="BaseResultMap" type="com.gdsp.platform.systools.notice.model.SysNoticeVO" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="publish_date" property="publish_date" jdbcType="BIGINT" />
+    <result column="start_date" property="start_date" jdbcType="BIGINT" />
+    <result column="end_date" property="end_date" jdbcType="BIGINT" />
+    <result column="valid_flag" property="valid_flag" jdbcType="CHAR" />
+    <result column="createtime" property="createTime" jdbcType="BIGINT" />
+    <result column="createby" property="createBy" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, title, content, publish_date, start_date, end_date, valid_flag, createtime, createby
+  </sql>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.gdsp.platform.systools.notice.model.SysNoticeVO" >
+    update rms_sys_notice
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="publish_date != null" >
+        start_date = #{publish_date,jdbcType=BIGINT},
+      </if>
+      <if test="start_date != null" >
+        start_date = #{start_date,jdbcType=BIGINT},
+      </if>
+      <if test="end_date != null" >
+        end_date = #{end_date,jdbcType=BIGINT},
+      </if>
+      <if test="valid_flag != null" >
+        valid_flag = #{valid_flag,jdbcType=CHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        createby = #{createBy,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gdsp.platform.systools.notice.model.SysNoticeVO" >
+    update rms_sys_notice
+    set title = #{title,jdbcType=VARCHAR} 
+      content = #{content,jdbcType=VARCHAR},
+      publish_date = #{publish_date,jdbcType=BIGINT},
+      start_date = #{start_date,jdbcType=BIGINT},
+      end_date = #{end_date,jdbcType=BIGINT},
+      valid_flag = #{valid_flag,jdbcType=CHAR},
+      createtime = #{createTime,jdbcType=BIGINT},
+      createby = #{createBy,jdbcType=BIGINT}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- <select id="querySimpleNoticeVosPage" resultMap="BaseResultMap">
+  		select * from rms_sys_notice 
+  		where UNIX_TIMESTAMP(now()) 
+  		BETWEEN start_date and end_date and 
+  			valid_flag='Y'
+    	<if test="sort != null"> 
+    		order by 
+    		<foreach collection="sort" item="order" separator=",">
+    			${order.property} ${order.direction}
+    		</foreach>
+    	</if>
+  </select> -->
+  <!-- 上面的注释代码用于适配mysql，下面注释的代码用于适配oracle， 暂时保留，等后续版本稳定后再统一删除  lijun  20170413-->
+  <!-- <select id="querySimpleNoticeVosPage" resultMap="BaseResultMap">
+    select * from rms_sys_notice 
+    where ((sysdate-to_date('1970-01-01','yyyy-mm-dd hh24:mi:ss'))*24*60*60)
+    BETWEEN start_date and end_date and 
+     valid_flag='Y'
+     <if test="sort != null"> 
+      order by 
+      <foreach collection="sort" item="order" separator=",">
+       ${order.property} ${order.direction}
+      </foreach>
+     </if>
+  </select> -->
+</mapper>

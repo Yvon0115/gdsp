@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gdsp.platform</groupId>
+        <artifactId>platform</artifactId>
+        <version>3.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>platform-tools</artifactId>
+    <name>platform-tools[工具集]</name>
+    <dependencies>
+        <!-- platform-tools只强依赖于 platform-base-->
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-base</artifactId>
+            <classifier>impl</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-base</artifactId>
+            <classifier>web</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-base</artifactId>
+            <type>war</type>
+        </dependency>
+        <!-- platform-tools只强依赖于 platform-base-->
+        
+         <!-- platform-tools只强依赖于 platform-base-->
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-comm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-comm</artifactId>
+            <classifier>impl</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-comm</artifactId>
+            <classifier>web</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-comm</artifactId>
+            <type>war</type>
+        </dependency>
+        <!-- platform-tools只强依赖于 platform-base-->
+        
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

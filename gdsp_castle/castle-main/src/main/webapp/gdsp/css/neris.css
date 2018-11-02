@@ -1,0 +1,405 @@
+/* 页面最外层样式 */
+#header{ height:59px;position:relative; border-bottom:#d6d6d6 1px solid; background:#f3f7f9;z-index:3;text-align:center; float:left;}
+.header_csdc{ height:66px; background:url(../images/NerisUI/skin-standard/images/top_bg.jpg) repeat-x; margin:0 auto;}
+.header_l{ width:764px; height:66px; background:url(../images/NerisUI/logo_sys.jpg) left; float:left;}
+.header_nl{width:764px; height:66px; background:url(../images/NerisUI/logo_sys.png) left; float:left;}
+.sys_name{ margin-left:195px; line-height:66px; color:#fff;text-align:left;}
+.header_r{ float:right; height:66px;}
+.home_csdc{ height:30px;text-align:left;padding-right:10px;padding-top: 5px;right: 0px;top: 0px; position:absolute;}
+.menu_csdc{ height:34px;text-align:left;position: absolute;right: 0;bottom: 0;}
+.user-name-csdc{ font-size:12px;color:#ffffff;}
+.user-image-csdc{ height:20px;background:url(../images/NerisUI/header_icon.png) no-repeat;float:right;background-position: 0 2px;width:20px;}
+.home-image-csdc{ margin-right:20px}
+.home-image-csdc a{ display:block;height:20px;background:url(../images/NerisUI/skin-standard/images/home.png) no-repeat center;float:right;width:20px;}
+.user-more-csdc{ margin-left:20px;height:20px;background:url(../images/NerisUI/header_icon.png) no-repeat;float:right;background-position: 0 -97px;width:20px;}
+.user-close-csdc{ margin-left:20px;height:20px;background:url(../images/NerisUI/header_icon.png) no-repeat;float:right;background-position: 0 -48px;width:20px;}
+.favorites-image{ display:block;height:20px;background:url(../images/xingxing.png) no-repeat center;float:right;width:20px;}
+
+/* .menu_csdc ul
+{
+    list-style:none; 去掉ul前面的符号
+    margin: 0px; 与外界元素的距离为0
+    padding: 0px; 与内部元素的距离为0
+    width: auto; 宽度根据元素内容调整
+    float: right;
+}
+.active_csdc a{
+	color:#ffffff;
+	font-size:15px;
+} */
+
+	/* ul li以横排显示 */
+/* 所有class为menu的div中的ul样式 */
+div.menu_csdc ul
+{
+    list-style:none; /* 去掉ul前面的符号 */
+    margin: 0px; /* 与外界元素的距离为0 */
+    padding: 0px; /* 与内部元素的距离为0 */
+    width: auto; /* 宽度根据元素内容调整 */
+}
+/* 所有class为menu的div中的ul中的li样式 */
+div.menu_csdc ul li
+{
+    float:left; /* 向左漂移，将竖排变为横排 */
+}
+
+/* 所有class为menu的div中的ul中的a样式(包括尚未点击的和点击过的样式) */
+div.menu_csdc ul li a, div.menu_csdc ul li a:visited
+{
+    /*background-color: #055EDE;  背景色 */
+    border: #034c9a; /* 边框 */
+    color: #dde4ec; /* 文字颜色 */
+    font-size: 15px;
+    display: block; /* 此元素将显示为块级元素，此元素前后会带有换行符 */
+    line-height: 34px; /* 行高 */
+    padding: 0px 20px; /* 内部填充的距离 */
+    text-decoration: none; /* 不显示超链接下划线 */
+    white-space: nowrap; /* 对于文本内的空白处，不会换行，文本会在在同一行上继续，直到遇到 <br> 标签为止。 */
+}
+
+.active_csdc { border-top-left-radius: 3px;}
+
+/* 所有class为menu的div中的ul中的a样式(鼠标移动到元素中的样式) */
+div.menu_csdc ul li a:hover
+{
+	background:url(../images/NerisUI/header_icon.png) repeat-x;
+	background-position: 0 -227px;
+    color: #ffffff; /* 文字颜色 */
+    font-weigh: bold;
+    line-height: 34px;
+    text-decoration: none; /* 不显示超链接下划线 */
+    border:#055ab6;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+
+
+/** --------导航栏-页面菜单部分内容样式    wqh 2016/11/24 ---------*/
+
+/** 下拉框样式 */
+div.menu_csdc ul li ul.dropdown-menu
+{
+	background : #ececec;
+	width : 150px;
+	max-width : 300px;
+}
+
+/** 下拉框内的li标签默认样式 ul --> li  */
+div.menu_csdc ul li ul.dropdown-menu li
+{
+	background : #ececec;
+	width: 120px;
+	max-width:240px;
+	height:30px;
+}
+
+/** 下拉框内的label标签 */
+div.menu_csdc ul li ul.dropdown-menu label 
+{
+	width: 80px;
+    height: 25px;
+    padding-top: 5px;
+}
+
+/** 下拉框内的label --> img */
+div.menu_csdc ul li ul.dropdown-menu label img
+{
+	margin-top: -3px;
+}
+
+/** 下拉框内的a标签默认样式*/
+div.menu_csdc ul li ul.dropdown-menu a[role="default-link"]
+{
+	/**background : #ececec;*/
+	color : #5F5F5F;
+	text-overflow:ellipsis;
+	max-width:100px;
+	height: 30px;
+}
+
+/** a标签内图片默认样式 */
+div.menu_csdc ul li ul.dropdown-menu a[role="default-link"] img
+{
+	margin-top: -3px;
+}
+
+/** 下拉框内li标签下a标签样式 */
+div.menu_csdc ul li ul.dropdown-menu li a[role="page-name"]
+{
+	color : #5f5f5f;
+	text-overflow:ellipsis;
+	overflow : hidden;
+	max-width: 120px;
+	height: 30px;
+	/**overflow:hidden;white-space:nowrap;text-overflow:ellipsis;*/
+}
+
+/** 下拉框内li标签下a标签 鼠标悬浮样式 */
+div.menu_csdc ul li ul.dropdown-menu li a:hover 
+{
+	background : #ececec;
+	color : #25abf2;
+}
+
+/** 下拉框内 a 标签 鼠标悬浮样式 */
+div.menu_csdc ul li ul.dropdown-menu a[role="default-link"]:hover
+{
+	background : #ececec;
+	color : #25abf2;
+}
+
+/**---------------------页面菜单样式结束----------------------------*/
+
+
+
+div.menu_csdc li
+{
+    background-color: #0462C6;  /*背景色 */
+    position: relative;
+}
+
+div.menu_csdc li:first-child
+{
+    border-top-left-radius: 3px;
+}
+
+div.menu_csdc .active {
+    line-height: 35px;
+	background:url(../images/NerisUI/header_icon.png) repeat-x;
+	background-position: 0 -227px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+div.menu_csdc .active em {
+	background:url(../images/NerisUI/header_icon.png) no-repeat;
+	background-position: center -181px;
+}
+
+.main-sidebar { margin:0 0 0 0 !important;padding-top:66px !important;}
+.fixed .content-wrapper {padding-top:66px;}
+.sidebar-content {background:#2A2F33 !important;}
+.page_sidebar{ font-size:14px;padding-left:0px;}
+.page_sidebar li{  color:#FFFFFF; text-indent:3px; position:relative; clear:both;}
+.page_sidebar li a{ color:#eee; display:block; text-decoration:none;font-size:14px; cursor:pointer;}
+.page_sidebar li a:hover{ background-color:#004283;filter:alpha(opacity=60);opacity:0.6;}
+.page_sidebar li.defActive{ border-bottom: 1px solid #1A1C21;border-top: 1px solid #3D4448;width:100%; display:table; }
+.page_sidebar li.defActive .titleTd{padding:0; line-height:50px;}
+.page_sidebar .sub_menu li .titleTwo{line-height:36px;padding-left:40px; background: url(../images/NerisUI/skin-standard/images/arrow.png) no-repeat 28px 13px ;}
+.page_sidebar .sub_menu li .titleThree{line-height:36px;padding-left:50px; background: url(../images/NerisUI/skin-standard/images/arrow.png) no-repeat 50px 13px ;}
+
+.page_sidebar li.open .titleTd{ background:#002768;}
+.page_sidebar li.enable{background:#45494c; color:#878787;}
+.page_sidebar li.enable a{color:#878787; text-decoration:none;}
+.page_sidebar li.enable a:hover{color:#878787; text-decoration:none;}
+.sub_menu li.open .titleTwo{ background:#327FCB url(../images/NerisUI/skin-standard/images/arrow_h.png) no-repeat 28px 13px ;}
+.sub_menu li.open ul.sub_menu li.open .titleThree{background-color: #4c99e5;}
+ul.sub_menu li.open .titleTwo{ background-color: #226eb9;}
+
+.page_sidebar .sub_menu li .round{line-height:36px;background: #01438c url(../images/NerisUI/skin-standard/images/round.png) no-repeat 28px 13px ;}
+.page_sidebar .sub_menu li .triangle{line-height:36px;background: url(../images/NerisUI/skin-standard/images/arrow.png) no-repeat 50px 13px ;}
+.page_sidebar .sub_menu li.open .round{line-height:36px;}
+.page_sidebar .sub_menu li.open .triangle{line-height:36px;background: url(../images/NerisUI/skin-standard/images/arrow.png) no-repeat 50px 13px ;}
+.page_sidebar .sub_menu li .round3{line-height:36px;padding-left:50px; background: url(../images/NerisUI/skin-standard/images/round.png) no-repeat 40px 13px ;}
+.page_sidebar .sub_menu li.open .round3{background-color: #327fcb;line-height:36px;padding-left:50px;}
+
+.page_sidebar i{ float:left; width:35px; margin:9px 0 0 5px; height:35px; background:url(../images/NerisUI/skin-standard/images/ico_page.png) no-repeat 0px 0;filter:alpha(opacity=60);opacity:0.6;}
+i.icon_1{ background-position:0 0;/*机构信息*/}
+i.icon_2{ background-position:0 -42px;/*现场检查*/}
+i.icon_3{ background-position:0 -85px;/*非现场检查*/}
+i.icon_4{ background-position:0 -124px;}
+i.icon_5{ background-position:0 -167px;}
+i.icon_6{ background-position:0 -250px;}
+i.icon_7{ background-position:0 -208px;}
+i.icon_8{ background-position:0 -581px;}
+i.icon_9{ background-position:0 -290px;}
+i.icon_10{ background-position:0 -333px;}
+i.icon_11{ background-position:0 -623px;/*通知公告*/}
+i.icon_12{ background-position:0 -665px;}
+i.icon_13{ background-position:0 -375px;}
+i.icon_14{ background-position:0 -415px;}
+i.icon_15{ background-position:0 -456px;}
+i.icon_16{ background-position:0 -498px;}
+i.icon_17{ background-position:0 -540px;}
+.sub_menu{ display:none; background:#115EAB;padding-left:0px;}
+.sub_menu li{ position:relative; clear:both;color: #ffffff !important;list-style: none;}
+
+.title,.titleThree,.titleTwo {overflow: hidden;white-space: nowrap; display:block;text-overflow:ellipsis;}
+.title {
+	width: 150px;
+}
+.titleThree,.titleTwo {
+	width:230px;
+}
+.skin-default .sidebar a {
+    color: #ffffff !important;
+}
+
+.content-header-csdc {
+	border: 1px solid #d2d2d2;
+	margin-top: 10px;
+	margin-right: 1px;
+}
+
+.content-header-csdc .nav-tabs > li > a {
+  margin-right: 2px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background-color: transparent;
+  cursor: pointer;
+  color: #000;
+  font-weight: normal;
+  font-size: 14px;
+}
+.content-header-csdc .nav-tabs > li > a:hover {
+  font-size: 14px;
+  color: #2096d5;
+  border: 1px solid transparent;
+  background-color: transparent;
+  border-bottom: 0px solid #2096d5;
+}
+.content-header-csdc .nav-tabs > li.active > a,
+.content-header-csdc .nav-tabs > li.active > a:focus {
+  font-size: 14px;
+  color: #333333;
+  border: 1px solid transparent;
+  border-bottom: 0px solid #25abf2;
+  background-color: transparent;
+}
+.content-header-csdc .nav-tabs > li.active > a:hover {
+  font-size: 14px;
+  color: #2096d5;
+  border: 1px solid transparent;
+  background-color: transparent;
+  border-bottom: 0px solid #2096d5;
+}
+
+.glyphicon{
+	padding-top: 2px;
+}
+
+.skin-default .wrapper .sidebar-content, .skin-default .main-sidebar .sidebar-content, .skin-default .left-side .sidebar-content {
+	border: 0px solid #dddddd;
+}
+
+.main-sidebar .sidebar-content {
+	top:66px;
+}
+
+.content-wrapper, .main-footer{
+	margin-left: 230px;
+}
+
+div.menu_csdc .active a:visited{
+	color: #ffffff;
+}
+
+.content-header-csdc div ul li.active {
+	background-color: #ffffff;
+	border: 1px solid #d2d2d2; 
+	color: #333333;
+	border-radius: 2px;
+	border-bottom: none;
+}
+
+.home_csdc ul {
+	list-style: none;
+	float: right;
+	margin-right: 20px;
+}
+
+.home_csdc ul li{
+	float: left;
+}
+
+.content-header-csdc ul li a {
+	color: #000;
+	padding-top: 5px;
+}
+
+.content-header-csdc .close-tab {
+	top: 7px;
+	right: 0px;
+}
+
+.main-footer-csdc {
+    z-index: 999;
+	height: 32px;
+	width: 100%;
+	position: fixed;
+    bottom: 0px;
+    text-align: center;
+    background-color: #004D9F;
+    padding: 8px 0;
+}
+
+.main-footer-csdc font {
+	font-size: 12px;
+	color: #ffffff;
+    text-align: center;
+}
+
+.fixed.sidebar-mini .content-wrapper .content {
+	padding-bottom: 40px;
+}
+
+.home_csdc_rms{ width:auto; height:66px; background:url(../images/NerisUI/skin-standard/images/right_bg1.jpg) right no-repeat;float:right;}
+.home_csdc_rms .home{float:left; background:url(../images/NerisUI/skin-standard/images/top_line.jpg) left no-repeat;}
+.home_csdc_rms .home a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/home.png) no-repeat center;}
+.home_csdc_rms .home a:hover{ display:block; background:url(../images/NerisUI/skin-standard/images/home_h.png) no-repeat center;}
+.home_csdc_rms .back{float:left; background:url(../images/NerisUI/skin-standard/images/top_line.jpg) left no-repeat;}
+.home_csdc_rms .back a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/back.png) no-repeat center;}
+.home_csdc_rms .back a:hover{ display:block; background:url(../images/NerisUI/skin-standard/images/back_h.png) no-repeat center;}
+.home_csdc_rms .refresh{float:left; background:url(../images/NerisUI/skin-standard/images/top_line.jpg) left no-repeat;}
+.home_csdc_rms .refresh a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/refresh.png) no-repeat center;}
+.home_csdc_rms .refresh a:hover{ display:block; background:url(../images/NerisUI/skin-standard/images/refresh_h.png) no-repeat center;}
+.home_csdc_rms .user{width:120px;height:66px; color:#ffffff; float:left; background:#01499e url(../images/NerisUI/skin-standard/images/user_icon.png) left no-repeat; position: relative;}
+.home_csdc_rms .user:hover{width:120px;height:66px;float:left; color:#002768; background:#0ea9f4 url(../images/NerisUI/skin-standard/images/user_icon_h.png) left no-repeat;}
+.home_csdc_rms .user span{ float:left;}
+.home_csdc_rms .userinfo_more{
+	display:none;
+	width:118px;
+	height:auto;
+	position:absolute;
+	top:66px;
+	left:2px;
+	color:#2a2f33;
+	background:#a7def8;
+	z-index:1000;
+	}
+.home_csdc_rms .userinfo_more li{
+	height:40px;
+	padding:0 10px;
+	line-height:40px;
+	background:#a7def8 url(../images/NerisUI/skin-standard/images/nav_sub.png) repeat-x;
+	}
+.home_csdc_rms .userinfo_more li:hover{
+	background:#bbe7fc url(../images/NerisUI/skin-standard/images/nav_sub.png) repeat-x;
+	}
+.home_csdc_rms .userinfo_more li>select{ width:100%;}
+.home_csdc_rms .u_icon{ width:23px; height:21px; display:block; margin-left:10px; margin-top:23px;}
+.home_csdc_rms .u_name{ width:80px; height:30px;margin-top:20px; margin-left:5px; font-size:14px; line-height:30px; text-align:left;}
+.home_csdc_rms .email{float:left; background:url(../images/NerisUI/skin-standard/images/top_line.jpg) left no-repeat;}
+.home_csdc_rms .email a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/mail.png) no-repeat center;}
+.home_csdc_rms .email a:hover{ display:block; background:url(../images/NerisUI/skin-standard/images/mail_h.png) no-repeat center;}
+
+.home_csdc_rms .remind{float:left; background:url(../images/NerisUI/skin-standard/images/top_line.jpg) left no-repeat;}
+.home_csdc_rms .remind a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/remind.png) no-repeat center;}
+.home_csdc_rms .remind a:hover{ display:block; background:url(../images/NerisUI/skin-standard/images/remind_h.png) no-repeat center;}
+
+.home_csdc_rms .set{float:left; background:url(../images/NerisUI/skin-standard/images/top_line.jpg) left no-repeat;}
+.home_csdc_rms .set a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/set.png) no-repeat center;}
+.home_csdc_rms .set a:hover{ display:block; background:url(../images/NerisUI/skin-standard/images/set_h.png) no-repeat center;}
+
+.home_csdc_rms .signout{width:69px;height:66px; color:#ffffff; position:relative; float:left; background:#01499e url(../images/NerisUI/skin-standard/images/signout.png) center no-repeat;}
+.home_csdc_rms .signout a{ width:69px;height:66px; display:block; background:url(../images/NerisUI/skin-standard/images/signout.png) no-repeat center;}
+.home_csdc_rms .signout a:hover{width:69px;height:66px;float:left; color:#002768; background:#0ea9f4 url(../images/NerisUI/skin-standard/images/signout_h.png) center no-repeat;}
+
+.home_csdc_rms .logout_more{display:none; width:118px; height:auto; position:absolute; top:66px; right:0px; color:#2a2f33; background:#a7def8; z-index:1000; }
+.home_csdc_rms .logout_more li{color:#428bca; height:40px; padding:0 10px; line-height:40px; background-color:#a7def8 !important; background:url(../images/nav_sub.png) repeat-x;}
+.home_csdc_rms .logout_more li:hover{text-decoration:underline; color:#2a6496; background-color:#bbe7fc !important; background:url(../images/nav_sub.png) repeat-x;}
+.home_csdc_rms .logout_more li div:hover{line-height:39px; background-color:#bbe7fc !important;}
+.home_csdc_rms .logout_more li>select{width:100%;}
+.home_csdc_rms .dropdown-menu { margin-top: 0px; min-width: 120px; background-color: #a7def8;}
+

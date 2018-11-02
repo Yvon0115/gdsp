@@ -1,0 +1,201 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gdsp.platform</groupId>
+        <artifactId>platform</artifactId>
+        <version>3.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>platform-workflow</artifactId>
+    <name>platform-workflow[流程管理]</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+        
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-grant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-grant</artifactId>
+            <classifier>impl</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-grant</artifactId>
+            <classifier>web</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gdsp.platform</groupId>
+            <artifactId>platform-grant</artifactId>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+        	<groupId>com.gdsp.platform</groupId>
+        	<artifactId>platform-schedule</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>com.gdsp.platform</groupId>
+        	<artifactId>platform-schedule</artifactId>
+        	<classifier>impl</classifier>
+        </dependency>
+        <dependency>
+        	<groupId>com.gdsp.platform</groupId>
+        	<artifactId>platform-schedule</artifactId>
+        	<classifier>web</classifier>
+        </dependency>
+        <dependency>
+        	<groupId>com.gdsp.platform</groupId>
+        	<artifactId>platform-schedule</artifactId>
+        	<type>war</type>
+        </dependency>
+        
+        <!-- activiti -->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-engine</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>mybatis</artifactId>
+                    <groupId>org.mybatis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-json-converter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+       
+        
+      
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <!--运行ant脚本插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase><!--运行在package时期-->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+							<!--ant任务-->
+                            <tasks>
+							<!--拷贝文件-->
+                                <copy
+                                    todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/classes"
+                                    overwrite="true">
+                                    <fileset dir="src/main/resources"
+                                        includes="*.properties,*.xml,gdsp/conf/*.*,gdsp/spring/*.*,gdsp/mvc/*.*,gdsp/dubbo/*.*,gdsp/cache/*.*,gdsp/security/*.*,gdsp/mybatis/*.*" />
+                                </copy>
+                                <!-- 拷贝自身class -->
+                                <copy todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/classes" 
+                                	overwrite="true">
+                                    <fileset
+                                        dir="${project.build.outputDirectory}/"
+                                        includes="org/**,*.class"
+                                        erroronmissingdir="false" />
+                                </copy>
+                                <copy
+                                    todir="${project.build.directory}/${project.artifactId}.war"
+                                    overwrite="true">
+                                    <fileset dir="src/main/webapp"
+                                        excludes="build,build/**/*,logs,log/**/*" />
+                                </copy>
+                                <copy
+                                    todir="${project.build.directory}/${project.artifactId}.war/WEB-INF/lib">
+                                    <fileset
+                                        dir="${project.build.directory}"
+                                        includes="*.jar"
+                                        excludes="*-sources.jar,*-javadoc.jar" />
+                                </copy>
+                                
+								<!--压缩文件-->
+                                <zip
+                                    destfile="${project.build.directory}/${project.artifactId}-${project.version}-war.zip">
+                                    <zipfileset
+                                        dir="${project.build.directory}/${project.artifactId}.war" />
+                                </zip>
+								<!--改名-->
+                                <copy
+                                    file="${project.build.directory}/${project.artifactId}-${project.version}-war.zip"
+                                    tofile="${project.build.directory}/${project.artifactId}-${project.version}.war" />
+								<!--删除临时文件，包括刚才重命名后的zip-->
+                                <delete
+                                    file="${project.build.directory}/${project.artifactId}-${project.version}-war.zip" />
+                                <delete
+                                    dir="${project.build.directory}/${project.artifactId}.war" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

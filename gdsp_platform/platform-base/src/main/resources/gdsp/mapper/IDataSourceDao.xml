@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datasource.dao.IDataSourceDao">
+	
+	<!-- 数据源字段 -->
+	<sql id="pt_datasourceColumns">
+		id
+		,code
+		,name
+		,type
+		,username
+		,password
+		,permissionurl
+		,ip
+		,port
+		,default_flag
+		,url
+		,comments
+		,sortnum
+		,driver
+		,isdefault
+		,px_url
+		,path
+		,dirID
+		,product_version
+		,createBy
+		,createTime
+		,lastModifyBy
+		,lastModifyTime
+		,version
+		,authentication_model
+		,keytabPath
+		,krbConfPath
+		,classify
+	</sql>
+	
+		<!-- 查询 分页列表 -->
+	<select id="queryDataSourceByCondition" resultType="DataSourceVO">
+		
+		select <include refid="pt_datasourceColumns"/> 
+		from pt_datasource
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null">
+            order by
+            <foreach collection="sort" item="order" separator=",">
+                ${order.property} ${order.direction}
+            </foreach>
+        </if>
+	</select>
+	<!-- 查询 列表 -->
+	<select id="queryDataSourceListByCondition" resultType="DataSourceVO">
+		
+		select <include refid="pt_datasourceColumns"/> 
+		from pt_datasource
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		order by createTime 
+	</select>
+	<select id="queryEnableDataSource" resultType="DataSourceVO">
+        select <include refid="pt_datasourceColumns"/>
+		from pt_datasource
+		<if test="reportType!= null">
+		 	where type in 
+			<foreach collection='reportType' index='index' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+    </select>
+	<select id="findDirTreeByCategory" resultType="map" >
+        select id,code,name,type from pt_datasource where type in 
+		<foreach collection='array' index='index' item='type' open='(' separator=',' close=')'>
+			#{type}
+		</foreach>
+    </select>
+    
+    <!-- 数据源编码校验 -->
+    <select id="existSameCode" resultType="int">
+		select count(1) from pt_datasource  
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="name!= null">name=#{name}</if>
+			<if test="code!= null">or code=#{code}</if>
+			
+			<if test="id!= null">and id!=#{id}</if>
+		</trim>
+	</select>
+	<select id="jdugeRegister" resultType="int">
+		select count(id) from cp_datasource_ref 
+		where pk_datasource=#{pk_datasource} and res_id=#{res_id}
+	</select>
+	<!-- 插入注册服务信息 -->
+	<insert id="insertPtRegMsgVO" parameterType="DsRegisterVO">
+		insert into cp_datasource_ref (id,pk_datasource,res_id,res_name,memo)
+		values(#{id},#{pk_datasource},#{res_id},#{res_name},#{memo})
+	</insert>
+	<!-- 更新注册服务信息 -->
+	<update id="updatePtRegMsgVO" parameterType="DsRegisterVO">
+		update cp_datasource_ref set res_name=#{res_name},memo=#{memo} 
+		where pk_datasource=#{pk_datasource} and res_id=#{res_id}
+	</update>
+	<!-- 注销注册服务信息 -->
+	<delete id="deletePtRegMsgVO" >
+		delete from cp_datasource_ref where pk_datasource=#{ds_id} and res_id=#{res_id}
+	</delete>
+	<!-- 查找所有注册信息 -->
+	<select id="findAllDsRef" resultType="DsRegisterVO">
+		select id,pk_datasource,res_id,res_name,memo from cp_datasource_ref
+	</select>
+	<!-- 查询数据源模型信息 -->
+	<select id="findDSProListByTypeAndVersion" resultType="DsLibraryVO">
+		select id,ds_type,ds_version,qualifiedClassName,jarPath from cp_datasource_library
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="ds_type!= null">ds_type=#{ds_type}</if>
+			<if test="ds_version!= null">and ds_version=#{ds_version}</if>
+		</trim>
+	</select>
+	
+</mapper>

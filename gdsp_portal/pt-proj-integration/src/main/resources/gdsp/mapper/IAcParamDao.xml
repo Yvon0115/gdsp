@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gdsp.integration.framework.param.dao.IAcParamDao" >
+  <resultMap id="BaseResultMap" type="com.gdsp.integration.framework.param.model.AcParam" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="display_name" property="displayName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="view_type" property="viewType" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="CHAR" />
+    <result column="cube_text_format" property="cubeTextFormat" jdbcType="VARCHAR" />
+    <result column="createBy" property="createBy" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="INTEGER" />
+    <result column="lastModifyBy" property="lastModifyBy" jdbcType="VARCHAR" />
+    <result column="lastModifyTime" property="lastModifyTime" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="data_from_type" property="dataFromType" jdbcType="VARCHAR" />
+    <result column="default_value" property="defaultValue" jdbcType="VARCHAR" />
+    <result column="mustput" property="mustput" jdbcType="CHAR" />
+    <result column="colspan" property="colspan" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.gdsp.integration.framework.param.model.AcParam" extends="BaseResultMap" >
+    <result column="data_from" property="dataFrom" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, display_name, name, type, view_type, pid, cube_text_format, createBy, createTime, 
+    lastModifyBy, lastModifyTime, version, data_from_type, default_value, mustput, colspan
+  </sql>
+  <sql id="Blob_Column_List" >
+    data_from
+  </sql>
+  <select id="load" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ac_param
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ac_param
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteParamByIds" >
+  	delete from ac_param  
+  	where id in 
+  	<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+  		#{item}
+  	</foreach>
+  </delete>
+  <insert id="insert" parameterType="com.gdsp.integration.framework.param.model.AcParam" >
+    insert into ac_param (id, display_name, name, 
+      type, view_type, pid, cube_text_format, 
+      createBy, createTime, lastModifyBy, 
+      lastModifyTime, version, data_from_type, 
+      default_value, mustput, colspan, 
+      data_from)
+    values (#{id,jdbcType=CHAR}, #{displayName,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{viewType,jdbcType=VARCHAR}, #{pid,jdbcType=CHAR}, #{cubeTextFormat,jdbcType=VARCHAR}, 
+      #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=INTEGER}, #{lastModifyBy,jdbcType=VARCHAR}, 
+      #{lastModifyTime,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{dataFromType,jdbcType=VARCHAR}, 
+      #{defaultValue,jdbcType=VARCHAR}, #{mustput,jdbcType=CHAR}, #{colspan,jdbcType=INTEGER}, 
+      #{dataFrom,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gdsp.integration.framework.param.model.AcParam" >
+    insert into ac_param
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="displayName != null" >
+        display_name,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="viewType != null" >
+        view_type,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="cubeTextFormat != null" >
+        cube_text_format,
+      </if>
+      <if test="createBy != null" >
+        createBy,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="lastModifyBy != null" >
+        lastModifyBy,
+      </if>
+      <if test="lastModifyTime != null" >
+        lastModifyTime,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="dataFromType != null" >
+        data_from_type,
+      </if>
+      <if test="defaultValue != null" >
+        default_value,
+      </if>
+      <if test="mustput != null" >
+        mustput,
+      </if>
+      <if test="colspan != null" >
+        colspan,
+      </if>
+      <if test="dataFrom != null" >
+        data_from,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="displayName != null" >
+        #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="viewType != null" >
+        #{viewType,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=CHAR},
+      </if>
+      <if test="cubeTextFormat != null" >
+        #{cubeTextFormat,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyBy != null" >
+        #{lastModifyBy,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="dataFromType != null" >
+        #{dataFromType,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultValue != null" >
+        #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="mustput != null" >
+        #{mustput,jdbcType=CHAR},
+      </if>
+      <if test="colspan != null" >
+        #{colspan,jdbcType=INTEGER},
+      </if>
+      <if test="dataFrom != null" >
+        #{dataFrom,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gdsp.integration.framework.param.model.AcParam" >
+    update ac_param
+    <set >
+      <if test="displayName != null" >
+        display_name = #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="viewType != null" >
+        view_type = #{viewType,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="cubeTextFormat != null" >
+        cube_text_format = #{cubeTextFormat,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        createBy = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyBy != null" >
+        lastModifyBy = #{lastModifyBy,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        lastModifyTime = #{lastModifyTime,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="dataFromType != null" >
+        data_from_type = #{dataFromType,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultValue != null" >
+        default_value = #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="mustput != null" >
+        mustput = #{mustput,jdbcType=CHAR},
+      </if>
+      <if test="colspan != null" >
+        colspan = #{colspan,jdbcType=INTEGER},
+      </if>
+      <if test="dataFrom != null" >
+        data_from = #{dataFrom,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.gdsp.integration.framework.param.model.AcParam" >
+    update ac_param
+    set display_name = #{displayName,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      view_type = #{viewType,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=CHAR},
+      cube_text_format = #{cubeTextFormat,jdbcType=VARCHAR},
+      createBy = #{createBy,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=INTEGER},
+      lastModifyBy = #{lastModifyBy,jdbcType=VARCHAR},
+      lastModifyTime = #{lastModifyTime,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      data_from_type = #{dataFromType,jdbcType=VARCHAR},
+      default_value = #{defaultValue,jdbcType=VARCHAR},
+      mustput = #{mustput,jdbcType=CHAR},
+      colspan = #{colspan,jdbcType=INTEGER},
+      data_from = #{dataFrom,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gdsp.integration.framework.param.model.AcParam" >
+    update ac_param
+    set display_name = #{displayName,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      view_type = #{viewType,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=CHAR},
+      cube_text_format = #{cubeTextFormat,jdbcType=VARCHAR},
+      createBy = #{createBy,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=INTEGER},
+      lastModifyBy = #{lastModifyBy,jdbcType=VARCHAR},
+      lastModifyTime = #{lastModifyTime,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      data_from_type = #{dataFromType,jdbcType=VARCHAR},
+      default_value = #{defaultValue,jdbcType=VARCHAR},
+      mustput = #{mustput,jdbcType=CHAR},
+      colspan = #{colspan,jdbcType=INTEGER}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <select id="queryAllParam" resultMap="ResultMapWithBLOBs">
+  	select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ac_param
+  </select>
+	 <!-- 查询 分页列表 -->
+	<select id="queryByCondition" resultMap="ResultMapWithBLOBs">
+		select * from ac_param
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	<select id="queryByIds" resultMap="ResultMapWithBLOBs">
+		select 
+		 <include refid="Base_Column_List" />
+		 ,
+		 <include refid="Blob_Column_List" />
+		 from ac_param where id in 
+		<foreach collection="list" open="(" close=")" item="id" separator=",">
+			'${id}'
+		</foreach>
+	</select>
+</mapper>

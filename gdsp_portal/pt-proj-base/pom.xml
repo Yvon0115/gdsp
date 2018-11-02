@@ -1,0 +1,175 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.gdsp.portal</groupId>
+		<artifactId>portal</artifactId>
+		<version>3.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>pt-proj-base</artifactId>
+	<name>pt-proj-base</name>
+	<dependencies>
+		<!-- pt-proj-base只强依赖于 platform-base -->
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-base</artifactId>
+			<classifier>impl</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-base</artifactId>
+			<classifier>web</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-base</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- pt-proj-base只强依赖于 platform-base -->
+		<!-- 为了构造增加依赖 platform-grant -->
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-grant</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-grant</artifactId>
+			<classifier>impl</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-grant</artifactId>
+			<classifier>web</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-grant</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- 为了构造增加依赖 platform-grant -->
+		<!-- 为了构造增加依赖 platform-tools -->
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-tools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-tools</artifactId>
+			<classifier>impl</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-tools</artifactId>
+			<classifier>web</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-tools</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- 为了构造增加依赖 platform-tools -->
+		<!-- 为了构造增加依赖 platform-workflow -->
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-workflow</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-workflow</artifactId>
+			<classifier>impl</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-workflow</artifactId>
+			<classifier>web</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-workflow</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- 为了构造增加依赖 platform-workflow -->
+		<!-- 为了构造增加依赖 platform-grant -->
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-comm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-comm</artifactId>
+			<classifier>impl</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-comm</artifactId>
+			<classifier>web</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-comm</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- 为了构造增加依赖 platform-grant -->
+		<!-- 为了构造增加依赖 platform-grant -->
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-schedule</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-schedule</artifactId>
+			<classifier>impl</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-schedule</artifactId>
+			<classifier>web</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.gdsp.platform</groupId>
+			<artifactId>platform-schedule</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- 为了构造增加依赖 platform-grant -->
+		
+		
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+			</plugin>
+			<!-- pt-proj-base需要打源码包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+		</plugins>
+	</build>
+</project>

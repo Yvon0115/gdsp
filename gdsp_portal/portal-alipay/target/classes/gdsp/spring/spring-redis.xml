@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd"
+		default-lazy-init="true">
+     <!-- redis连接池 -->
+     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig"/>
+ 
+     <!-- redis连接工厂 -->
+     <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+         <property name="hostName" value="47.104.194.248"/>
+         <property name="port" value="6379"/>
+         <property name="password" value="1q2w3e4R_2016"/>
+         <property name="timeout" value="20000"/>
+         <property name="poolConfig" ref="poolConfig"></property>
+     </bean>
+</beans>

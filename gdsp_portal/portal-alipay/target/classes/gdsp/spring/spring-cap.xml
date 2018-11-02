@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<description>cap单点登陆配置</description>
+    <context:property-placeholder  ignore-resource-not-found="false" ignore-unresolvable="true" location="classpath:/application.properties" />
+    
+    <!--session服务-->
+	<bean id="capRemoteSessionService" class="com.alipay.cap.session.common.web.service.impl.CapRemoteSessionServiceImpl">
+		<!--cap的openapi调用地址-->
+		<property name="endpoint" value="https://cn-shanghai-cap.cloud.alipay.com/openapi/gateway.json"/>
+		<!-- 调用用户名 找开发申请-->
+		<property name="accessId" value="3WOY0LR4eO3xUNDugyyh"/>
+		<!-- 调用密码 找开发申请-->
+		<property name="accessKey" value="v6Z0ai1IWyAqvEz1C1GaWr6Oa0dq01"/>
+	</bean>
+	<!--用户服务-->
+	<bean id="capExternalUserService" class="com.alipay.cap.session.common.web.service.impl.CapExternalUserServiceImpl">
+		<!--cap的openapi调用地址-->
+		<property name="endpoint" value="https://cn-shanghai-cap.cloud.alipay.com/openapi/gateway.json"/>
+		<!-- 调用用户名 找开发申请-->
+		<property name="accessId" value="3WOY0LR4eO3xUNDugyyh"/>
+		<!-- 调用密码 找开发申请-->
+		<property name="accessKey" value="v6Z0ai1IWyAqvEz1C1GaWr6Oa0dq01"/>
+	</bean>
+    
+    <bean id="capExternalLoginFilter4CommonWeb" class="com.alipay.cap.session.common.web.filter.CapExternalLoginFilter4CommonWeb">
+		<!-- 不需要进行登录的页面 ,以半角逗号分隔的正则表达式如：{@code *\a.json*,*\b.json*, }-->
+		<property name="unneedLogin" value="/api/*,/error/*"/>
+		<!--系统的访问schema http或https-->
+		<property name="scheme" value="http"/>
+		<!--sessionid在cookie中的名字 各个环境可能不同 内网ALIPAYDWDISSESSIONID 金融云 ANTSESSIONID -->
+		<property name="sessionIdCookieName" value="ANTSESSIONID"/>
+		<!--cap的登录重定向地址-->
+		<property name="loginUrl" value="${cap.loginUrl}"/>
+		<!--cap的租户选择地址-->
+		<property name="tenantSwitchUrl" value="${cap.tenantSwitchUrl}"/>
+		
+		<property name="capRemoteSessionService" ref="capRemoteSessionService"></property>
+		<property name="capExternalUserService" ref="capExternalUserService"></property>
+	</bean>
+
+	<bean id="RequestParamHandleFilter" class="com.gdsp.portal.alipay.helper.filter.RequestParamHandleFilter" >
+		<!-- session中用户过期时间，单位；min -->
+		<property name="userInvalidTime" value="30" />
+	</bean>
+
+	<bean id="LogoutFilter4CommenWeb" class="com.gdsp.portal.alipay.helper.filter.LogoutFilter4CommenWeb">
+		<property name="redirectUrl" value="${cap.redirectLoginUrl}" />
+		<property name="capRemoteSessionService" ref="capRemoteSessionService" />
+	</bean>
+	
+</beans>

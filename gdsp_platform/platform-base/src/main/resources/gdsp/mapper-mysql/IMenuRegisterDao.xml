@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.func.dao.IMenuRegisterDao">
+	<resultMap id="BaseResultMap" type="com.gdsp.platform.func.model.MenuRegisterVO" >
+	    <id column="ID" property="id" jdbcType="CHAR" />
+	    <result column="FUNNAME" jdbcType="VARCHAR" property="funname" />
+	    <result column="FUNCODE" jdbcType="VARCHAR" property="funcode" />
+	    <result column="DISPCODE" jdbcType="VARCHAR" property="dispcode" />
+	    <result column="PARENTID" jdbcType="VARCHAR" property="parentid" />
+	    <result column="FUNTYPE" jdbcType="DECIMAL" property="funtype" />
+	    <result column="ISPOWER" jdbcType="CHAR" property="ispower" />
+	    <result column="URL" jdbcType="VARCHAR" property="url" />
+	    <result column="FILEURL" jdbcType="VARCHAR" property="fileurl" />
+	    <result column="HELPNAME" jdbcType="VARCHAR" property="helpname" />
+	    <result column="HINTINF" jdbcType="VARCHAR" property="hintinf" />
+	    <result column="ISENABLE" jdbcType="CHAR" property="isenable" />
+	    <result column="IS_SYSTEM_MENU" jdbcType="CHAR" property="isSystemMenu" />
+	    <result column="MEMO" jdbcType="VARCHAR" property="memo" />
+	    <result column="INNERCODE" jdbcType="VARCHAR" property="innercode" />
+	    <result column="PAGEID" jdbcType="VARCHAR" property="pageid" />
+	    <result column="SAFELEVEL" jdbcType="CHAR" property="safeLevel" />
+	    <result column="createBy" property="createBy" jdbcType="VARCHAR" />
+	    <result column="createTime" property="createTime" jdbcType="BIGINT" />
+	    <result column="lastModifyBy" property="lastModifyBy" jdbcType="VARCHAR" />
+	    <result column="lastModifyTime" property="lastModifyTime" jdbcType="BIGINT" />
+	    <result column="version" property="version" jdbcType="INTEGER" />
+	    <result column="ISREPORT" property="isreport" jdbcType="VARCHAR"/>
+	    <result column="ICONFIELD" property="iconField" jdbcType="VARCHAR"/>
+	</resultMap>
+
+    <select id="queryMenuPathByMenuId" resultMap="BaseResultMap">
+    	select m.*
+		  from st_menuregister m
+		 inner join st_menuregister s
+		    on m.innercode =
+		  left(s.innercode, length(m.innercode))
+		 where s.id = #{menuId}
+		   and m.id != #{menuId}
+           and (m.isenable = 'Y' or m.isenable = 'y')
+		 order by m.innercode
+    </select>
+    
+    <select id="queryMenuListByCondForPower" resultMap="BaseResultMap">
+		select distinct ma.* 
+		from st_menuregister ma inner join st_menuregister mb 
+		on ma.innercode = left(mb.innercode,length(ma.innercode)) inner join rms_power_menu mp on mp.resource_id = mb.id  
+		where ma.isenable in ('y', 'Y')
+		<if test="addCond != null and addCond!=''">
+			and (${addCond}) 
+		</if> order by ma.dispcode 
+	</select>
+	
+	<!-- 过滤权限时效的菜单 -->
+	<select id="queryAgingFilteredMenuList" resultMap="BaseResultMap">
+		select distinct ma.* 
+		from st_menuregister ma inner join st_menuregister mb 
+		on ma.innercode = left(mb.innercode,length(ma.innercode)) inner join rms_power_menu mp on mp.resource_id = mb.id  
+		where ma.isenable in ('y', 'Y')
+		<if test="addCond != null and addCond!=''">
+			and (${addCond}) 
+		</if> 
+		<trim prefix="and">
+			<if test="condition!= null"> ${condition._CONDITION_} </if>
+		</trim>
+		order by ma.dispcode 
+	</select>
+	
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gdsp.platform.grant.auth.dao.IOrgPowerDao" >
+  <resultMap id="BaseResultMap" type="OrgPowerVO" >
+    <id column="ID" property="id" jdbcType="CHAR" />
+    <result column="PK_ROLE" property="pk_role" jdbcType="VARCHAR" />
+    <result column="RESOURCE_ID" property="resource_id" jdbcType="VARCHAR" />
+    <result column="CREATEBY" property="createby" jdbcType="VARCHAR" />
+    <result column="CREATETIME" property="createtime" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapRm" type="OrgPowerVO"  extends="BaseResultMap">
+  		<association property="roleVO" javaType="RoleVO">
+			<id property="id" column="rid"  />
+		</association>
+		<association property="orgVO" javaType="OrgVO">
+			<id property="id" column="oid"  />
+			<result property="pk_fatherorg" column="pk_fatherorg" />
+			<result property="orgcode" column="orgcode" />
+			<result property="orgname" column="orgname" />
+			<result property="innercode" column="innercode" />
+			<result property="memo" column="memo" />
+			<result property="shortname" column="shortname" />
+		</association>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, PK_ROLE, RESOURCE_ID, CREATEBY, CREATETIME
+  </sql>
+  
+  <!-- 失去引用  待删除 -->
+  <!--  
+  <select id="queryOrgRoleByRoleId" resultMap="BaseResultMapRm">
+  		SELECT
+			ro.*, 
+			o.id AS oid,
+			o.orgcode,
+			o.orgname,
+			o.pk_fatherorg,
+			o.innercode,
+			o.memo,
+			r.id AS rid
+		FROM
+			rms_power_org ro
+		INNER JOIN rms_orgs o ON ro.resource_id = o.id
+		INNER JOIN rms_role r ON ro.pk_role = r.id
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+  </select>
+  -->
+  
+  
+  <insert id="insertBatch">
+  	insert into rms_power_org (id,pk_role,resource_id,createby,createtime )
+    VALUES 
+    <foreach collection="list" item="item" index="index" separator="," >
+    	(#{item.id},
+    	#{item.pk_role},
+    	#{item.resource_id},
+    	#{item.createBy},
+    	#{item.createTime:BIGINT})
+    </foreach>
+  </insert>
+  
+  <delete id="deleteByRoleIdAndOrgIds">
+  	delete from rms_power_org
+  	where pk_role = #{roleId} 
+  			and resource_id in
+  			<foreach collection="orgIds" item="item" index="index" separator="," open="(" close=")">
+  				#{item}
+  			</foreach>
+  </delete>
+  <select id="load" resultType="OrgPowerVO">
+    	select 
+    	<include refid="Base_Column_List"></include> 
+        from rms_power_org 
+        where  id=#{id}
+    </select>
+</mapper>

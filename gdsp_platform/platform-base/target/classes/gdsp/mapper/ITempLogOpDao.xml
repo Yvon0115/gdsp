@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.log.dao.ITempLogOpDao">
+	<resultMap id="TempLogOpMap" type="com.gdsp.platform.log.model.TempLogOpVO">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result property="tableName" column="table_name" jdbcType="VARCHAR" />
+        <result property="tableDesc" column="table_desc" jdbcType="VARCHAR" />
+        <result property="serviceId" column="service_id" jdbcType="CHAR" />
+        <result property="dataId" column="data_id" jdbcType="CHAR" />
+        <result property="type" column="type" jdbcType="CHAR" />
+        <result property="createBy" column="createby" jdbcType="VARCHAR" />
+        <result property="createTime" column="createtime" jdbcType="BIGINT" />
+        <collection property="logContents" ofType="com.gdsp.platform.log.model.TempLogContentVO">
+        	<id property="id" column="cid" jdbcType="CHAR" />
+        	<result property="logId" column="log_id" jdbcType="VARCHAR" />
+        	<result property="colName" column="col_name" jdbcType="VARCHAR" />
+        	<result property="colDesc" column="col_desc" jdbcType="VARCHAR" />
+        	<result property="newData" column="new_data" jdbcType="LONGVARCHAR" />
+        	<result property="oldData" column="old_data" jdbcType="LONGVARCHAR" />
+        </collection>
+    </resultMap>
+	
+	<select id="queryByServiceIdAndTimeRange" resultMap="TempLogOpMap">
+		select log.id,log.table_name,log.table_desc,log.createby,log.createtime,log.service_id,log.data_id,
+			   log.type,content.id as cid,content.log_id,content.col_name,content.col_desc,
+			   content.new_data,content.old_data
+		from tmp_cp_log_op log
+		inner join tmp_cp_log_content content
+			on log.id = content.log_id
+		where
+			service_id = #{serviceId} 
+			and createtime between #{start} and #{end}
+	</select>
+	
+	<select id="queryByTableName" resultType="Integer">
+		select count(1) from ${tableName} 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>	
+	</select>
+	
+	<delete id="delete">
+		delete from tmp_cp_log_op
+		where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<!-- <insert id="insertBatchOpVo">
+  	insert into tmp_cp_log_op (id,table_name,table_desc,createby,createtime,service_id,data_id,type )
+    VALUES 
+    	<foreach collection="opList" item="item" index="index" separator="," >
+	    	(#{item.id},
+	    	#{item.tableName},
+	    	#{item.tableDesc},
+	    	#{item.createBy},
+	    	#{item.createTime:BIGINT},
+	    	#{item.serviceId},
+	    	#{item.dataId},
+	    	#{item.type}
+	    	)
+    	</foreach>
+  </insert> -->
+  <select id="queryFormerValueByCondition" resultType="java.lang.String" statementType="STATEMENT">
+        select 
+        id
+        from 
+        ${tablename}
+        ${condition}
+  </select>
+</mapper>

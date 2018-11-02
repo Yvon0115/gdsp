@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.config.global.dao.IDefDocDao">
+
+	<resultMap type="DefDocListVO" id="defdocListResultMap">
+		<id property="type_code" column="type_code" />
+		<collection property="defdocs" ofType="DefDocVO">
+			<id property="id" column="sid" />
+			<result property="doc_code" column="doc_code" />
+			<result property="doc_name" column="doc_name" />
+			<result property="doc_desc" column="doc_desc" />
+			<result property="type_id" column="type_id" />
+			<result property="sortnum" column="sortnum" />
+		</collection>
+	</resultMap>
+
+	<select id="findOne" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * from cp_defdoc
+		where id = #{id}
+	</select>
+
+	<select id="findAll" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * from cp_defdoc order by type_id,sortnum
+	</select>
+
+	<select id="findPage" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * from cp_defdoc order by type_id,sortnum
+	</select>
+
+	<select id="findListByCondition" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * from cp_defdoc
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+		order by type_id,sortnum
+	</select>
+
+	<select id="findPageByCondition" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * from cp_defdoc
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+		order by type_id,sortnum
+	</select>
+
+	<select id="findListByIds" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * from cp_defdoc
+		<where>
+			<if test="ids!=null">
+				and id in
+				<foreach collection="ids" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		order by type_id,sortnum
+	</select>
+
+	<!-- 根据类型ID查询码表项 -->
+	<select id="findListByType" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * 
+		from cp_defdoc 
+		where type_id = #{type_id}
+		order by sortnum
+	</select>
+
+	<!-- 根据档案类型查询数据项 -->
+	<select id="findPageByType" resultType="com.gdsp.platform.config.global.model.DefDocVO">
+		select * 
+		from cp_defdoc 
+		where type_id = #{type_id}
+		order by sortnum,doc_code
+	</select>
+	
+	<!-- 获取时间频度 -->
+	<select id="findDateFreq" resultType="DefDocVO">
+		select * from cp_defdoc where type_id = #{dateFreq}
+		order by sortnum
+	</select>
+	
+	<!-- 获取时间频度用于前台页面展示 -->
+	<select id="findFreqByStateFreq" resultType="DefDocVO">
+		select * from cp_defdoc where doc_code in 
+		<foreach collection='tempStrs' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+		and type_id=#{frequency}
+		order by doc_code
+	</select>
+	
+	<select id="findFreqByCodeName" resultType="DefDocVO">
+		select * from cp_defdoc where doc_name in
+		<foreach collection='array' index='index' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+		order by doc_code
+	</select>
+	<select id="selectParent" resultType="DefDocVO">
+		select id,doc_code,doc_name,pk_fatherid from cp_defdoc where type_id=#{type_id}
+	</select>
+	<select id="queryParent" resultType="DefDocVO" >
+		select id,doc_code,doc_name from cp_defdoc where id in
+		<foreach collection="list" item="id" index="index" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</select>
+	<select id="existSameDocCode" resultType="int">
+		select count(1) 
+		from cp_defdoc  
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="doc_code!= null">doc_code=#{doc_code}</if>
+			<if test="doc_name!= null">or doc_name=#{doc_name}</if>
+			<if test="type_id!= null and type_id!= ''">and type_id=#{type_id}</if>
+			<if test="id!= null and id!=''" >and id!=#{id}</if>
+		</trim>
+	</select>
+	
+	<!-- 查询所有码表 -->
+	<select id="findAllDocListWithDocs" resultMap="defdocListResultMap">
+		select 
+			doclist.id 
+			, doclist.type_code
+			, doc.id as sid
+			, doc.type_id 
+			, doc.doc_code
+			, doc.doc_name
+			, doc.doc_desc 
+		from cp_defdoclist doclist inner join cp_defdoc doc on trim(doclist.id) = doc.type_id 
+		order by doclist.sortnum, doc.sortnum 
+	</select>
+	
+	<select id="queryDefDocMapByTypeId"  resultType="DefDocVO">
+		select * 
+		from cp_defdoc 
+		where type_id = #{typeId}
+		order by sortnum
+	</select>
+	
+	<!-- 查询子级档案 -->
+	<select id="querySubLevelDocsByCode" resultType="DefDocVO">
+		SELECT
+			doc.id id
+			,doc.doc_code doc_code 
+			,doc.doc_name doc_name
+			,doc.doc_desc doc_desc
+			,doc.is_preset is_preset
+			,doc.sortnum sortnum
+			,doc.pk_fatherid pk_fatherid
+			,doc.type_id type_id
+			,doc.createby createby
+			,doc.createtime createtime
+			,doc.lastmodifyby lastmodifyby
+			,doc.lastmodifytime lastmodifytime
+			,doc.version version
+		FROM
+			cp_defdoc doc
+		LEFT JOIN cp_defdoclist list ON doc.type_id = list.id
+		WHERE
+			type_code = #{typeCode}
+		AND doc.pk_fatherid IN 
+			(
+			SELECT
+				id
+			FROM
+				cp_defdoc
+			WHERE
+				doc_code IN 
+				<foreach collection="docCode" open="(" close=")" separator="," item="doc_code">
+					#{doc_code}
+				</foreach>
+			) 
+	</select>
+	
+	
+</mapper>

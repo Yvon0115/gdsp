@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IFormVariableDao">
+    <sql id="flow_formvariableColumns">
+    	id,formtypeid,variablename,displayname,memo,createby,createtime,lastmodifyby,lastmodifytime,version
+    </sql>
+
+	<!-- 查询 单据变量列表 -->
+	<select id="queryFormVariableListByCondition" resultType="FormVariableVO">
+		select 
+		<include refid="flow_formvariableColumns" />
+		from flow_formvariable 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+	
+	<!-- 插入 -->
+	<insert id="insertFormVariable" parameterType="FormVariableVO">
+		insert 
+		into flow_formvariable
+		(<include refid="flow_formvariableColumns"/>)
+		values (#{id},#{fromTypeId},#{variableName},#{displayName},#{memo},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+	</insert>
+	
+	<!-- 删除 -->
+	<delete id="deleteFormVariable">
+		delete 
+		from flow_formvariable
+		where formtypeid in 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</delete>
+</mapper>

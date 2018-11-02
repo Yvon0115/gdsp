@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datalicense.dao.IDataDicPowerDao">
+    <!-- 根据数据源id查询关联的数据字典信息 -->
+    <select id="findDataDicByDataSourceId" resultMap="DataDicPowerMap">
+        select
+        cp.id,cp.pk_dataSource,cp.pk_dataDicId,st.dic_code,st.dic_name,st.dic_desc
+        from cp_power_dic cp inner join cp_datadic st on
+        cp.pk_dataDicId=st.id where cp.pk_dataSource=#{dataSourceId}
+        <if test="condition!= null">and ${condition._CONDITION_}</if>
+    </select>
+    <resultMap type="DataDicPowerVO" id="DataDicPowerMap">
+        <id property="id" column="id" />
+        <result property="pk_dataSource" column="pk_dataSource" />
+        <result property="pk_dataDicId" column="pk_dataDicId" />
+        <association property="dataDicVO"
+            javaType="com.gdsp.platform.systools.datadic.model.DataDicVO">
+            <id property="id" column="pk_dataDicId" />
+            <result property="dic_code" column="dic_code" />
+            <result property="dic_name" column="dic_name" />
+            <result property="dic_desc" column="dic_desc" />
+        </association>
+    </resultMap>
+    <!--根据数据源id查询关联的数据字典id -->
+    <select id="queryDataDicIds" resultType="DataDicPowerVO"
+        parameterType="java.lang.String"> select cp.pk_dataDicId form cp_power_dic cp where
+        cp.pk_dataSource=#{pk_dataSource}
+    </select>
+    <!-- 查询所有数据字典数据id集合 -->
+    <select id="findAllDataDicIds" resultType="java.lang.String"> select distinct
+        st.pk_dataDicId from cp_power_dic st
+    </select>
+    <!-- 插入数据源数据字典关联关系,由于mysql和oracle的sql批量插入语法差异提取并针对不同数据库进行拆分
+    <insert id="insert">
+        insert into
+        cp_power_dic(id,pk_dataSource,pk_dataDicId,createBy,createTime)
+        values
+        <foreach collection="list" item="item" index="index"
+            separator=",">
+            (#{item.id},#{item.pk_dataSource},#{item.pk_dataDicId},#{item.createBy},#{item.createTime:BIGINT})
+        </foreach>
+    </insert> -->
+    <!--查询数据源数据字典关联表中已关联的所有数据字典id -->
+    <select id="findDataDicIds" parameterType="java.lang.String"
+        resultType="DataDicPowerVO"> select cp.pk_dataDicId from cp_power_dic cp where
+        cp.pk_dataSource = #{pk_dataSource}
+    </select>
+    <!-- 删除数据源数据字典关联关系 -->
+    <delete id="delete">
+        delete from cp_power_dic where id in
+        <foreach collection="ids" item="id" index="index"
+            separator="," open="(" close=")"> #{id}
+        </foreach>
+    </delete>
+    <!-- 通过选中id查询出维度id集合 -->
+    <select id="findPk_dataDicIds" resultType="java.lang.String">
+        select cp.pk_dataDicId from cp_power_dic cp where cp.id in
+        <foreach collection="array" item="id" index="index"
+            open="(" separator="," close=")"> #{id}
+        </foreach>
+    </select>
+    <!-- 根据维度id集合查询维度是否被授权 -->
+    <select id="findPk_dicList" resultType="java.lang.String">
+        select rd.pk_dic from cp_role_datadic rd where rd.pk_dic in
+        <foreach collection="list" item="id" index="index" open="("
+            separator="," close=")"> #{id}
+        </foreach>
+    </select>
+    <!-- 通过id查询维度信息 --> 
+   <select id="load" resultType="DataDicPowerVO">
+    	select * 
+        from cp_power_dic
+        where  id=#{id}
+   </select>
+   
+   <select id="queryPowerDataDic" resultType="DataDicPowerVO">
+   	select id,pk_dataSource,pk_dataDicId from cp_power_dic where
+   	pk_dataDicId in
+   	 <foreach collection="array" item="id" index="index"
+            open="(" separator="," close=")"> #{id}
+        </foreach>
+   </select>
+</mapper>

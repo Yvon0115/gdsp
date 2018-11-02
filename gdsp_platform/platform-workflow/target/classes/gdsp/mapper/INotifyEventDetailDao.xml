@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.INotifyEventDetailDao">
+	<sql id="allcolumn">
+		id,pk_deploymentId,pk_nodeinfoId,pk_eventTypeId,notifyUrl,createby,createtime,lastmodifyby,lastmodifytime,version
+	</sql>
+	<resultMap type="com.gdsp.platform.workflow.model.NotifyEventDetailVO" id="colomnmap">
+		<result property="id" column="ID" />
+		<result property="deploymentId" column="pk_deploymentId" />
+		<result property="nodeinfoId" column="pk_nodeinfoId" />
+		<result property="eventTypeId" column="pk_eventTypeId" />
+		<result property="notifyUrl" column="notifyUrl" />
+		
+		<result property="createBy" column="createBy" />
+		<result property="createTime" column="createTime" />
+		<result property="lastModifyBy" column="lastModifyBy" />
+		<result property="lastModifyTime" column="lastModifyTime" />
+		<result property="version" column="version" />
+	</resultMap>
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert 										
+		into flow_formvariablevalue (id,pk_deploymentId,pk_nodeinfoId,pk_eventTypeId,notifyUrl)
+		VALUES
+		<foreach collection="notifylist" item="item" index="index" separator=",">
+            (#{item.id},#{item.deploymentId},#{item.nodeinfoId},#{item.eventTypeId},#{item.notifyUrl})
+        </foreach>
+	</insert>
+	
+	<insert id="insertVO" >
+		insert 
+		into flow_notifyeventdetail (id,pk_deploymentId,pk_nodeinfoId,pk_eventTypeId,notifyUrl)
+		VALUES
+		 (#{notifyEventDetailVO.id},#{notifyEventDetailVO.deploymentId},#{notifyEventDetailVO.nodeinfoId},#{notifyEventDetailVO.eventTypeId},#{notifyEventDetailVO.notifyUrl})
+	</insert>
+	
+	<select id="queryNotifyEventDetailByNodeinfoId" resultMap="colomnmap">
+		select <include refid="allcolumn" /> from flow_notifyeventdetail
+		where pk_nodeinfoId=#{nodeInfoId}
+	</select>
+	
+</mapper>

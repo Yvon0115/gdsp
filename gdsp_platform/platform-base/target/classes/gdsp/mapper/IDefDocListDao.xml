@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.config.global.dao.IDefDocListDao">
+
+	<resultMap type="DefDocListVO" id="defdocListResultMap">
+		<id property="type_code" column="type_code" />
+		<collection property="defdocs" ofType="DefDocVO">
+			<id property="id" column="sid" />
+			<result property="doc_code" column="doc_code" />
+			<result property="doc_name" column="doc_name" />
+			<result property="doc_desc" column="doc_desc" />
+			<result property="type_id" column="type_id" />
+			<result property="sortnum" column="sortnum" />
+		</collection>
+	</resultMap>
+	
+	<select id="findOne" resultType="com.gdsp.platform.config.global.model.DefDocListVO">
+		select * from cp_defdoclist
+		where id = #{id}
+	</select>
+
+	<select id="findAll" resultType="com.gdsp.platform.systools.datadic.model.DataDicVO">
+		select * from cp_datadic  
+	</select>
+
+	<select id="findPage" resultType="com.gdsp.platform.config.global.model.DefDocListVO">
+		select * from cp_defdoclist order by sortnum
+	</select>
+
+	<!-- 根据条件查询系统码表类型 -->
+	<select id="findListByCondition" resultType="com.gdsp.platform.config.global.model.DefDocListVO">
+		select * from cp_defdoclist
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="cond._CONDITION_ != null">${cond._CONDITION_}</if>
+		</trim>
+		order by sortnum
+	</select>
+
+	<select id="queryDefDocListVOByCondition" resultType="com.gdsp.platform.config.global.model.DefDocListVO">
+	
+		select * from cp_defdoclist
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>		
+		order by createTime DESC 
+	</select>
+
+	<select id="findListByIds" resultType="com.gdsp.platform.config.global.model.DefDocListVO">
+		select * from cp_defdoclist
+		<where>
+			<if test="ids!=null">
+				and id in
+				<foreach collection="ids" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		order by sortnum
+	</select>
+	
+	
+	<!-- 根据档案类型查询系统码表数据项 -->
+	<select id="findDocListWithDocsByTypeCode" resultMap="defdocListResultMap">
+		select 
+			doclist.id 
+			, doc.id as sid
+			, doc.type_id
+			, doclist.type_code
+			, doc.doc_code
+			, doc.doc_name
+			, doc.doc_desc 
+		from cp_defdoclist doclist inner join cp_defdoc doc on trim(doclist.id) = trim(doc.type_id )
+		where doclist.type_code = #{type_code}
+		order by doclist.sortnum, doc.sortnum		
+	</select>
+	<select id="existSameTypeCode" resultType="int">
+	  select count(1) from cp_defdoclist
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="type_code!= null">type_code = #{type_code}</if>
+            <if test="type_name!= null">or type_name = #{type_name}</if>
+        	<if test="id!= null and id!=''">and id!=#{id}</if>
+        </trim>
+	</select>
+</mapper>

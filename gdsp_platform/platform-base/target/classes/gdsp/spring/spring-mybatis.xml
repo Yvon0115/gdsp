@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+		default-lazy-init="true">
+
+	<description>Spring-Mybatis配置</description>
+
+	<!-- <context:property-placeholder  ignore-resource-not-found="false" ignore-unresolvable="true" location="classpath:/application.properties" /> -->
+	<bean factory-method="getDialect" class="com.gdsp.dev.core.data.jdbc.DialectHelper">
+		<constructor-arg value="${jdbc.dbtype}"/>
+	</bean>
+	
+	<!-- 使用annotation定义事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	<!-- 事务管理器配置 -->
+	<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- dao资源合并处理器 -->
+	<bean id="mergeHandler" class="com.gdsp.dev.persist.ext.merge.handler.ResourceMergeHandlerFileImpl">
+		<property name="mergeResources">
+			<array>
+				<value>classpath*:gdsp/merge/**/*.xml</value>
+				<value>classpath*:gdsp/merge-${jdbc.dbtype}/**/*.xml</value>
+			</array>
+		</property>
+	</bean>
+	<!-- MyBatis配置 -->
+	<bean id="paginationInterceptor" class="com.gdsp.dev.persist.ext.ParameterInterceptor" />
+	<bean id="excuteSqlInterceptor"  />
+	<bean id="sqlSessionFactory" class="com.gdsp.dev.persist.ext.SpringSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="objectFactory">
+			<bean class="com.gdsp.dev.persist.ext.MybatisObjectFactory"></bean>
+		</property>
+		<property name="objectWrapperFactory">
+			<bean class="com.gdsp.dev.persist.ext.MybatisObjectWrapperFactory">
+				<property name="resultMapKeyCase" value="${mybatis.resultMapKeyCaseMode:0}"/>
+			</bean>
+		</property>
+		<property name="plugins">
+			<array>  
+				<ref bean="paginationInterceptor" />
+           		<bean class="com.gdsp.platform.log.web.OpLogInterceptor"/>  
+           	</array> 
+		</property>
+		<property name="mergeHandler" ref="mergeHandler" />
+		<property name="mapperLocations">
+			<array>
+				<value>classpath*:gdsp/mapper/**/*.xml</value>
+				<value>classpath*:gdsp/mapper-${jdbc.dbtype}/**/*.xml</value>
+			</array>
+		</property>
+		<property name="typeAliasesPackage" value="com.gdsp"/>
+		<property name="typeAliasesSuperType" value="com.gdsp.dev.core.model.entity.BaseEntity"/>
+		<property name="typeHandlersPackage" value="com.gdsp.dev.persist.types"/>
+		<property name="configLocation" value="classpath:gdsp/mybatis/mybatis-config.xml" />
+	</bean>
+	<bean id="sqlSessionTemplate" class="com.gdsp.dev.persist.ext.MybatisSqlTemplate">
+		<constructor-arg ref="sqlSessionFactory"/>
+	</bean>
+	<!-- 扫描basePackage下所有以@MDao标识的 接口-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.gdsp.**.dao" />
+		<property name="annotationClass" value="com.gdsp.dev.persist.ext.MBDao"/>
+		<property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"/>
+	</bean>
+
+	<!-- Tomcat JDBC连接池 -->
+	<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${${jdbc.dbtype}.jdbc.username}" />
+		<property name="password" value="${${jdbc.dbtype}.jdbc.password}" />
+		<property name="defaultAutoCommit" value="false" />
+		<property name="maxActive" value="${jdbc.pool.maxActive}" />
+		<property name="maxIdle" value="${jdbc.pool.maxIdle}" />
+		<property name="minIdle" value="0" />
+		<property name="initialSize"  value="${jdbc.pool.initialSize}"/>
+	</bean>
+</beans>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.systools.datalicense.dao.IDataLicenseDao">
+
+     <insert id="insertPowerConn">
+        insert into cp_role_datadic (id,pk_role,pk_dic,pk_dicval,createBy,createTime)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+        (#{item.id}, #{item.pk_role},#{item.pk_dic},#{item.pk_dicval},#{item.createBy},#{item.createTime:BIGINT})
+        </foreach>
+     </insert>
+</mapper>

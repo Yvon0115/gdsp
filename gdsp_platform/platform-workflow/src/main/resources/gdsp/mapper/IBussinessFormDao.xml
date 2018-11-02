@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IBussinessFormDao">
+	<sql id="allcolumn">
+		id,pk_deploymentId,formId,params,status,downloadurl,createby,createtime,lastmodifyby,lastmodifytime,version
+	</sql>
+	
+	
+	<resultMap type="com.gdsp.platform.workflow.model.BussinessFormVO" id="colomnmap">
+		<result property="id" column="ID" />
+		<result property="deploymentId" column="pk_deploymentId" />
+		<result property="formId" column="formId" />
+		<result property="params" column="params" />
+		<result property="status" column="status" />
+		<result property="downloadurl" column="downloadurl" />
+		
+		<result property="createBy" column="createBy" />
+		<result property="createTime" column="createTime" />
+		<result property="lastModifyBy" column="lastModifyBy" />
+		<result property="lastModifyTime" column="lastModifyTime" />
+		<result property="version" column="version" />
+	</resultMap>
+	<!-- 添加审批权限记录 -->
+	<insert id="insert" parameterType="com.gdsp.platform.workflow.model.BussinessFormVO">
+		insert 
+		into flow_businessform 
+		(<include refid="allcolumn"/>)
+		values (#{id},#{deploymentId},#{formId},#{params},#{status},#{downloadurl},#{createBy},#{createTime:BIGINT},#{lastModifyBy},#{lastModifyTime:BIGINT},#{version})
+	</insert>
+	
+	<select id="queryFormVariableValueByFormId" resultMap="colomnmap" >
+		select <include refid="allcolumn" />
+		from  flow_businessform where formId=#{formId}
+	</select>
+	
+	<select id="queryFormVariableValuerByDepidAndFormid" resultMap="colomnmap">
+		select <include refid="allcolumn" />
+		from  flow_businessform where pk_deploymentId=#{depId} and formId=#{formid}
+	</select>
+	
+	<select id="queryFormIdByInstId" resultMap="colomnmap">
+		select 
+		a.id,a.pk_deploymentId,a.formId,a.params,a.status,a.downloadurl,a.createby,a.createtime,a.lastmodifyby,a.lastmodifytime,a.version
+		from flow_businessform a,flow_form_proceinst_rlt b 
+		where a.id=b.pk_businessformid and b.proceinstId=#{proceInstId}
+	</select>
+	
+	<update id="updateDownloadUrl" >
+		update flow_businessform set downloadurl=#{downloadurl} where id=#{id}
+	</update>
+	<update id="updateBusinessStatus" >
+		update flow_businessform set status=#{status} where formId=#{formId}
+	</update>
+	
+	<update id="update">
+		update flow_businessform set params=#{bussinessFormVO.params},status=#{bussinessFormVO.status} where id=#{bussinessFormVO.id}
+	</update>
+</mapper>

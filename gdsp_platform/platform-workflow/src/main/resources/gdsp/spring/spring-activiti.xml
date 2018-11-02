@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
+		default-lazy-init="true">
+
+	<!-- <context:property-placeholder ignore-resource-not-found="false" ignore-unresolvable="true" location="classpath:/application.properties" /> -->
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="databaseSchemaUpdate" value="true"/><!-- 是否创建工作流表 -->
+        <property name="jobExecutorActivate" value="false"/>
+        <!--<property name="history" value="full"/>-->
+        <property name="processDefinitionCacheLimit" value="10"/>
+
+		<property name="eventListeners">  
+			<list>
+		      <ref bean="ProcessEndListener"/>  
+		    </list>
+		 </property>
+        <!-- 生成流程图的字体 -->
+        <property name="activityFontName" value="${diagram.activityFontName}"/>
+        <property name="labelFontName" value="${diagram.labelFontName}"/>
+
+        <!-- 自动部署 -->
+        <property name="deploymentResources">
+            <list>
+                <value>classpath*:/gdsp/deployments/*</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 发送Email配置 -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	  <property name="host" value="${mail.host}"/>
+	  <property name="username" value="${mail.username}"/>
+	  <property name="password" value="${mail.password}"/>
+	  <property name="defaultEncoding" value="UTF-8"/>
+	  <property name="port" value="25"/>
+	  <property name="javaMailProperties">
+	  	<props>
+	  		<prop key="mail.smtp.auth">${mail.smtp.auth}</prop>   
+	  		<prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
+	  	</props>
+	  </property>
+	</bean>
+
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+	<bean id="ProcessEndListener" class="com.gdsp.platform.workflow.helper.listener.ProcessEndListener"/>
+	
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+    <bean id="formService" factory-bean="processEngine" factory-method="getFormService"/>
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+    <bean id="templateEmail" class="com.gdsp.platform.workflow.utils.TemplateEmail"/>
+    
+    <bean id="processHistoryService" class="com.gdsp.platform.workflow.impl.ProcessHistoryServiceImpl"/>
+    <bean id="nodeInfoService" class="com.gdsp.platform.workflow.impl.NodeInfoServiceImpl"/>
+    <bean id="deploymentService" class="com.gdsp.platform.workflow.impl.DeploymentServiceImpl"/>
+    <bean id="formVariableService" class="com.gdsp.platform.workflow.impl.FormVariableServiceImpl"/>
+    <bean id="apprAuthorityService" class="com.gdsp.platform.workflow.impl.ApprAuthorityServiceImpl"/>
+    <bean id="delegateService" class="com.gdsp.platform.workflow.impl.DelegateServiceImpl"/>
+    <bean id="timerTaskService" class="com.gdsp.platform.workflow.impl.TimerTaskServiceImpl"/>
+    <bean id="notifyEventDetailService" class="com.gdsp.platform.workflow.impl.NotifyEventDetailServiceImpl"/>
+    <bean id="formProcinstRltService" class="com.gdsp.platform.workflow.impl.FormProcinstRltServiceImpl"/>
+    <bean id="bussinessFormService" class="com.gdsp.platform.workflow.impl.BussinessFormServiceImpl"/>
+    <bean id="messageService" class="com.gdsp.platform.comm.message.impl.MessageServiceImpl"/>
+    
+    
+</beans>

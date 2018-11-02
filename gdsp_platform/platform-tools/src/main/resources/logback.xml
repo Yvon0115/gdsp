@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>com.gdsp</contextName>
+	<property resource="datasource.properties" />
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.home:-.}/logs/gdsp.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${catalina.home:-.}/logs/gdsp.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder> 
+	</appender>
+	<appender name="logExFile" class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+        <file>${catalina.home:-.}/logs/logex.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${catalina.home:-.}/logs/logex.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+    </appender> 
+	<appender name="sheduleRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.home:-.}/logs/gdsp-quartz.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${catalina.home:-.}/logs/gdsp-quartz.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+ 	<appender name="db-classic-mysql" class="com.gdsp.platform.log.web.DBAppender4AccessLog">  
+        <connectionSource class="com.gdsp.dev.core.ext.EncryptDriverManagerConnectionSource">  
+            <driverClass>${log.jdbc.driver}</driverClass>
+			<url>${log.jdbc.url}</url>
+			<user>${log.jdbc.username}</user>
+			<password>${log.jdbc.password}</password>
+		</connectionSource>
+    </appender>  
+    <!-- 登录日志配置 -->
+    <appender name="db-login-mysql" class="com.gdsp.platform.log.web.DBAppender4LoginLog">  
+        <connectionSource class="com.gdsp.dev.core.ext.EncryptDriverManagerConnectionSource">  
+            <driverClass>${log.jdbc.driver}</driverClass>
+			<url>${log.jdbc.url}</url>
+			<user>${log.jdbc.username}</user>
+			<password>${log.jdbc.password}</password>
+		</connectionSource>
+    </appender> 
+    
+    <!-- 操作表日志配置 -->
+    <appender name="db-op-mysql" class="com.gdsp.platform.log.web.DBAppender4OpLog">  
+        <connectionSource class="com.gdsp.dev.core.ext.EncryptDriverManagerConnectionSource">  
+            <driverClass>${log.jdbc.driver}</driverClass>
+			<url>${log.jdbc.url}</url>
+			<user>${log.jdbc.username}</user>
+			<password>${log.jdbc.password}</password>
+		</connectionSource>
+    </appender>  
+    <!-- 操作表字段日志配置 -->
+    <appender name="db-op-content-mysql" class="com.gdsp.platform.log.web.DBAppender4OpContentLog">  
+        <connectionSource class="com.gdsp.dev.core.ext.EncryptDriverManagerConnectionSource">  
+            <driverClass>${log.jdbc.driver}</driverClass>
+			<url>${log.jdbc.url}</url>
+			<user>${log.jdbc.username}</user>
+			<password>${log.jdbc.password}</password>
+		</connectionSource>
+    </appender>
+    
+    <!-- 后台任务日志 -->
+    <appender name="db-sched-mysql" class="com.gdsp.platform.schedule.web.SchedDBAppenderAccessLog">  
+        <connectionSource class="com.gdsp.dev.core.ext.EncryptDriverManagerConnectionSource">  
+            <driverClass>${log.jdbc.driver}</driverClass>
+			<url>${log.jdbc.url}</url>
+			<user>${log.jdbc.username}</user>
+			<password>${log.jdbc.password}</password>
+		</connectionSource>
+    </appender>  
+    
+	<!-- project default level -->
+	<logger name="org.springframework" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="jndi" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache.ibatis.io.ResolverUtil" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.eclipse.jetty" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="o.e.jetty" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="ch.qos" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="c.q" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="o.s" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="c.d" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.gdsp.dev.web.mvc" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.gdsp.dev.persist" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.gdsp.dev.server" additivity="true">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.gdsp" additivity="true">
+		<level value="DEBUG" />
+	</logger>
+
+	<!--log4jdbc -->
+	<logger name="jdbc.sqltiming" level="INFO"/>
+
+	<logger name="busInfoLogger" additivity="true">
+		<level value="INFO"/>
+		<appender-ref ref="console"/>
+		<appender-ref ref="db-classic-mysql"/>
+	</logger>
+	
+	<!-- 登录日志配置 -->
+	<logger name="loginInfoLogger" additivity="true">
+		<level value="INFO"/>
+		<appender-ref ref="console"/>
+		<appender-ref ref="db-login-mysql"/>
+	</logger>
+	
+	<!-- 操作表日志配置 -->
+	<logger name="opMainInfoLogger" additivity="true">
+		<level value="INFO"/>
+		<appender-ref ref="console"/>
+		<appender-ref ref="db-op-mysql"/>
+	</logger>
+	<!-- 操作表字段日志配置 -->
+	<logger name="opContentLogger" additivity="true">
+		<level value="INFO"/>
+		<appender-ref ref="console"/>
+		<appender-ref ref="db-op-content-mysql"/>
+	</logger>
+
+	<logger name="schedInfoLogger" additivity="true">
+		<level value="INFO"/>
+		<appender-ref ref="console"/>
+		<!-- 后台任务日志 -->
+		<appender-ref ref="db-sched-mysql"/>
+	</logger>
+	
+	<logger name="org.quartz" additivity="true">
+		<level value="INFO"/>
+		<appender-ref ref="sheduleRollingFile"/>
+	</logger>
+	
+	<logger name="logExcepFile" additivity="true">
+		<level value="INFO"/>
+        <appender-ref ref="logExFile" /> 
+    </logger> 
+
+	<root level="${log.root.level:-DEBUG}">
+		<appender-ref ref="console" />
+		<appender-ref ref="rollingFile" />
+	</root>
+</configuration>

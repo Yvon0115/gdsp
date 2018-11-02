@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdsp.platform.workflow.dao.IEventTypeDao">
+    <sql id="flow_eventtypeColumns">
+    	id,eventtypecode,eventtypename,eventinterface,createby,createtime,lastmodifyby,lastmodifytime,version
+    </sql>
+
+	<!-- 查询 事件类型列表 -->
+	<select id="queryEventTypeListByCondition" resultType="EventTypeVO">
+		select 
+		<include refid="flow_eventtypeColumns" />
+		from flow_eventtype 
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="condition!= null">${condition._CONDITION_}</if>
+		</trim>
+		<if test="sort != null"> order by	<foreach collection="sort" item="order" separator=",">	${order.property} ${order.direction}</foreach></if> 
+	</select>
+</mapper>
