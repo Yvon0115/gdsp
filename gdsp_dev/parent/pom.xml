@@ -28,7 +28,7 @@
 		<ECharts.version>2.1.8.3</ECharts.version>
 		<!-- 6.Json -->
 		<jackson.version>2.5.1</jackson.version>
-		<jackson-databind.version>2.5.1</jackson-databind.version>
+		<jackson-databind.version>2.9.10.1</jackson-databind.version>
 		<json.version>2.4</json.version>
 		
 		<!-- JS工具&控件 -->
