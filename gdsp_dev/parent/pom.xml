@@ -110,7 +110,7 @@
 		<!-- 6.表达式 -->
 		<commons-jexl.version>2.1.1</commons-jexl.version>
 		<!-- 7.JavaBean操作工具类 -->
-		<commons-beanutils.version>1.9.1</commons-beanutils.version>
+		<commons-beanutils.version>1.9.2</commons-beanutils.version>
 		<!-- 8.Ant 压缩与解压缩工具包 -->
 		<ant.version>1.8.2</ant.version>
 		<!-- 9.Poi -->
