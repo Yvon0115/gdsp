@@ -176,7 +176,7 @@
 		<mybatis-paginator.version>1.2.15</mybatis-paginator.version>
 		<mybatis-spring.version>1.2.2</mybatis-spring.version>
 		<!-- 3.Mysql connector -->
-		<mysql-connector.version>5.1.30</mysql-connector.version>
+		<mysql-connector.version>8.0.16</mysql-connector.version>
 		<!-- 4.Oracle connector -->
 		<oracle-connector.version>11.2.0.3.0</oracle-connector.version>
 		<!-- sqlserver -->
