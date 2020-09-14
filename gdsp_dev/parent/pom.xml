@@ -112,7 +112,7 @@
 		<!-- 7.JavaBean操作工具类 -->
 		<commons-beanutils.version>1.9.1</commons-beanutils.version>
 		<!-- 8.Ant 压缩与解压缩工具包 -->
-		<ant.version>1.8.2</ant.version>
+		<ant.version>1.9.15</ant.version>
 		<!-- 9.Poi -->
 		<poi.version>3.14</poi.version>
 		<!-- 10.Solr搜索服务器客户端工具 -->
