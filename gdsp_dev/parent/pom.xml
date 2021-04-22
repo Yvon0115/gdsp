@@ -73,7 +73,7 @@
 		<ehcache.version>2.6.8</ehcache.version>
 		
 		<!-- 安全框架 -->
-		<shiro.version>1.2.2</shiro.version>
+		<shiro.version>1.7.1</shiro.version>
 		<!-- 登录验证码 -->
 		<jcaptcha.version>2.0.0</jcaptcha.version>
 		
