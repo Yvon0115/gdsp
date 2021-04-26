@@ -100,7 +100,7 @@
 		<!-- 1.通用公共组件包 -->
 		<commons-lang3.version>3.4</commons-lang3.version>
 		<!-- 2.IO流工具 -->
-		<commons-io.version>2.4</commons-io.version>
+		<commons-io.version>2.7</commons-io.version>
 		<!-- 3.commons-net ftp工具包 -->
 		<commons-net.version>3.1</commons-net.version>
 		<!-- 4.commons-fileupload文件上传工具 -->
