@@ -118,7 +118,7 @@
 		<!-- 10.Solr搜索服务器客户端工具 -->
 		<solr-solrj.version>5.3.2</solr-solrj.version>
 		<!-- 11.HTTP客户端编程工具包 -->
-		<httpclient.version>4.5.2</httpclient.version>
+		<httpclient.version>4.5.13</httpclient.version>
 		<httpmime.version>4.3.3</httpmime.version>
 		
 		<!-- 命令行工具API -->
